@@ -77,4 +77,11 @@ public interface Ssc {
 	public String ssc_module_exec_simple_nothread(String name, Pointer data);
 	public boolean ssc_module_exec(Pointer module, Pointer data);
 	public String ssc_module_log(Pointer module, int index, @Out IntByReference itemType, @Out FloatByReference time);
+	
+	/*
+	 * Module execution with a handler. The user must create a handler to pass in during
+	 * execution.
+	 */
+	public boolean ssc_module_exec_with_handler(Pointer module, Pointer data,
+			ExecutionHandler handler, Pointer userData);
 }

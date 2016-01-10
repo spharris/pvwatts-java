@@ -281,10 +281,31 @@ public class TestSsc {
 		} while (logMsg != null);
 	}
 	
+	private static class TestHandler implements ExecutionHandler {
+
+		@Override
+		public boolean update(Pointer module, Pointer handler, int action, float f0, float f1, String s0,
+				String s1, Pointer userData) {
+			return true;
+		}
+	}
+	
+	@Test
+	public void testWithHandler() {
+		initializeSimulationData(ssclib, data);
+		Pointer module = ssclib.ssc_module_create("layoutarea");
+		
+		ExecutionHandler handler = new TestHandler();
+		boolean result = ssclib.ssc_module_exec_with_handler(module, data, handler, null);
+		
+		assertThat(result, equalTo(true));
+		checkSimulationData(ssclib, data);
+		ssclib.ssc_module_free(module);
+	}
+	
 	/**
 	 * Private helper that initializes some data for a simulation. Assumes
 	 * that we want to use the "layoutarea" module, as it's the simplest.
-	 * @param data
 	 */
 	private static void initializeSimulationData(Ssc ssclib, Pointer data) {
 		float[] positions = { 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
