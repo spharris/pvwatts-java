@@ -10,6 +10,7 @@ import org.junit.Test;
 import jnr.ffi.LibraryLoader;
 import jnr.ffi.Pointer;
 import jnr.ffi.byref.FloatByReference;
+import jnr.ffi.byref.IntByReference;
 
 public class TestSsc {
 	
@@ -54,7 +55,7 @@ public class TestSsc {
 		int status = ssclib.ssc_data_get_number(data, name, out);
 		
 		assertThat(status, greaterThan(0));
-		assertThat(out.getValue().floatValue(), equalTo(targetVal));
+		assertThat(out.floatValue(), equalTo(targetVal));
 	}
 	
 	@Test
@@ -66,5 +67,58 @@ public class TestSsc {
 		String result = ssclib.ssc_data_get_string(data, name);
 		
 		assertThat(result, equalTo(targetString));
+	}
+	
+	@Test
+	public void setArray() {
+		float value = 0.5f;
+		float[] array = { value, value, value, value };
+		String name = "test";
+		
+		ssclib.ssc_data_set_array(data, name, array, array.length);
+		IntByReference length = new IntByReference();
+		Pointer result = ssclib.ssc_data_get_array(data, name, length);
+
+		assertThat(length.intValue(), equalTo(array.length));
+		for (int i = 0; i < length.intValue(); i++) {
+			// Offset is by byte (float = 4 bytes)
+			assertThat(result.getFloat(i*4), equalTo(value));
+		}
+	}
+	
+	@Test
+	public void setMatrix() {
+		float value = 0.5f;
+		int n = 2;
+		float[] array = { value, value, value, value };
+		String name = "test";
+		
+		ssclib.ssc_data_set_matrix(data, name, array, n, n);
+		IntByReference rows = new IntByReference();
+		IntByReference cols = new IntByReference();
+		Pointer result = ssclib.ssc_data_get_matrix(data, name, rows, cols);
+
+		assertThat(rows.intValue(), equalTo(n));
+		assertThat(cols.intValue(), equalTo(n));
+		for (int i = 0; i < rows.intValue(); i++) {
+			for (int j = 0; j < cols.intValue(); j++) {
+				// Offset is by byte (float = 4 bytes)
+				assertThat(result.getFloat((i*j+j)*4), equalTo(value));
+			}
+		}
+	}
+	
+	@Test
+	public void setTable() {
+		Pointer table = ssclib.ssc_data_create();
+		String name = "test";
+		String val = "test string";
+		
+		ssclib.ssc_data_set_string(table, name, val);
+		ssclib.ssc_data_set_table(data, name, table);
+		Pointer resultTable = ssclib.ssc_data_get_table(data, name);
+		String resultString = ssclib.ssc_data_get_string(resultTable, name);
+		
+		assertThat(resultString, equalTo(val));
 	}
 }
