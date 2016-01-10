@@ -19,9 +19,15 @@ public class TestSsc {
 	
 	@Before
 	public void loadLibrary() {
+		String path = getLibPath();
 		ssclib = LibraryLoader.create(Ssc.class)
-			.search("/Users/spharris/Dropbox/pvwatts-java/target/classes/ssc/osx64")
+			.search(path + "/osx64")
 			.load("ssc");
+	}
+	
+	private String getLibPath() {
+		String basePath = getClass().getClassLoader().getResource("ssc").getPath();
+		return basePath;
 	}
 	
 	@Before
