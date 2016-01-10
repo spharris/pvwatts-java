@@ -116,9 +116,70 @@ public class TestSsc {
 		
 		ssclib.ssc_data_set_string(table, name, val);
 		ssclib.ssc_data_set_table(data, name, table);
+		
 		Pointer resultTable = ssclib.ssc_data_get_table(data, name);
 		String resultString = ssclib.ssc_data_get_string(resultTable, name);
 		
 		assertThat(resultString, equalTo(val));
+	}
+	
+	@Test
+	public void dataClear() {
+		String name = "test";
+		String targetString = "test string";
+		
+		ssclib.ssc_data_set_string(data, name, targetString);
+		ssclib.ssc_data_clear(data);
+		
+		String resultString = ssclib.ssc_data_get_string(data, name);
+		assertThat(resultString, equalTo(null));
+	}
+	
+	@Test
+	public void dataQuery() {
+		String name = "test";
+		String targetString = "test string";
+		
+		ssclib.ssc_data_set_string(data, name, targetString);
+		int type = ssclib.ssc_data_query(data, name);
+		
+		assertThat(type, equalTo(1));
+	}
+	
+	@Test
+	public void dataFirstWithNoDataReturnsNull() {
+		assertThat(ssclib.ssc_data_first(data), equalTo(null));
+	}
+	
+	@Test
+	public void dataFirstWithData() {
+		String name = "test";
+		String targetString = "test string";
+		
+		ssclib.ssc_data_set_string(data, name, targetString);
+		String result = ssclib.ssc_data_first(data);
+		
+		assertThat(result, equalTo(name));
+	}
+	
+	@Test
+	public void entryData() {
+		int i = 0;
+		Pointer entry = ssclib.ssc_module_entry(i);
+		do {
+			assertThat(entry, not(equalTo(null)));
+			
+			String name = ssclib.ssc_entry_name(entry);
+			assertThat(name, not(equalTo(null)));
+			
+			String description = ssclib.ssc_entry_description(entry);
+			assertThat(description, not(equalTo(null)));
+			
+			int version = ssclib.ssc_entry_version(entry);
+			assertThat(version, greaterThanOrEqualTo(0));
+			
+			i++;
+			entry = ssclib.ssc_module_entry(i);
+		} while (entry != null);
 	}
 }
