@@ -58,9 +58,9 @@ public class TestSsc {
 		
 		ssclib.ssc_data_set_number(data, name, targetVal);
 		FloatByReference out = new FloatByReference();
-		int status = ssclib.ssc_data_get_number(data, name, out);
+		boolean status = ssclib.ssc_data_get_number(data, name, out);
 		
-		assertThat(status, greaterThan(0));
+		assertThat(status, equalTo(true));
 		assertThat(out.floatValue(), equalTo(targetVal));
 	}
 	
@@ -187,5 +187,126 @@ public class TestSsc {
 			i++;
 			entry = ssclib.ssc_module_entry(i);
 		} while (entry != null);
+	}
+	
+	@Test
+	public void createAndFreeModule() {
+		Pointer module = ssclib.ssc_module_create("pvwattsv1");
+		assertThat(module, not(equalTo(null)));
+		
+		ssclib.ssc_module_free(module);
+	}
+	
+	@Test
+	public void getModuleInfo() {
+		Pointer module = ssclib.ssc_module_create("pvwattsv1");
+		
+		int i = 0;
+		Pointer info = ssclib.ssc_module_var_info(module, i);
+		do {
+			assertThat(info, not(equalTo(null)));
+			
+			ssclib.ssc_info_name(info);
+			assertThat(ssclib.ssc_info_var_type(info), greaterThanOrEqualTo(0));
+			assertThat(ssclib.ssc_info_data_type(info), greaterThanOrEqualTo(0));
+			assertThat(ssclib.ssc_info_name(info), not(equalTo(null)));
+			assertThat(ssclib.ssc_info_label(info), not(equalTo(null)));
+			assertThat(ssclib.ssc_info_units(info), not(equalTo(null)));
+			assertThat(ssclib.ssc_info_meta(info), not(equalTo(null)));
+			assertThat(ssclib.ssc_info_group(info), not(equalTo(null)));
+			assertThat(ssclib.ssc_info_required(info), not(equalTo(null)));
+			assertThat(ssclib.ssc_info_constraints(info), not(equalTo(null)));
+			
+			i++;
+			info = ssclib.ssc_module_var_info(module, i);
+		} while (info != null);
+		
+		ssclib.ssc_module_free(module);
+	}
+	
+	@Test
+	public void moduleExecSimple() {
+		// Arrange
+		initializeSimulationData(ssclib, data);
+		
+		// Act
+		boolean result = ssclib.ssc_module_exec_simple("layoutarea", data);
+
+		// Assert
+		assertThat(result, equalTo(true));
+		checkSimulationData(ssclib, data);
+	}
+	
+	@Test
+	public void moduleExecNoThread() {
+		initializeSimulationData(ssclib, data);
+		
+		String result = ssclib.ssc_module_exec_simple_nothread("layoutarea", data);
+		
+		assertThat(result, equalTo(null));
+		checkSimulationData(ssclib, data);
+	}
+	
+	@Test
+	public void moduleExec() {
+		initializeSimulationData(ssclib, data);
+		
+		Pointer module = ssclib.ssc_module_create("layoutarea");
+		boolean result = ssclib.ssc_module_exec(module, data);
+		
+		assertThat(result, equalTo(true));
+		checkSimulationData(ssclib, data);
+		ssclib.ssc_module_free(module);
+	}
+	
+	@Test
+	public void testModuleLog() {
+		Pointer module = ssclib.ssc_module_create("layoutarea");
+		boolean result = ssclib.ssc_module_exec(module, data);
+		
+		assertThat(result, equalTo(false));
+		
+		int i = 0;
+		IntByReference itemType = new IntByReference();
+		FloatByReference time = new FloatByReference();
+		String logMsg = ssclib.ssc_module_log(module, i, itemType, time);
+		do {
+			assertThat(logMsg, not(equalTo(null)));
+
+			assertThat(itemType.intValue(), greaterThan(0));
+			assertThat(time.floatValue(), not(equalTo((0f))));
+			
+			i++;
+			logMsg = ssclib.ssc_module_log(module, i, itemType, time);
+		} while (logMsg != null);
+	}
+	
+	/**
+	 * Private helper that initializes some data for a simulation. Assumes
+	 * that we want to use the "layoutarea" module, as it's the simplest.
+	 * @param data
+	 */
+	private static void initializeSimulationData(Ssc ssclib, Pointer data) {
+		float[] positions = { 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
+		ssclib.ssc_data_set_matrix(data, "positions", positions, 3, 2);
+	}
+	
+	/**
+	 * Private helper to make sure that the data created by the
+	 * simulation was set as expected. Assumes that we used the "layoutarea"
+	 * module
+	 */
+	private static void checkSimulationData(Ssc ssclib, Pointer data) {
+		FloatByReference val = new FloatByReference();
+		boolean status = ssclib.ssc_data_get_number(data, "area", val);
+		assertThat(status, equalTo(true));
+		assertThat(val.floatValue(), greaterThanOrEqualTo(0f));
+		
+		IntByReference rows = new IntByReference();
+		IntByReference cols = new IntByReference();
+		Pointer mtx = ssclib.ssc_data_get_matrix(data, "convex_hull", rows, cols);
+		assertThat(mtx, not(equalTo(null)));
+		assertThat(rows.intValue(), greaterThan(0));
+		assertThat(cols.intValue(), greaterThan(0));
 	}
 }

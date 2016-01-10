@@ -35,7 +35,7 @@ public interface Ssc {
 	public void ssc_data_set_matrix(Pointer data, String name, float[] values, int rows, int cols);
 	public void ssc_data_set_table(Pointer data, String name, Pointer table);
 	
-	public int ssc_data_get_number(Pointer data, String name, @Out FloatByReference value);
+	public boolean ssc_data_get_number(Pointer data, String name, @Out FloatByReference value);
 	public String ssc_data_get_string(Pointer data, String name);
 	public Pointer ssc_data_get_array(Pointer data, String name, @Out IntByReference lenth);
 	public Pointer ssc_data_get_matrix(Pointer data, String name, @Out IntByReference rows, @Out IntByReference cols);
@@ -50,6 +50,31 @@ public interface Ssc {
 	public int ssc_entry_version(Pointer entry);
 	
 	/*
-	 * Module functions
+	 * Module creation functions
 	 */
+	public Pointer ssc_module_create(String moduleName);
+	public void ssc_module_free(Pointer module);
+
+	/*
+	 * Info functions
+	 */
+	public Pointer ssc_module_var_info(Pointer module, int index);
+	public int ssc_info_var_type(Pointer info);
+	public int ssc_info_data_type(Pointer info);
+	public String ssc_info_name(Pointer info);
+	public String ssc_info_label(Pointer info);
+	public String ssc_info_units(Pointer info);
+	public String ssc_info_meta(Pointer info);
+	public String ssc_info_group(Pointer info);
+	public String ssc_info_required(Pointer info);
+	public String ssc_info_constraints(Pointer info);
+	
+	/*
+	 * Module execution functions
+	 */
+	public void ssc_module_exec_set_print(int print);
+	public boolean ssc_module_exec_simple(String name, Pointer data);
+	public String ssc_module_exec_simple_nothread(String name, Pointer data);
+	public boolean ssc_module_exec(Pointer module, Pointer data);
+	public String ssc_module_log(Pointer module, int index, @Out IntByReference itemType, @Out FloatByReference time);
 }
