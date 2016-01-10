@@ -1,6 +1,7 @@
 package io.github.spharris.ssc;
 
 import jnr.ffi.Pointer;
+import jnr.ffi.annotations.In;
 import jnr.ffi.annotations.Out;
 import jnr.ffi.byref.FloatByReference;
 import jnr.ffi.byref.IntByReference;
@@ -21,25 +22,25 @@ public interface Ssc {
 	public Pointer ssc_data_create();
 	public void ssc_data_free(Pointer data);
 	public void ssc_data_clear(Pointer data);
-	public void ssc_data_unassign(Pointer data, String name);
-	public int ssc_data_query(Pointer data, String name);
+	public void ssc_data_unassign(Pointer data, @In String name);
+	public int ssc_data_query(Pointer data, @In String name);
 	public String ssc_data_first(Pointer data);
 	public String ssc_data_next(Pointer data);
 	
 	/*
 	 * Setters and getters for different data types
 	 */
-	public void ssc_data_set_number(Pointer data, String name, float value);
-	public void ssc_data_set_string(Pointer data, String name, String value);
-	public void ssc_data_set_array(Pointer data, String name, float[] values, int length);
-	public void ssc_data_set_matrix(Pointer data, String name, float[] values, int rows, int cols);
-	public void ssc_data_set_table(Pointer data, String name, Pointer table);
+	public void ssc_data_set_number(Pointer data, @In String name, float value);
+	public void ssc_data_set_string(Pointer data, @In String name, @In String value);
+	public void ssc_data_set_array(Pointer data, @In String name, @In float[] values, int length);
+	public void ssc_data_set_matrix(Pointer data, @In String name, @In float[] values, int rows, int cols);
+	public void ssc_data_set_table(Pointer data, @In String name, Pointer table);
 	
-	public boolean ssc_data_get_number(Pointer data, String name, @Out FloatByReference value);
-	public String ssc_data_get_string(Pointer data, String name);
-	public Pointer ssc_data_get_array(Pointer data, String name, @Out IntByReference lenth);
-	public Pointer ssc_data_get_matrix(Pointer data, String name, @Out IntByReference rows, @Out IntByReference cols);
-	public Pointer ssc_data_get_table(Pointer data, String name);
+	public boolean ssc_data_get_number(Pointer data, @In String name, @Out FloatByReference value);
+	public String ssc_data_get_string(Pointer data, @In String name);
+	public Pointer ssc_data_get_array(Pointer data, @In String name, @Out IntByReference lenth);
+	public Pointer ssc_data_get_matrix(Pointer data, @In String name, @Out IntByReference rows, @Out IntByReference cols);
+	public Pointer ssc_data_get_table(Pointer data, @In String name);
 	
 	/*
 	 * Module metadata functions
@@ -52,7 +53,7 @@ public interface Ssc {
 	/*
 	 * Module creation functions
 	 */
-	public Pointer ssc_module_create(String moduleName);
+	public Pointer ssc_module_create(@In String moduleName);
 	public void ssc_module_free(Pointer module);
 
 	/*
@@ -73,8 +74,8 @@ public interface Ssc {
 	 * Module execution functions
 	 */
 	public void ssc_module_exec_set_print(int print);
-	public boolean ssc_module_exec_simple(String name, Pointer data);
-	public String ssc_module_exec_simple_nothread(String name, Pointer data);
+	public boolean ssc_module_exec_simple(@In String name, Pointer data);
+	public String ssc_module_exec_simple_nothread(@In String name, Pointer data);
 	public boolean ssc_module_exec(Pointer module, Pointer data);
 	public String ssc_module_log(Pointer module, int index, @Out IntByReference itemType, @Out FloatByReference time);
 	
