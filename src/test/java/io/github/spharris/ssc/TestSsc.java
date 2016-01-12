@@ -190,6 +190,12 @@ public class TestSsc {
 	}
 	
 	@Test
+	public void unknownModuleReturnsNull() {
+		Pointer module = ssclib.ssc_module_create("unknown");
+		assertThat(module, equalTo(null));
+	}
+	
+	@Test
 	public void createAndFreeModule() {
 		Pointer module = ssclib.ssc_module_create("pvwattsv1");
 		assertThat(module, not(equalTo(null)));
