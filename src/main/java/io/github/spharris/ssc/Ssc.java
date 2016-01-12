@@ -8,7 +8,9 @@ import jnr.ffi.byref.IntByReference;
 
 /**
  * Raw interface to the Ssc library. Declares the basic functions defined in
- * sscapi.h
+ * sscapi.h. This interface is public for compatibility with jnr.ffi, but
+ * should not be used outside of the ssc package. Instead,
+ * use a {@link io.github.spharris.ssc.Module} 
  * 
  * @author spharris
  */

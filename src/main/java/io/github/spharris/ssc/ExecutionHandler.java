@@ -8,7 +8,7 @@ import jnr.ffi.annotations.Delegate;
  * 
  * @author spharris
  */
-public interface ExecutionHandler {
+interface ExecutionHandler {
 	@Delegate public boolean update(Pointer module, Pointer sscFunction, int action,
 			float f0, float f1, String s0, String s1, Pointer userData);
 }
