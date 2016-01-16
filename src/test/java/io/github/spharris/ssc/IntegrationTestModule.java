@@ -36,4 +36,18 @@ public class IntegrationTestModule {
 		assertThat(result.get(), equalTo(value));
 	}
 	
+	@Test
+	public void getArray() {
+		String field = "field";
+		float[] values = { 0.5f, 0.5f, 0.5f };
+		
+		module.setArray(field, values);
+		Optional<Float[]> result = module.getArray(field);
+		
+		assertThat(result.isPresent(), equalTo(true));
+		
+		for (Float val : result.get()) {
+			assertThat(val, equalTo(0.5f));
+		}
+	}
 }

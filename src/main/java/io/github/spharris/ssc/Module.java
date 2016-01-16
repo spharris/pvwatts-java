@@ -1,5 +1,9 @@
 package io.github.spharris.ssc;
 
+import static com.google.common.base.Preconditions.*;
+
+import java.util.List;
+
 import com.google.common.base.Optional;
 
 import io.github.spharris.data.Matrix;
@@ -7,6 +11,7 @@ import io.github.spharris.ssc.excepions.UnknownModuleNameException;
 import jnr.ffi.LibraryLoader;
 import jnr.ffi.Pointer;
 import jnr.ffi.byref.FloatByReference;
+import jnr.ffi.byref.IntByReference;
 
 /**
  * A <code>Module</code> represents an SSC compute module ("pvwattsv1", for example).
@@ -84,12 +89,23 @@ public class Module {
 	
 	public void setString(String variableName, String value) {
 		checkState();
+		checkNotNull(value);
 		data.setString(variableName, value);
 	}
 	
 	public Optional<String> getString(String variableName) {
 		checkState();
 		return data.getString(variableName);
+	}
+	
+	public void setArray(String variableName, float[] value) {
+		checkState();
+		data.setArray(variableName, value);
+	}
+	
+	public Optional<Float[]> getArray(String variableName) {
+		checkState();
+		return data.getArray(variableName);
 	}
 	
 	/**
@@ -120,7 +136,9 @@ public class Module {
 	 */
 	private class Data {
 		
+		private static final int FLOAT_SIZE = 4;
 		private Pointer dataPointer;
+		
 		
 		public Data() {
 			dataPointer = api.ssc_data_create();
@@ -153,6 +171,24 @@ public class Module {
 		
 		public void setArray(String name, float[] value) {
 			api.ssc_data_set_array(dataPointer, name, value, value.length);
+		}
+		
+		public Optional<Float[]> getArray(String name) {
+			IntByReference length = new IntByReference();
+			Pointer result = api.ssc_data_get_array(dataPointer, name, length);
+			
+			if (result == null) {
+				return Optional.<Float[]>absent();
+			} else {
+				int len = length.intValue();
+				Float[] arr = new Float[len];
+				
+				for (int i = 0; i < len; i++) {
+					arr[i] = result.getFloat(i * FLOAT_SIZE);
+				}
+				
+				return Optional.of(arr);
+			}
 		}
 		
 		public void setMatrix(String name, Matrix value) {
