@@ -42,12 +42,9 @@ public class IntegrationTestModule {
 		float[] values = { 0.5f, 0.5f, 0.5f };
 		
 		module.setArray(field, values);
-		Optional<Float[]> result = module.getArray(field);
+		Optional<float[]> result = module.getArray(field);
 		
 		assertThat(result.isPresent(), equalTo(true));
-		
-		for (Float val : result.get()) {
-			assertThat(val, equalTo(0.5f));
-		}
+		assertThat(result.get(), equalTo(values));
 	}
 }

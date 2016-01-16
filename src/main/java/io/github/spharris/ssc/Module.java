@@ -2,8 +2,6 @@ package io.github.spharris.ssc;
 
 import static com.google.common.base.Preconditions.*;
 
-import java.util.List;
-
 import com.google.common.base.Optional;
 
 import io.github.spharris.data.Matrix;
@@ -24,10 +22,12 @@ import jnr.ffi.byref.IntByReference;
  * @author spharris
  */
 public class Module {
+	
+	private static final int FLOAT_SIZE = 4;
 
 	private String moduleName;
 	private Pointer module;
-	private Data data;
+	private Pointer data;
 	private Ssc api;
 	
 	private boolean freed = false;
@@ -70,7 +70,7 @@ public class Module {
 		
 		this.moduleName = moduleName;
 		this.api = api;
-		data = new Data();
+		data = api.ssc_data_create();
 	}
 	
 	public String getName() {
@@ -79,33 +79,65 @@ public class Module {
 	
 	public void setNumber(String variableName, float value) {
 		checkState();
-		data.setNumber(variableName, value);
+		api.ssc_data_set_number(data, variableName, value);
 	}
 	
 	public Optional<Float> getNumber(String variableName) {
 		checkState();
-		return data.getNumber(variableName);
+		
+		FloatByReference value = new FloatByReference();
+		boolean present = api.ssc_data_get_number(data, variableName, value); 
+		
+		if (present) {
+			return Optional.of(value.floatValue());
+		} else {
+			return Optional.absent();
+		}
 	}
 	
 	public void setString(String variableName, String value) {
 		checkState();
 		checkNotNull(value);
-		data.setString(variableName, value);
+		
+		api.ssc_data_set_string(data, variableName, value);
 	}
 	
 	public Optional<String> getString(String variableName) {
 		checkState();
-		return data.getString(variableName);
+		
+		String val = api.ssc_data_get_string(data, variableName);
+		return Optional.fromNullable(val);
 	}
 	
 	public void setArray(String variableName, float[] value) {
 		checkState();
-		data.setArray(variableName, value);
+		checkNotNull(value);
+		
+		api.ssc_data_set_array(data, variableName, value, value.length);
 	}
 	
-	public Optional<Float[]> getArray(String variableName) {
+	public Optional<float[]> getArray(String variableName) {
 		checkState();
-		return data.getArray(variableName);
+		
+		IntByReference length = new IntByReference();
+		Pointer result = api.ssc_data_get_array(data, variableName, length);
+		
+		if (result == null) {
+			return Optional.<float[]>absent();
+		} else {
+			int len = length.intValue();
+			float[] arr = new float[len];
+			
+			for (int i = 0; i < len; i++) {
+				arr[i] = result.getFloat(i * FLOAT_SIZE);
+			}
+			
+			return Optional.of(arr);
+		}
+	}
+	
+	public void setMatrix(String variableName, Matrix value) {
+		api.ssc_data_set_matrix(data, variableName, null, value.rows(), value.cols());
 	}
 	
 	/**
@@ -115,7 +147,7 @@ public class Module {
 	public void free() {
 		if (!freed) {
 			api.ssc_module_free(module);
-			data.free();
+			api.ssc_data_free(data);
 			freed = true;
 		}
 	}
@@ -127,76 +159,6 @@ public class Module {
 	private void checkState() {
 		if (freed) {
 			throw new IllegalStateException("The module has already been freed.");
-		}
-	}
-	
-	/**
-	 * Wrapper for an SSC data pointer. Forwards any call to setXX to the appropriate
-	 * SSC function
-	 */
-	private class Data {
-		
-		private static final int FLOAT_SIZE = 4;
-		private Pointer dataPointer;
-		
-		
-		public Data() {
-			dataPointer = api.ssc_data_create();
-		}
-		
-		public void setNumber(String name, float value) {
-			api.ssc_data_set_number(dataPointer, name, value);
-		}
-		
-		public Optional<Float> getNumber(String name) {
-			FloatByReference value = new FloatByReference();
-			boolean present = api.ssc_data_get_number(dataPointer, name, value); 
-			
-			if (present) {
-				return Optional.of(value.floatValue());
-			} else {
-				return Optional.absent();
-			}
-		}
-		
-		public void setString(String name, String value) {
-			api.ssc_data_set_string(dataPointer, name, value);
-		}
-		
-		public Optional<String> getString(String name) {
-			String val = api.ssc_data_get_string(dataPointer, name);
-			
-			return Optional.fromNullable(val);
-		}
-		
-		public void setArray(String name, float[] value) {
-			api.ssc_data_set_array(dataPointer, name, value, value.length);
-		}
-		
-		public Optional<Float[]> getArray(String name) {
-			IntByReference length = new IntByReference();
-			Pointer result = api.ssc_data_get_array(dataPointer, name, length);
-			
-			if (result == null) {
-				return Optional.<Float[]>absent();
-			} else {
-				int len = length.intValue();
-				Float[] arr = new Float[len];
-				
-				for (int i = 0; i < len; i++) {
-					arr[i] = result.getFloat(i * FLOAT_SIZE);
-				}
-				
-				return Optional.of(arr);
-			}
-		}
-		
-		public void setMatrix(String name, Matrix value) {
-			api.ssc_data_set_matrix(dataPointer, name, null, value.rows(), value.cols());
-		}
-		
-		public void free() {
-			api.ssc_data_free(dataPointer);
 		}
 	}
 }
