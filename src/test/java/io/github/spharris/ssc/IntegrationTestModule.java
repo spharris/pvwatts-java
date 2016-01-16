@@ -1,14 +1,13 @@
 package io.github.spharris.ssc;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Optional;
-
-import static org.hamcrest.Matchers.*;
 
 public class IntegrationTestModule {
 	

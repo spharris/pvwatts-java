@@ -6,7 +6,12 @@ package io.github.spharris.data;
  *  
  * @author spharris
  */
-public class Matrix {
+public class Matrix<T extends Number> {
+	
+	public Matrix(int rows, int cols) {
+		
+	}
+	
 	public int rows() {
 		return 0;
 	}

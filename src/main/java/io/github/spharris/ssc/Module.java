@@ -33,7 +33,8 @@ public class Module {
 	private boolean freed = false;
 	
 	/**
-	 * Creates and returns an SSC compute module with the given name.
+	 * Creates and returns an SSC compute module with the given name. Created modules
+	 * with <tt>forName</tt> use native memory and therefore must be freed when no longer needed.
 	 * 
 	 * @throws UnknownModuleNameException if no such module exists.
 	 */
@@ -136,12 +137,19 @@ public class Module {
 		}
 	}
 	
-	public void setMatrix(String variableName, Matrix value) {
+	public <T extends Number> void setMatrix(String variableName, Matrix<T> value) {
+		checkState();
+		checkNotNull(value);
+		
 		api.ssc_data_set_matrix(data, variableName, null, value.rows(), value.cols());
 	}
 	
+	public Matrix<Float> getMatrix(String variableName) {
+		return null;
+	}
+	
 	/**
-	 * Frees the underlying pointer associated with this module. Subsequent calls to
+	 * Frees the underlying pointers associated with this module. Subsequent calls to
 	 * other module functions will result in an {@link java.lang.IllegalStateException}
 	 */
 	public void free() {
