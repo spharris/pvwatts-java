@@ -1,15 +1,20 @@
 package io.github.spharris.ssc;
 
+import com.google.common.base.Optional;
+
 import io.github.spharris.data.Matrix;
 import io.github.spharris.ssc.excepions.UnknownModuleNameException;
 import jnr.ffi.LibraryLoader;
 import jnr.ffi.Pointer;
+import jnr.ffi.byref.FloatByReference;
 
 /**
  * A <code>Module</code> represents an SSC compute module ("pvwattsv1", for example).
  * 
  * Once a module has been created with {@link io.github.spharris.ssc.Module#forName}, you can
- * get information about the available variables, add values for variables, and execute
+ * get information about the available variables, add values for variables, and execute.
+ * 
+ * <strong>When you are done with a module, it must be freed using {@link #free}. 
  * 
  * @author spharris
  */
@@ -19,6 +24,8 @@ public class Module {
 	private Pointer module;
 	private Data data;
 	private Ssc api;
+	
+	private boolean freed = false;
 	
 	/**
 	 * Creates and returns an SSC compute module with the given name.
@@ -61,13 +68,50 @@ public class Module {
 		data = new Data();
 	}
 	
-	@Override
-	public void finalize() {
-		api.ssc_module_free(module);
+	public String getName() {
+		return moduleName;
 	}
 	
 	public void setNumber(String variableName, float value) {
+		checkState();
 		data.setNumber(variableName, value);
+	}
+	
+	public Optional<Float> getNumber(String variableName) {
+		checkState();
+		return data.getNumber(variableName);
+	}
+	
+	public void setString(String variableName, String value) {
+		checkState();
+		data.setString(variableName, value);
+	}
+	
+	public Optional<String> getString(String variableName) {
+		checkState();
+		return data.getString(variableName);
+	}
+	
+	/**
+	 * Frees the underlying pointer associated with this module. Subsequent calls to
+	 * other module functions will result in an {@link java.lang.IllegalStateException}
+	 */
+	public void free() {
+		if (!freed) {
+			api.ssc_module_free(module);
+			data.free();
+			freed = true;
+		}
+	}
+	
+	public boolean isFreed() {
+		return freed;
+	}
+	
+	private void checkState() {
+		if (freed) {
+			throw new IllegalStateException("The module has already been freed.");
+		}
 	}
 	
 	/**
@@ -86,8 +130,25 @@ public class Module {
 			api.ssc_data_set_number(dataPointer, name, value);
 		}
 		
+		public Optional<Float> getNumber(String name) {
+			FloatByReference value = new FloatByReference();
+			boolean present = api.ssc_data_get_number(dataPointer, name, value); 
+			
+			if (present) {
+				return Optional.of(value.floatValue());
+			} else {
+				return Optional.absent();
+			}
+		}
+		
 		public void setString(String name, String value) {
 			api.ssc_data_set_string(dataPointer, name, value);
+		}
+		
+		public Optional<String> getString(String name) {
+			String val = api.ssc_data_get_string(dataPointer, name);
+			
+			return Optional.fromNullable(val);
 		}
 		
 		public void setArray(String name, float[] value) {
@@ -98,11 +159,8 @@ public class Module {
 			api.ssc_data_set_matrix(dataPointer, name, null, value.rows(), value.cols());
 		}
 		
-		@Override
-		public void finalize() {
+		public void free() {
 			api.ssc_data_free(dataPointer);
 		}
-		
-		
 	}
 }

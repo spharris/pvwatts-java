@@ -12,7 +12,7 @@ import jnr.ffi.Pointer;
 import jnr.ffi.byref.FloatByReference;
 import jnr.ffi.byref.IntByReference;
 
-public class TestSsc {
+public class IntegrationTestSsc {
 	
 	private Ssc ssclib;
 	private Pointer data;

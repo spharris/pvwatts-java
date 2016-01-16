@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class TestVariable {
+public class UnitTestVariable {
 	
 	@Test
 	public void varType() {
