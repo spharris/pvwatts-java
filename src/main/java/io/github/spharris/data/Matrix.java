@@ -8,15 +8,21 @@ package io.github.spharris.data;
  */
 public class Matrix<T extends Number> {
 	
+	private int rows;
+	private int cols;
+	private Object[][] matrix;
+	
 	public Matrix(int rows, int cols) {
-		
+		this.rows = rows;
+		this.cols = cols;
+		matrix = new Object[rows][cols];
 	}
 	
 	public int rows() {
-		return 0;
+		return rows;
 	}
 	
 	public int cols() {
-		return 0;
+		return cols;
 	}
 }
