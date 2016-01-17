@@ -137,11 +137,17 @@ public class Module {
 		}
 	}
 	
-	public <T extends Number> void setMatrix(String variableName, Matrix<T> value) {
+	public <T extends Number> void setMatrix(String variableName, float[][] value) {
 		checkState();
 		checkNotNull(value);
 		
-		api.ssc_data_set_matrix(data, variableName, null, value.rows(), value.cols());
+		checkArgument(value.length >= 1, "The number of rows must be >= 1.");
+		checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
+		
+		int rows = value.length;
+		int cols = value[0].length;
+		
+		api.ssc_data_set_matrix(data, variableName, null, rows, cols);
 	}
 	
 	public Matrix<Float> getMatrix(String variableName) {
