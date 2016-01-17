@@ -38,7 +38,7 @@ public class UnitTestModule {
 	
 	@Test
 	public void setNumber() {
-		returnRealModule();
+		getRealModule();
 		Module m = new Module("adf", mockApi);
 		
 		String varName = "var";
@@ -50,7 +50,7 @@ public class UnitTestModule {
 	
 	@Test
 	public void getNonExistentNumber() {
-		Module m = returnRealModule();
+		Module m = getRealModule();
 		when(mockApi.ssc_data_get_number(any(Pointer.class), any(String.class), any(FloatByReference.class)))
 			.thenReturn(false);
 		
@@ -60,7 +60,7 @@ public class UnitTestModule {
 	
 	@Test
 	public void setString() {
-		returnRealModule();
+		getRealModule();
 		Module m = new Module("adf", mockApi);
 		
 		String varName = "var";
@@ -72,7 +72,7 @@ public class UnitTestModule {
 	
 	@Test
 	public void getNonExistentString() {
-		Module m = returnRealModule();
+		Module m = getRealModule();
 		when(mockApi.ssc_data_get_string(any(Pointer.class), any(String.class)))
 			.thenReturn(null);
 		
@@ -82,7 +82,7 @@ public class UnitTestModule {
 	
 	@Test
 	public void getString() {
-		Module m = returnRealModule();
+		Module m = getRealModule();
 		String returnVal = "Hello, world!";
 		when(mockApi.ssc_data_get_string(any(Pointer.class), any(String.class)))
 			.thenReturn(returnVal);
@@ -94,7 +94,7 @@ public class UnitTestModule {
 	
 	@Test
 	public void setNumberThrowsErrorOnFreedModule() {
-		Module m = returnFreedModule();
+		Module m = getFreedModule();
 		
 		thrown.expect(IllegalStateException.class);
 		
@@ -103,7 +103,7 @@ public class UnitTestModule {
 	
 	@Test
 	public void freeCallsSccFree() {
-		Module m = returnRealModule();
+		Module m = getRealModule();
 		
 		m.free();
 		
@@ -112,7 +112,7 @@ public class UnitTestModule {
 	
 	@Test
 	public void multipleFreeCallsOnlyFreesOnce() {
-		Module m = returnRealModule();
+		Module m = getRealModule();
 		
 		m.free();
 		m.free();
@@ -120,7 +120,55 @@ public class UnitTestModule {
 		verify(mockApi, times(1)).ssc_module_free(any(Pointer.class));
 	}
 	
-	private Module returnRealModule() {
+	@Test
+	public void arrayLengthGreaterThanZero() {
+		Module m = getRealModule();
+		
+		float[] input = new float[0];
+		thrown.expect(IllegalArgumentException.class);
+		
+		m.setArray("asdf", input);
+	}
+	
+	@Test
+	public void mtxRowsGreaterThanZero() {
+		Module m = getRealModule();
+		
+		float[][] input = new float[0][1];
+		thrown.expect(IllegalArgumentException.class);
+		
+		m.setMatrix("asdf", input);
+	}
+	
+	@Test
+	public void mtxColsGreaterThanZero() {
+		Module m = getRealModule();
+		
+		float[][] input = new float[1][0];
+		thrown.expect(IllegalArgumentException.class);
+		
+		m.setMatrix("asdf", input);
+	}
+	
+	@Test
+	public void callsSetMatrixProperly() {
+		Module m = getRealModule();
+		
+		float[][] value = new float[2][2];
+		value[0][0] = 1;
+		value[0][1] = 2;
+		value[1][0] = 3;
+		value[1][1] = 4;
+		
+		String varName = "adsf";
+		m.setMatrix(varName, value);
+		
+		float[] expected = { 1, 2, 3, 4 };
+		verify(mockApi).ssc_data_set_matrix(any(Pointer.class), eq(varName),
+				eq(expected), eq(2), eq(2));
+	}
+	
+	private Module getRealModule() {
 		Pointer fakePointer = mock(Pointer.class);
 		when(mockApi.ssc_module_create(anyString())).thenReturn(fakePointer);
 		
@@ -128,8 +176,8 @@ public class UnitTestModule {
 		return m;
 	}
 	
-	private Module returnFreedModule() {
-		Module m = returnRealModule();
+	private Module getFreedModule() {
+		Module m = getRealModule();
 		m.free();
 		
 		return m;

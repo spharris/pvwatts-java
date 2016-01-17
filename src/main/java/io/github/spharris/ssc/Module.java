@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.*;
 
 import com.google.common.base.Optional;
 
-import io.github.spharris.data.Matrix;
 import io.github.spharris.ssc.excepions.UnknownModuleNameException;
 import jnr.ffi.LibraryLoader;
 import jnr.ffi.Pointer;
@@ -113,6 +112,7 @@ public class Module {
 	public void setArray(String variableName, float[] value) {
 		checkState();
 		checkNotNull(value);
+		checkArgument(value.length >= 1, "The length of the array must be >= 1.");
 		
 		api.ssc_data_set_array(data, variableName, value, value.length);
 	}
@@ -146,12 +146,22 @@ public class Module {
 		
 		int rows = value.length;
 		int cols = value[0].length;
+		float[] inputArray = new float[rows*cols];
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				inputArray[arrayIndex(i, j, cols)] = value[i][j];
+			}
+		}
 		
-		api.ssc_data_set_matrix(data, variableName, null, rows, cols);
+		api.ssc_data_set_matrix(data, variableName, inputArray, rows, cols);
 	}
 	
-	public Matrix<Float> getMatrix(String variableName) {
+	public Optional<float[][]> getMatrix(String variableName) {
 		return null;
+	}
+	
+	private static int arrayIndex(int i, int j, int cols) {
+		return (i * cols) + j;
 	}
 	
 	/**
