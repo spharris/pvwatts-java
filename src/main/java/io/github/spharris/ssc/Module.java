@@ -73,10 +73,22 @@ public class Module {
 		data = api.ssc_data_create();
 	}
 	
+	/**
+	 * Get the name of SSC compute module
+	 */
 	public String getName() {
 		return moduleName;
 	}
 	
+	/**
+	 * Set a numeric input value for this module.
+	 * 
+	 * @param variableName The name of the variable to set.
+	 * @param value The value.
+	 * 
+	 * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
+	 * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
+	 */
 	public void setNumber(String variableName, float value) {
 		checkState();
 		checkNotNull(variableName);
@@ -84,6 +96,16 @@ public class Module {
 		api.ssc_data_set_number(data, variableName, value);
 	}
 	
+	/**
+	 * Get a numeric input or output number for this module.
+	 * 
+	 * @param variableName The name of the variable to retrieve.
+	 * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
+	 * an empty {@link Optional}
+	 * 
+	 * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
+	 * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
+	 */
 	public Optional<Float> getNumber(String variableName) {
 		checkState();
 		checkNotNull(variableName);
@@ -98,6 +120,15 @@ public class Module {
 		}
 	}
 	
+	/**
+	 * Set a String input value for this module.
+	 * 
+	 * @param variableName The name of the variable to set.
+	 * @param value The value.
+	 * 
+	 * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
+	 * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is null
+	 */
 	public void setString(String variableName, String value) {
 		checkState();
 		checkNotNull(value);
@@ -105,6 +136,16 @@ public class Module {
 		api.ssc_data_set_string(data, variableName, value);
 	}
 	
+	/**
+	 * Get a numeric input or output number for this module.
+	 * 
+	 * @param variableName The name of the variable to retrieve.
+	 * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
+	 * an empty {@link Optional}
+	 * 
+	 * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
+	 * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
+	 */
 	public Optional<String> getString(String variableName) {
 		checkState();
 		checkNotNull(variableName);
@@ -113,6 +154,16 @@ public class Module {
 		return Optional.fromNullable(val);
 	}
 	
+	/**
+	 * Set an array input value for this module.
+	 * 
+	 * @param variableName The name of the variable to set.
+	 * @param value The value.
+	 * 
+	 * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
+	 * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is null
+	 * @throws {@link java.lang.IllegalArgumentException} if <tt>value</tt> has a length of zero.
+	 */
 	public void setArray(String variableName, float[] value) {
 		checkState();
 		checkNotNull(value);
@@ -121,6 +172,16 @@ public class Module {
 		api.ssc_data_set_array(data, variableName, value, value.length);
 	}
 	
+	/**
+	 * Get a numeric input or output number for this module.
+	 * 
+	 * @param variableName The name of the variable to retrieve.
+	 * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
+	 * an empty {@link Optional}
+	 * 
+	 * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
+	 * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
+	 */
 	public Optional<float[]> getArray(String variableName) {
 		checkState();
 		checkNotNull(variableName);
@@ -142,6 +203,16 @@ public class Module {
 		}
 	}
 	
+	/**
+	 * Set an array input value for this module.
+	 * 
+	 * @param variableName The name of the variable to set.
+	 * @param value The value.
+	 * 
+	 * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
+	 * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is null
+	 * @throws {@link java.lang.IllegalArgumentException} if <tt>value</tt> has zero rows or columns
+	 */
 	public <T extends Number> void setMatrix(String variableName, float[][] value) {
 		checkState();
 		checkNotNull(value);
@@ -160,6 +231,16 @@ public class Module {
 		api.ssc_data_set_matrix(data, variableName, inputArray, rows, cols);
 	}
 	
+	/**
+	 * Get a numeric input or output number for this module.
+	 * 
+	 * @param variableName The name of the variable to retrieve.
+	 * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
+	 * an empty {@link Optional}
+	 * 
+	 * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
+	 * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
+	 */
 	public Optional<float[][]> getMatrix(String variableName) {
 		checkState();
 		checkNotNull(variableName);
