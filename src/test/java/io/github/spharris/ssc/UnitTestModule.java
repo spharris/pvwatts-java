@@ -154,11 +154,7 @@ public class UnitTestModule {
 	public void callsSetMatrixProperly() {
 		Module m = getRealModule();
 		
-		float[][] value = new float[2][2];
-		value[0][0] = 1;
-		value[0][1] = 2;
-		value[1][0] = 3;
-		value[1][1] = 4;
+		float[][] value = {{1, 2}, {3, 4}};
 		
 		String varName = "adsf";
 		m.setMatrix(varName, value);

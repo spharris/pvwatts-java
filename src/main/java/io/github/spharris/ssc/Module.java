@@ -79,11 +79,14 @@ public class Module {
 	
 	public void setNumber(String variableName, float value) {
 		checkState();
+		checkNotNull(variableName);
+		
 		api.ssc_data_set_number(data, variableName, value);
 	}
 	
 	public Optional<Float> getNumber(String variableName) {
 		checkState();
+		checkNotNull(variableName);
 		
 		FloatByReference value = new FloatByReference();
 		boolean present = api.ssc_data_get_number(data, variableName, value); 
@@ -104,6 +107,7 @@ public class Module {
 	
 	public Optional<String> getString(String variableName) {
 		checkState();
+		checkNotNull(variableName);
 		
 		String val = api.ssc_data_get_string(data, variableName);
 		return Optional.fromNullable(val);
@@ -119,6 +123,7 @@ public class Module {
 	
 	public Optional<float[]> getArray(String variableName) {
 		checkState();
+		checkNotNull(variableName);
 		
 		IntByReference length = new IntByReference();
 		Pointer result = api.ssc_data_get_array(data, variableName, length);
@@ -140,7 +145,6 @@ public class Module {
 	public <T extends Number> void setMatrix(String variableName, float[][] value) {
 		checkState();
 		checkNotNull(value);
-		
 		checkArgument(value.length >= 1, "The number of rows must be >= 1.");
 		checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
 		
@@ -157,7 +161,25 @@ public class Module {
 	}
 	
 	public Optional<float[][]> getMatrix(String variableName) {
-		return null;
+		checkState();
+		checkNotNull(variableName);
+		
+		IntByReference rows = new IntByReference();
+		IntByReference cols = new IntByReference();
+		Pointer result = api.ssc_data_get_matrix(data, variableName, rows, cols);
+		
+		if (result == null) {
+			return Optional.<float[][]>absent();
+		} else {
+			float[][] value = new float[rows.intValue()][cols.intValue()];
+			for (int i = 0; i < rows.intValue(); i++) {
+				for (int j = 0; j < rows.intValue(); j++) {
+					value[i][j] = result.getFloat(arrayIndex(i, j, cols.intValue()) * FLOAT_SIZE);
+				}
+			}
+			
+			return Optional.of(value);
+		}
 	}
 	
 	private static int arrayIndex(int i, int j, int cols) {

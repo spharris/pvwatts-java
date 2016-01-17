@@ -46,4 +46,16 @@ public class IntegrationTestModule {
 		assertThat(result.isPresent(), equalTo(true));
 		assertThat(result.get(), equalTo(values));
 	}
+	
+	@Test
+	public void callsGetMatrixProperly() {
+		String field = "field";
+		float[][] values = {{1, 2}, {3, 4}};
+		
+		module.setMatrix(field, values);
+		Optional<float[][]> result = module.getMatrix(field);
+		
+		assertThat(result.isPresent(), equalTo(true));
+		assertThat(result.get(), equalTo(values));
+	}
 }
