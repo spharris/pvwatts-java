@@ -6,10 +6,10 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>PVWattsJava</name>
 	<description>A clone of PVWatts, written in Java</description>
-	
+
 	<properties>
-    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	</properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<build>
 		<plugins>
@@ -43,6 +43,11 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>9.3.7.v20160115</version>
+		</dependency>
 		<dependency>
 			<groupId>com.github.jnr</groupId>
 			<artifactId>jnr-ffi</artifactId>
