@@ -2,7 +2,11 @@ package io.github.spharris.ssc;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+
+import java.util.List;
+
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -162,6 +166,61 @@ public class UnitTestModule {
 		float[] expected = { 1, 2, 3, 4 };
 		verify(mockApi).ssc_data_set_matrix(any(Pointer.class), eq(varName),
 				eq(expected), eq(2), eq(2));
+	}
+	
+	@Test
+	public void getVariableCallsAllInfoFunctions() {
+		Module m = getRealModule();
+		
+		Pointer p = mock(Pointer.class);
+		when(mockApi.ssc_module_var_info(any(Pointer.class), eq(0)))
+				.thenReturn(p);
+		
+		m.getVariables();
+		
+		verify(mockApi, times(2)).ssc_module_var_info(any(Pointer.class), any(Integer.class));
+		verify(mockApi).ssc_info_var_type(any(Pointer.class));
+		verify(mockApi).ssc_info_data_type(any(Pointer.class));
+		verify(mockApi).ssc_info_name(any(Pointer.class));
+		verify(mockApi).ssc_info_label(any(Pointer.class));
+		verify(mockApi).ssc_info_units(any(Pointer.class));
+		verify(mockApi).ssc_info_meta(any(Pointer.class));
+		verify(mockApi).ssc_info_group(any(Pointer.class));
+		verify(mockApi).ssc_info_required(any(Pointer.class));
+	}
+	
+	@Test
+	public void getsVariableData() {
+		Module m = getRealModule();
+		
+		Pointer p = mock(Pointer.class);
+		when(mockApi.ssc_module_var_info(any(Pointer.class), eq(0)))
+				.thenReturn(p);
+		
+		when(mockApi.ssc_info_var_type(any(Pointer.class))).thenReturn(1);
+		when(mockApi.ssc_info_data_type(any(Pointer.class))).thenReturn(1);
+		when(mockApi.ssc_info_name(any(Pointer.class))).thenReturn("Name");
+		when(mockApi.ssc_info_label(any(Pointer.class))).thenReturn("Label");
+		when(mockApi.ssc_info_units(any(Pointer.class))).thenReturn("Units");
+		when(mockApi.ssc_info_meta(any(Pointer.class))).thenReturn("Meta");
+		when(mockApi.ssc_info_group(any(Pointer.class))).thenReturn("Group");
+		when(mockApi.ssc_info_required(any(Pointer.class))).thenReturn("Required");
+		
+		List<Variable> vars = m.getVariables();
+		
+		Variable expected = Variable.buildVariable()
+				.varType(Variable.VariableType.forInt(1))
+				.dataType(Variable.DataType.forInt(1))
+				.name("Name")
+				.label("Label")
+				.units("Units")
+				.meta("Meta")
+				.group("Group")
+				.required("Required")
+				.build();
+		
+		assertThat(vars, hasSize(1));
+		assertThat(vars.get(0), equalTo(expected)); 
 	}
 	
 	private Module getRealModule() {

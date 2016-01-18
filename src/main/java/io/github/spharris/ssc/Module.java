@@ -2,6 +2,9 @@ package io.github.spharris.ssc;
 
 import static com.google.common.base.Preconditions.*;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.google.common.base.Optional;
 
 import io.github.spharris.ssc.excepions.UnknownModuleNameException;
@@ -28,6 +31,7 @@ public class Module {
 	private Pointer module;
 	private Pointer data;
 	private Ssc api;
+	private List<Variable> variables;
 	
 	private boolean freed = false;
 	
@@ -78,6 +82,43 @@ public class Module {
 	 */
 	public String getName() {
 		return moduleName;
+	}
+	
+	/**
+	 * Returns a list of all of the variables for this module.
+	 * 
+	 * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
+	 */
+	public List<Variable> getVariables() {
+		checkState();
+		
+		if (variables != null) {
+			return variables;
+		}
+		
+		variables = new LinkedList<>();
+		
+		int i = 0;
+		Pointer infoPointer = api.ssc_module_var_info(module, i);
+		while (infoPointer != null) {
+			Variable var = Variable.buildVariable()
+					.varType(Variable.VariableType.forInt(api.ssc_info_var_type(infoPointer)))
+					.dataType(Variable.DataType.forInt(api.ssc_info_data_type(infoPointer)))
+					.name(api.ssc_info_name(infoPointer))
+					.label(api.ssc_info_label(infoPointer))
+					.units(api.ssc_info_units(infoPointer))
+					.meta(api.ssc_info_meta(infoPointer))
+					.group(api.ssc_info_group(infoPointer))
+					.required(api.ssc_info_required(infoPointer))
+					.build();
+			
+			variables.add(var);
+			
+			i++;
+			infoPointer = api.ssc_module_var_info(module, i);
+		}
+		
+		return variables;
 	}
 	
 	/**

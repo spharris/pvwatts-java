@@ -23,4 +23,31 @@ public class UnitTestVariable {
 		assertThat(Variable.DataType.forInt(4), equalTo(Variable.DataType.MATRIX));
 		assertThat(Variable.DataType.forInt(5), equalTo(Variable.DataType.TABLE));
 	}
+	
+	@Test
+	public void equalsWorks() {
+		Variable v1 = Variable.buildVariable()
+				.varType(Variable.VariableType.forInt(1))
+				.dataType(Variable.DataType.forInt(1))
+				.name("Name")
+				.label("Label")
+				.units("Units")
+				.meta("Meta")
+				.group("Group")
+				.required("Required")
+				.build();
+		
+		Variable v2 = Variable.buildVariable()
+				.varType(Variable.VariableType.forInt(1))
+				.dataType(Variable.DataType.forInt(1))
+				.name("Name")
+				.label("Label")
+				.units("Units")
+				.meta("Meta")
+				.group("Group")
+				.required("Required")
+				.build();
+		
+		assertThat(v1, equalTo(v2));
+	}
 }
