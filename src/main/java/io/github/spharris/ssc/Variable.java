@@ -174,6 +174,12 @@ public class Variable {
 		return required;
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("name: %s, type: %s, data: %s", name, varType, dataType);
+	}
+	
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof Variable)) {
 			return false;
@@ -190,6 +196,7 @@ public class Variable {
 				&& Objects.equals(otherVar.required(), required);
 	}
 	
+	@Override
 	public int hashCode() {
 		return Objects.hash(varType, dataType, name, label, units, meta, group, required);
 	}

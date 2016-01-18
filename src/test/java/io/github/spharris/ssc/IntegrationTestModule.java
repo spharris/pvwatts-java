@@ -1,6 +1,9 @@
 package io.github.spharris.ssc;
 
 import static org.junit.Assert.*;
+
+import java.util.List;
+
 import static org.hamcrest.Matchers.*;
 
 import org.junit.After;
@@ -57,5 +60,46 @@ public class IntegrationTestModule {
 		
 		assertThat(result.isPresent(), equalTo(true));
 		assertThat(result.get(), equalTo(values));
+	}
+	
+	@Test
+	public void getsAllVariables() {
+		List<Variable> vars = module.getVariables();
+		
+		Variable v1 = Variable.buildVariable()
+				.varType(Variable.VariableType.INPUT)
+				.dataType(Variable.DataType.MATRIX)
+				.name("positions")
+				.label("Positions within calculataed area")
+				.group("layoutarea")
+				.required("*")
+				.units("")
+				.meta("")
+				.build();
+		
+		Variable v2 = Variable.buildVariable()
+				.varType(Variable.VariableType.OUTPUT)
+				.dataType(Variable.DataType.MATRIX)
+				.name("convex_hull")
+				.label("Convex hull bounding the region")
+				.group("layoutarea")
+				.required("*")
+				.units("")
+				.meta("")
+				.build();
+		
+		Variable v3 = Variable.buildVariable()
+				.varType(Variable.VariableType.OUTPUT)
+				.dataType(Variable.DataType.NUMBER)
+				.name("area")
+				.label("Area inside the convex hull")
+				.group("layoutarea")
+				.required("*")
+				.units("")
+				.meta("")
+				.build();
+		
+		assertThat(vars, hasSize(3));
+		assertThat(vars, contains(v1, v2, v3));
 	}
 }
