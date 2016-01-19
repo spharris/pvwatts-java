@@ -36,6 +36,30 @@ public class Module {
 	private boolean freed = false;
 	
 	/**
+	 * Gets a list of the available modules.
+	 */
+	public static List<ModuleInfo> getAvailableModules() {
+		Ssc api = loadSscLibrary();
+		
+		List<ModuleInfo> modules = new LinkedList<>();
+		
+		int i = 0;
+		Pointer entry = api.ssc_module_entry(i);
+		while (entry != null) {
+			String name = api.ssc_entry_name(entry);
+			String desc = api.ssc_entry_description(entry);
+			int version = api.ssc_entry_version(entry);
+			
+			modules.add(new ModuleInfo(name, desc, version));
+			
+			i++;
+			entry = api.ssc_module_entry(i);
+		}
+		
+		return modules;
+	}
+	
+	/**
 	 * Creates and returns an SSC compute module with the given name. Created modules
 	 * with <tt>forName</tt> use native memory and therefore must be freed when no longer needed.
 	 * 

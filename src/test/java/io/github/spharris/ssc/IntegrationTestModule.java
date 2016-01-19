@@ -102,4 +102,11 @@ public class IntegrationTestModule {
 		assertThat(vars, hasSize(3));
 		assertThat(vars, contains(v1, v2, v3));
 	}
+	
+	@Test
+	public void getAllModules() {
+		List<ModuleInfo> modules = Module.getAvailableModules();
+		
+		assertThat(modules, hasSize(greaterThan(0)));
+	}
 }
