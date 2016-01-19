@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import com.google.common.base.Optional;
 
+import io.github.spharris.ssc.ExecutionHandler.MessageType;
 import io.github.spharris.ssc.excepions.UnknownModuleNameException;
 import jnr.ffi.LibraryLoader;
 import jnr.ffi.Pointer;
@@ -25,6 +26,21 @@ import jnr.ffi.byref.IntByReference;
  * @author spharris
  */
 public class Module {
+	
+	private enum ActionType {
+		LOG,
+		UPDATE;
+		
+		public static ActionType forInt(int action) {
+			checkArgument(action == 0 || action == 1, "action must have a value of 0 or 1");
+			
+			if (action == 0) {
+				return LOG;
+			} else {
+				return UPDATE;
+			}
+		}
+	}
 	
 	private static final int FLOAT_SIZE = 4;
 
@@ -179,6 +195,26 @@ public class Module {
 		}
 		
 		return variables;
+	}
+	
+	public void execute(final ExecutionHandler handler) {
+		
+		SscExecutionHandler wrapper = new SscExecutionHandler() {
+			
+			@Override
+			public boolean update(Pointer module, Pointer sscFunction, int action, float f0, float f1, String s0, String s1,
+					Pointer userData) {
+				ActionType type = ActionType.forInt(action);
+				if (type == ActionType.LOG) {
+					MessageType msg = MessageType.forInt((int)f0);
+					return handler.handleLogMessage(msg, f1, s0);
+				} else {
+					return handler.handleProgressUpdate(f0, f1, s0);
+				}
+			}
+		};
+		
+		api.ssc_module_exec_with_handler(module, data, wrapper, null);
 	}
 	
 	/**

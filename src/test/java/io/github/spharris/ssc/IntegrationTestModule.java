@@ -109,4 +109,38 @@ public class IntegrationTestModule {
 		
 		assertThat(modules, hasSize(greaterThan(0)));
 	}
+	
+	@Test
+	public void executeWithHandler() {
+		Module m = Module.forName("pvwattsv1");
+		String weatherFile = getClass().getClassLoader().getResource("weather/23129.tm2").getPath();
+		m.setString("solar_resource_file", weatherFile);
+		m.setNumber("adjust:factor", 0.5f);
+		m.setNumber("system_size", 1);
+		m.setNumber("tilt", 20);
+		m.setNumber("derate", 0.8f);
+		m.setNumber("track_mode", 0);
+		m.setNumber("azimuth", 180);
+		
+		ExecutionHandler handler = new ExecutionHandler() {
+
+			@Override
+			public boolean handleLogMessage(MessageType type, float time, String message) {
+				return true;
+			}
+
+			@Override
+			public boolean handleProgressUpdate(float percentComplete, float time, String text) {
+				return true;
+			}
+		};
+		
+		m.execute(handler);
+		
+		assertThat(m.getString("location").get(), equalTo("23129"));
+		assertThat(m.getString("state").get(), equalTo("CA"));
+		assertThat(m.getNumber("ac_annual").isPresent(), equalTo(true));
+		
+		m.free();
+	}
 }

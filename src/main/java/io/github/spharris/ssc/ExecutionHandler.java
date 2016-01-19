@@ -5,6 +5,7 @@ import java.util.Map;
 
 public interface ExecutionHandler {
 	public static enum MessageType {
+		INPUT_ERROR(0),
 		NOTICE(1),
 		WARNING(2),
 		ERROR(3);
