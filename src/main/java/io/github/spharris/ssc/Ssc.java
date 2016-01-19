@@ -86,5 +86,5 @@ public interface Ssc {
 	 * execution.
 	 */
 	public boolean ssc_module_exec_with_handler(Pointer module, Pointer data,
-			ExecutionHandler handler, Pointer userData);
+			SscExecutionHandler handler, Pointer userData);
 }

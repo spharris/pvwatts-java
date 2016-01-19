@@ -287,7 +287,7 @@ public class IntegrationTestSsc {
 		} while (logMsg != null);
 	}
 	
-	private static class TestHandler implements ExecutionHandler {
+	private static class TestHandler implements SscExecutionHandler {
 
 		@Override
 		public boolean update(Pointer module, Pointer handler, int action, float f0, float f1, String s0,
@@ -301,7 +301,7 @@ public class IntegrationTestSsc {
 		initializeSimulationData(ssclib, data);
 		Pointer module = ssclib.ssc_module_create("layoutarea");
 		
-		ExecutionHandler handler = new TestHandler();
+		SscExecutionHandler handler = new TestHandler();
 		boolean result = ssclib.ssc_module_exec_with_handler(module, data, handler, null);
 		
 		assertThat(result, equalTo(true));
