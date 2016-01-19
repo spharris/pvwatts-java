@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 /**
  * An immutable class representing a module variable.
  */
+@JsonPropertyOrder({"dataType", "variableType", "name", "label", "units", "group", "required", "meta"})
 public class Variable {
 	
 	private final VariableType varType;
@@ -142,35 +145,35 @@ public class Variable {
 		}
 	}
 	
-	public VariableType variableType() {
+	public VariableType getVariableType() {
 		return varType;
 	}
 	
-	public DataType dataType() {
+	public DataType getDataType() {
 		return dataType;
 	}
 	
-	public String name() {
+	public String getName() {
 		return name;
 	}
 	
-	public String label() {
+	public String getLabel() {
 		return label;
 	}
 	
-	public String units() {
+	public String getUnits() {
 		return units;
 	}
 	
-	public String meta() {
+	public String getMeta() {
 		return meta;
 	}
 	
-	public String group() {
+	public String getGroup() {
 		return group;
 	}
 	
-	public String required() {
+	public String getRequired() {
 		return required;
 	}
 	
@@ -186,14 +189,14 @@ public class Variable {
 		}
 		
 		Variable otherVar = (Variable)o;
-		return otherVar.variableType() == varType
-				&& otherVar.dataType() == dataType
-				&& Objects.equals(otherVar.name(), name)
-				&& Objects.equals(otherVar.label(), label)
-				&& Objects.equals(otherVar.units(), units)
-				&& Objects.equals(otherVar.meta(), meta)
-				&& Objects.equals(otherVar.group(), group)
-				&& Objects.equals(otherVar.required(), required);
+		return otherVar.getVariableType() == varType
+				&& otherVar.getDataType() == dataType
+				&& Objects.equals(otherVar.getName(), name)
+				&& Objects.equals(otherVar.getLabel(), label)
+				&& Objects.equals(otherVar.getUnits(), units)
+				&& Objects.equals(otherVar.getMeta(), meta)
+				&& Objects.equals(otherVar.getGroup(), group)
+				&& Objects.equals(otherVar.getRequired(), required);
 	}
 	
 	@Override

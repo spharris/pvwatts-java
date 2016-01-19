@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.*;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.base.Optional;
 
@@ -30,6 +31,7 @@ public class Module {
 	private String moduleName;
 	private Pointer module;
 	private Pointer data;
+	private Pointer entry;
 	private Ssc api;
 	private List<Variable> variables;
 	
@@ -98,7 +100,33 @@ public class Module {
 		
 		this.moduleName = moduleName;
 		this.api = api;
+		entry = getEntry();
 		data = api.ssc_data_create();
+	}
+	
+	/**
+	 * Helper to get the SSC entry for this module. Generally you should only use this once you're sure
+	 * that the module in question exists.
+	*/
+	private Pointer getEntry() {
+		int i = 0;
+		Pointer entry = api.ssc_module_entry(i);
+		while (entry != null) {
+			String name = api.ssc_entry_name(entry);
+			if (Objects.equals(name, getName())) {
+				return entry;
+			}
+
+			i++;
+			entry = api.ssc_module_entry(i);
+		}
+		
+		// Should never get here.
+		return null; 
+	}
+	
+	public ModuleInfo getModuleInfo() {
+		return new ModuleInfo(getName(), getDescription(), getVersion(), getVariables());
 	}
 	
 	/**
@@ -106,6 +134,14 @@ public class Module {
 	 */
 	public String getName() {
 		return moduleName;
+	}
+	
+	public String getDescription() {
+		return api.ssc_entry_description(entry);
+	}
+	
+	public int getVersion() {
+		return api.ssc_entry_version(entry);
 	}
 	
 	/**
