@@ -13,6 +13,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import io.github.spharris.ssc.web.ModuleService;
+import io.github.spharris.ssc.web.UnknownModuleHandler;
 
 public class PVWattsJava {
 
@@ -37,6 +38,7 @@ public class PVWattsJava {
 		@Override
 		protected void configure() {
 			bind(ModuleService.class);
+			bind(UnknownModuleHandler.class);
 			bind(JacksonJsonProvider.class);
 			bind(JacksonXMLProvider.class);
 		}
