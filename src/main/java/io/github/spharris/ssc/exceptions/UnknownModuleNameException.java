@@ -1,4 +1,4 @@
-package io.github.spharris.ssc.excepions;
+package io.github.spharris.ssc.exceptions;
 
 /**
  * Thrown when a user tries to create a new {@link io.github.spharris.ssc.Module} with a module

@@ -13,7 +13,7 @@ import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.IntByReference;
 
 import io.github.spharris.ssc.ExecutionHandler.MessageType;
-import io.github.spharris.ssc.excepions.UnknownModuleNameException;
+import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
 
 /**
  * A <code>Module</code> represents an SSC compute module ("pvwattsv1", for example).

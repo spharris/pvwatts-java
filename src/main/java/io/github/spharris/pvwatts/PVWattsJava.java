@@ -13,8 +13,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import io.github.spharris.ssc.web.ModuleService;
-import io.github.spharris.ssc.web.UncaughtExceptionHandler;
-import io.github.spharris.ssc.web.UnknownModuleHandler;
+import io.github.spharris.ssc.web.handlers.UncaughtExceptionHandler;
+import io.github.spharris.ssc.web.handlers.UnknownModuleHandler;
 
 public class PVWattsJava {
 

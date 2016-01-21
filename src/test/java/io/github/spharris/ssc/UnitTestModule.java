@@ -17,7 +17,7 @@ import com.google.common.base.Optional;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.FloatByReference;
 
-import io.github.spharris.ssc.excepions.UnknownModuleNameException;
+import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
 
 public class UnitTestModule {
 	

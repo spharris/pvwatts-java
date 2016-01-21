@@ -1,9 +1,11 @@
-package io.github.spharris.ssc.web;
+package io.github.spharris.ssc.web.handlers;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
+import io.github.spharris.ssc.web.Error;
 
 @Provider
 public class UncaughtExceptionHandler implements ExceptionMapper<Exception> {

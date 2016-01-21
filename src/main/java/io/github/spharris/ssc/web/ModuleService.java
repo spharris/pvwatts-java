@@ -2,7 +2,9 @@ package io.github.spharris.ssc.web;
 
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -35,5 +37,12 @@ public class ModuleService {
 	public ModuleInfo getModuleInfo(@PathParam("moduleName") String moduleName) {
 		Module m = Module.forName(moduleName);
 		return m.getModuleInfo();
+	}
+	
+	@POST
+	@Path("/{moduleName}")
+	@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	public String moduleSimulation(Object body) {
+		return "[\"Hello, world!\"]";
 	}
 }
