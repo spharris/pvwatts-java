@@ -118,23 +118,22 @@ public class IntegrationTestModule {
 		ExecutionHandler handler = new ExecutionHandler() {
 
 			@Override
-			public boolean handleLogMessage(MessageType type, double time, String message) {
-				System.out.println(String.format("[%.2f] %s: %s", time, type, message));
+			public boolean handleLogMessage(MessageType type, float time, String message) {
+				assertThat(type, not(equalTo(null)));
 				return true;
 			}
 
 			@Override
-			public boolean handleProgressUpdate(double percentComplete, double time, String text) {
-				System.out.println(String.format("[%.2f] %.2f%%: %s", time, percentComplete, text));
+			public boolean handleProgressUpdate(float percentComplete, float time, String text) {
+				assertThat(percentComplete, greaterThanOrEqualTo(0f));
+				assertThat(time, greaterThanOrEqualTo(0f));
 				return true;
 			}
 		};
 		
 		m.execute(handler);
 		
-		assertThat(m.getString("location").get(), equalTo("23129"));
-		assertThat(m.getString("state").get(), equalTo("CA"));
-		assertThat(m.getNumber("ac_annual").isPresent(), equalTo(true));
+		assertThat(m.getNumber("annual_ac_net").get(), greaterThan(0f));
 		
 		m.free();
 	}
@@ -146,10 +145,8 @@ public class IntegrationTestModule {
 		
 		m.execute();
 		
-		assertThat(m.getString("location").get(), equalTo("23129"));
-		assertThat(m.getString("state").get(), equalTo("CA"));
-		assertThat(m.getNumber("ac_annual").isPresent(), equalTo(true));
-		
+		assertThat(m.getNumber("annual_ac_net").get(), greaterThan(0f));
+
 		m.free();
 	}
 	

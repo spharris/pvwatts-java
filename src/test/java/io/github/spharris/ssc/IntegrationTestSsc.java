@@ -19,13 +19,7 @@ public class IntegrationTestSsc {
 	
 	@Before
 	public void loadLibrary() {
-		String path = getLibPath();
 		ssclib = (Ssc)Native.loadLibrary("ssc", Ssc.class);
-	}
-	
-	private String getLibPath() {
-		String basePath = getClass().getClassLoader().getResource("ssc").getPath();
-		return basePath;
 	}
 	
 	@Before
@@ -290,13 +284,9 @@ public class IntegrationTestSsc {
 		@Override
 		public boolean update(Pointer module, Pointer handler, int action, float f0, float f1, String s0,
 				String s1, Pointer userData) {
-			if (action == 0) {
-				System.out.print("Received log message : ");
-				System.out.println(String.format("%.2f : %s", f1, s0));
-			} else {
-				System.out.print("Received update message! : ");
-				System.out.println(String.format("%.2f%% [%.2f] : %s", f0, f1, s0));
-			}
+			
+			assertThat(f0, greaterThanOrEqualTo(0f));
+			assertThat(f1, greaterThanOrEqualTo(0f));
 
 			return true;
 		}
@@ -310,8 +300,7 @@ public class IntegrationTestSsc {
 		SscExecutionHandler handler = new TestHandler();
 		boolean result = ssclib.ssc_module_exec_with_handler(module, data, handler, null);
 		
-		assertThat(result, equalTo(true));
-		checkSimulationData(ssclib, data);
+		assertThat(result, equalTo(true));	
 		ssclib.ssc_module_free(module);
 	}
 	
@@ -331,8 +320,8 @@ public class IntegrationTestSsc {
 		float[] albedo= new float[] {0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f};
 		ssclib.ssc_data_set_array(data, "albedo", albedo, 12);
 
-		ssclib.ssc_data_set_number(data, "system_capacity", 1);
-		ssclib.ssc_data_set_number(data, "modules_per_string", 14);
+		ssclib.ssc_data_set_number(data, "system_capacity", 0.24f);
+		ssclib.ssc_data_set_number(data, "modules_per_string", 1);
 		ssclib.ssc_data_set_number(data, "strings_in_parallel", 1);
 		ssclib.ssc_data_set_number(data, "inverter_count", 1);
 
@@ -373,33 +362,41 @@ public class IntegrationTestSsc {
 		ssclib.ssc_data_set_number(data, "subarray4_backtrack", 1);
 
 		ssclib.ssc_data_set_number(data, "module_model", 1);
-		ssclib.ssc_data_set_number(data, "cec_t_noct", 65);
-		ssclib.ssc_data_set_number(data, "cec_area", 0.67f);
-		ssclib.ssc_data_set_number(data, "cec_n_s", 18);
-		ssclib.ssc_data_set_number(data, "cec_i_sc_ref", 7.5f);
-		ssclib.ssc_data_set_number(data, "cec_v_oc_ref", 10.4f);
-		ssclib.ssc_data_set_number(data, "cec_i_mp_ref", 6.6f);
-		ssclib.ssc_data_set_number(data, "cec_v_mp_ref", 8.4f);
-		ssclib.ssc_data_set_number(data, "cec_alpha_sc", 0.003f);
-		ssclib.ssc_data_set_number(data, "cec_beta_oc", -0.04f);
-		ssclib.ssc_data_set_number(data, "cec_a_ref", 0.473f);
-		ssclib.ssc_data_set_number(data, "cec_i_l_ref", 7.545f);
-		ssclib.ssc_data_set_number(data, "cec_i_o_ref", (float)1.94E-09);
-		ssclib.ssc_data_set_number(data, "cec_r_s", 0.094f);
-		ssclib.ssc_data_set_number(data, "cec_r_sh_ref", 15.72f);
-		ssclib.ssc_data_set_number(data, "cec_adjust", 10.6f);
-		ssclib.ssc_data_set_number(data, "cec_gamma_r", -0.5f);
+		ssclib.ssc_data_set_number(data, "cec_t_noct", 44.1f);
+		ssclib.ssc_data_set_number(data, "cec_area", 1.618f);
+		ssclib.ssc_data_set_number(data, "cec_n_s", 60);
+		ssclib.ssc_data_set_number(data, "cec_i_sc_ref", 8.37f);
+		ssclib.ssc_data_set_number(data, "cec_v_oc_ref", 37.2f);
+		ssclib.ssc_data_set_number(data, "cec_i_mp_ref", 7.89f);
+		ssclib.ssc_data_set_number(data, "cec_v_mp_ref", 30.4f);
+		ssclib.ssc_data_set_number(data, "cec_alpha_sc", .005022f);
+		ssclib.ssc_data_set_number(data, "cec_beta_oc", -.1302f);
+		ssclib.ssc_data_set_number(data, "cec_a_ref", 1.5731f);
+		ssclib.ssc_data_set_number(data, "cec_i_l_ref", 8.373f);
+		ssclib.ssc_data_set_number(data, "cec_i_o_ref", (float)4.47e-10);
+		ssclib.ssc_data_set_number(data, "cec_r_s", .275f);
+		ssclib.ssc_data_set_number(data, "cec_r_sh_ref", 710.44f);
+		ssclib.ssc_data_set_number(data, "cec_adjust", 6.704f);
+		ssclib.ssc_data_set_number(data, "cec_gamma_r", -0.45f);
 		ssclib.ssc_data_set_number(data, "cec_temp_corr_mode", 0);
 		ssclib.ssc_data_set_number(data, "cec_standoff", 1);
 		ssclib.ssc_data_set_number(data, "cec_height", 0);
 
-		ssclib.ssc_data_set_number(data, "inverter_model", 1);
-		ssclib.ssc_data_set_number(data, "inv_ds_paco", 225);
-		ssclib.ssc_data_set_number(data, "inv_ds_eff", .965f);
-		ssclib.ssc_data_set_number(data, "inv_ds_pnt", .065f);
-		ssclib.ssc_data_set_number(data, "inv_ds_pso", 250);
-		ssclib.ssc_data_set_number(data, "inv_ds_vdco", 27);
-		ssclib.ssc_data_set_number(data, "inv_ds_vdcmax", 48);
+		ssclib.ssc_data_set_number(data, "inverter_model", 0);
+		ssclib.ssc_data_set_number(data, "inv_snl_ac_voltage", 208f);
+		ssclib.ssc_data_set_number(data, "inv_snl_paco", 215f);
+		ssclib.ssc_data_set_number(data, "inv_snl_pdco", 225.415261f);
+		ssclib.ssc_data_set_number(data, "inv_snl_vdco", 28.89642857f);
+		ssclib.ssc_data_set_number(data, "inv_snl_pso", 0.802832927f);
+		ssclib.ssc_data_set_number(data, "inv_snl_c0", -8.90E-05f);
+		ssclib.ssc_data_set_number(data, "inv_snl_c1", -8.94E-04f);
+		ssclib.ssc_data_set_number(data, "inv_snl_c2", -2.38E-02f);
+		ssclib.ssc_data_set_number(data, "inv_snl_c3", -8.28E-02f);
+		ssclib.ssc_data_set_number(data, "inv_snl_pnt", 0.04f);
+		ssclib.ssc_data_set_number(data, "inv_snl_vdcmax", 45f);
+		ssclib.ssc_data_set_number(data, "inv_snl_idcmax", 15f);
+		ssclib.ssc_data_set_number(data, "inv_snl_mppt_low", 16f);
+		ssclib.ssc_data_set_number(data, "inv_snl_mppt_hi", 36f);
 
 		ssclib.ssc_data_set_number(data, "adjust:factor", 1);
 	}

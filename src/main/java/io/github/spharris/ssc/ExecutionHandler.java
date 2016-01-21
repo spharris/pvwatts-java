@@ -28,7 +28,7 @@ public interface ExecutionHandler {
 		}
 	}
 	
-	public boolean handleLogMessage(MessageType type, double time, String message);
+	public boolean handleLogMessage(MessageType type, float time, String message);
 	
-	public boolean handleProgressUpdate(double percentComplete, double time, String text);
+	public boolean handleProgressUpdate(float percentComplete, float time, String text);
 }
