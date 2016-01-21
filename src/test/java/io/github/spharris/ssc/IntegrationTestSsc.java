@@ -7,10 +7,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import jnr.ffi.LibraryLoader;
-import jnr.ffi.Pointer;
-import jnr.ffi.byref.FloatByReference;
-import jnr.ffi.byref.IntByReference;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.FloatByReference;
+import com.sun.jna.ptr.IntByReference;
 
 public class IntegrationTestSsc {
 	
@@ -20,9 +20,7 @@ public class IntegrationTestSsc {
 	@Before
 	public void loadLibrary() {
 		String path = getLibPath();
-		ssclib = LibraryLoader.create(Ssc.class)
-			.search(path + "/osx64")
-			.load("ssc");
+		ssclib = (Ssc)Native.loadLibrary("ssc", Ssc.class);
 	}
 	
 	private String getLibPath() {
@@ -61,7 +59,7 @@ public class IntegrationTestSsc {
 		boolean status = ssclib.ssc_data_get_number(data, name, out);
 		
 		assertThat(status, equalTo(true));
-		assertThat(out.floatValue(), equalTo(targetVal));
+		assertThat(out.getValue(), equalTo(targetVal));
 	}
 	
 	@Test
@@ -85,8 +83,8 @@ public class IntegrationTestSsc {
 		IntByReference length = new IntByReference();
 		Pointer result = ssclib.ssc_data_get_array(data, name, length);
 
-		assertThat(length.intValue(), equalTo(array.length));
-		for (int i = 0; i < length.intValue(); i++) {
+		assertThat(length.getValue(), equalTo(array.length));
+		for (int i = 0; i < length.getValue(); i++) {
 			// Offset is by byte (float = 4 bytes)
 			assertThat(result.getFloat(i*4), equalTo(value));
 		}
@@ -104,10 +102,10 @@ public class IntegrationTestSsc {
 		IntByReference cols = new IntByReference();
 		Pointer result = ssclib.ssc_data_get_matrix(data, name, rows, cols);
 
-		assertThat(rows.intValue(), equalTo(n));
-		assertThat(cols.intValue(), equalTo(n));
-		for (int i = 0; i < rows.intValue(); i++) {
-			for (int j = 0; j < cols.intValue(); j++) {
+		assertThat(rows.getValue(), equalTo(n));
+		assertThat(cols.getValue(), equalTo(n));
+		for (int i = 0; i < rows.getValue(); i++) {
+			for (int j = 0; j < cols.getValue(); j++) {
 				// Offset is by byte (float = 4 bytes)
 				assertThat(result.getFloat((i*j+j)*4), equalTo(value));
 			}
@@ -279,27 +277,35 @@ public class IntegrationTestSsc {
 		do {
 			assertThat(logMsg, not(equalTo(null)));
 
-			assertThat(itemType.intValue(), greaterThan(0));
-			assertThat(time.floatValue(), not(equalTo((0f))));
+			assertThat(itemType.getValue(), greaterThan(0));
+			assertThat(time.getValue(), not(equalTo((0f))));
 			
 			i++;
 			logMsg = ssclib.ssc_module_log(module, i, itemType, time);
 		} while (logMsg != null);
 	}
 	
-	private static class TestHandler implements SscExecutionHandler {
+	public static class TestHandler implements SscExecutionHandler {
 
 		@Override
 		public boolean update(Pointer module, Pointer handler, int action, float f0, float f1, String s0,
 				String s1, Pointer userData) {
+			if (action == 0) {
+				System.out.print("Received log message : ");
+				System.out.println(String.format("%.2f : %s", f1, s0));
+			} else {
+				System.out.print("Received update message! : ");
+				System.out.println(String.format("%.2f%% [%.2f] : %s", f0, f1, s0));
+			}
+
 			return true;
 		}
 	}
 	
 	@Test
 	public void testWithHandler() {
-		initializeSimulationData(ssclib, data);
-		Pointer module = ssclib.ssc_module_create("layoutarea");
+		initializeComplicatedData(ssclib, data);
+		Pointer module = ssclib.ssc_module_create("pvsamv1");
 		
 		SscExecutionHandler handler = new TestHandler();
 		boolean result = ssclib.ssc_module_exec_with_handler(module, data, handler, null);
@@ -318,6 +324,86 @@ public class IntegrationTestSsc {
 		ssclib.ssc_data_set_matrix(data, "positions", positions, 3, 2);
 	}
 	
+	private static void initializeComplicatedData(Ssc ssclib, Pointer data) {
+		String weatherFile = IntegrationTestModule.class.getClassLoader().getResource("weather/23129.tm2").getPath();
+		ssclib.ssc_data_set_string(data, "solar_resource_file", weatherFile);
+
+		float[] albedo= new float[] {0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f};
+		ssclib.ssc_data_set_array(data, "albedo", albedo, 12);
+
+		ssclib.ssc_data_set_number(data, "system_capacity", 1);
+		ssclib.ssc_data_set_number(data, "modules_per_string", 14);
+		ssclib.ssc_data_set_number(data, "strings_in_parallel", 1);
+		ssclib.ssc_data_set_number(data, "inverter_count", 1);
+
+		ssclib.ssc_data_set_number(data, "ac_loss", 0.1f);
+		ssclib.ssc_data_set_number(data, "acwiring_loss", 0.015f);
+		ssclib.ssc_data_set_number(data, "transformer_loss", 0.02f);
+
+		ssclib.ssc_data_set_number(data, "subarray1_tilt", 20);
+		ssclib.ssc_data_set_number(data, "subarray1_track_mode", 0);
+		ssclib.ssc_data_set_number(data, "subarray1_azimuth", 180);
+		ssclib.ssc_data_set_number(data, "subarray1_shade_mode", 1);
+		ssclib.ssc_data_set_number(data, "subarray1_dcloss", .1f);
+		ssclib.ssc_data_set_number(data, "subarray1_dcwiring_loss", .015f);
+		ssclib.ssc_data_set_number(data, "subarray1_tracking_loss", 0);
+		ssclib.ssc_data_set_number(data, "subarray1_mismatch_loss", .04f);
+		ssclib.ssc_data_set_number(data, "subarray1_nameplate_loss", -0.015f);
+		ssclib.ssc_data_set_number(data, "subarray1_diodeconn_loss", 0);
+
+		float[] soilingfactors = new float[] {0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f};
+		ssclib.ssc_data_set_array(data, "subarray1_soiling", soilingfactors, 12);
+
+		ssclib.ssc_data_set_number(data, "subarray2_enable", 0);
+		ssclib.ssc_data_set_number(data, "subarray2_tilt", 0);
+		ssclib.ssc_data_set_number(data, "subarray2_shade_mode", 1);
+		ssclib.ssc_data_set_number(data, "subarray2_track_mode", 1);
+		ssclib.ssc_data_set_number(data, "subarray2_backtrack", 1);
+
+		ssclib.ssc_data_set_number(data, "subarray3_enable", 0);
+		ssclib.ssc_data_set_number(data, "subarray3_tilt", 0);
+		ssclib.ssc_data_set_number(data, "subarray3_shade_mode", 1);
+		ssclib.ssc_data_set_number(data, "subarray3_track_mode", 1);
+		ssclib.ssc_data_set_number(data, "subarray3_backtrack", 1);
+
+		ssclib.ssc_data_set_number(data, "subarray4_enable", 0);
+		ssclib.ssc_data_set_number(data, "subarray4_tilt", 0);
+		ssclib.ssc_data_set_number(data, "subarray4_shade_mode", 1);
+		ssclib.ssc_data_set_number(data, "subarray4_track_mode", 1);
+		ssclib.ssc_data_set_number(data, "subarray4_backtrack", 1);
+
+		ssclib.ssc_data_set_number(data, "module_model", 1);
+		ssclib.ssc_data_set_number(data, "cec_t_noct", 65);
+		ssclib.ssc_data_set_number(data, "cec_area", 0.67f);
+		ssclib.ssc_data_set_number(data, "cec_n_s", 18);
+		ssclib.ssc_data_set_number(data, "cec_i_sc_ref", 7.5f);
+		ssclib.ssc_data_set_number(data, "cec_v_oc_ref", 10.4f);
+		ssclib.ssc_data_set_number(data, "cec_i_mp_ref", 6.6f);
+		ssclib.ssc_data_set_number(data, "cec_v_mp_ref", 8.4f);
+		ssclib.ssc_data_set_number(data, "cec_alpha_sc", 0.003f);
+		ssclib.ssc_data_set_number(data, "cec_beta_oc", -0.04f);
+		ssclib.ssc_data_set_number(data, "cec_a_ref", 0.473f);
+		ssclib.ssc_data_set_number(data, "cec_i_l_ref", 7.545f);
+		ssclib.ssc_data_set_number(data, "cec_i_o_ref", (float)1.94E-09);
+		ssclib.ssc_data_set_number(data, "cec_r_s", 0.094f);
+		ssclib.ssc_data_set_number(data, "cec_r_sh_ref", 15.72f);
+		ssclib.ssc_data_set_number(data, "cec_adjust", 10.6f);
+		ssclib.ssc_data_set_number(data, "cec_gamma_r", -0.5f);
+		ssclib.ssc_data_set_number(data, "cec_temp_corr_mode", 0);
+		ssclib.ssc_data_set_number(data, "cec_standoff", 1);
+		ssclib.ssc_data_set_number(data, "cec_height", 0);
+
+		ssclib.ssc_data_set_number(data, "inverter_model", 1);
+		ssclib.ssc_data_set_number(data, "inv_ds_paco", 225);
+		ssclib.ssc_data_set_number(data, "inv_ds_eff", .965f);
+		ssclib.ssc_data_set_number(data, "inv_ds_pnt", .065f);
+		ssclib.ssc_data_set_number(data, "inv_ds_pso", 250);
+		ssclib.ssc_data_set_number(data, "inv_ds_vdco", 27);
+		ssclib.ssc_data_set_number(data, "inv_ds_vdcmax", 48);
+
+		ssclib.ssc_data_set_number(data, "adjust:factor", 1);
+	}
+	
 	/**
 	 * Private helper to make sure that the data created by the
 	 * simulation was set as expected. Assumes that we used the "layoutarea"
@@ -327,13 +413,13 @@ public class IntegrationTestSsc {
 		FloatByReference val = new FloatByReference();
 		boolean status = ssclib.ssc_data_get_number(data, "area", val);
 		assertThat(status, equalTo(true));
-		assertThat(val.floatValue(), greaterThanOrEqualTo(0f));
+		assertThat(val.getValue(), greaterThanOrEqualTo(0f));
 		
 		IntByReference rows = new IntByReference();
 		IntByReference cols = new IntByReference();
 		Pointer mtx = ssclib.ssc_data_get_matrix(data, "convex_hull", rows, cols);
 		assertThat(mtx, not(equalTo(null)));
-		assertThat(rows.intValue(), greaterThan(0));
-		assertThat(cols.intValue(), greaterThan(0));
+		assertThat(rows.getValue(), greaterThan(0));
+		assertThat(cols.getValue(), greaterThan(0));
 	}
 }

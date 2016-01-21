@@ -14,10 +14,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.google.common.base.Optional;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.FloatByReference;
 
 import io.github.spharris.ssc.excepions.UnknownModuleNameException;
-import jnr.ffi.Pointer;
-import jnr.ffi.byref.FloatByReference;
 
 public class UnitTestModule {
 	

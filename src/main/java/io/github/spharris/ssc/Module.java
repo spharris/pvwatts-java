@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.Optional;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.FloatByReference;
+import com.sun.jna.ptr.IntByReference;
 
 import io.github.spharris.ssc.ExecutionHandler.MessageType;
 import io.github.spharris.ssc.excepions.UnknownModuleNameException;
-import jnr.ffi.LibraryLoader;
-import jnr.ffi.Pointer;
-import jnr.ffi.byref.FloatByReference;
-import jnr.ffi.byref.IntByReference;
 
 /**
  * A <code>Module</code> represents an SSC compute module ("pvwattsv1", for example).
@@ -89,9 +89,7 @@ public class Module {
 	}
 	
 	private static Ssc loadSscLibrary() {
-		return LibraryLoader.create(Ssc.class)
-			.search(getSscPath())
-			.load("ssc");
+		return (Ssc)Native.loadLibrary("ssc", Ssc.class);
 	}
 	
 	private static String getSscPath() {
@@ -197,6 +195,10 @@ public class Module {
 		return variables;
 	}
 	
+	public void execute() {
+		api.ssc_module_exec(module, data);
+	}
+	
 	public void execute(final ExecutionHandler handler) {
 		
 		SscExecutionHandler wrapper = new SscExecutionHandler() {
@@ -251,7 +253,7 @@ public class Module {
 		boolean present = api.ssc_data_get_number(data, variableName, value); 
 		
 		if (present) {
-			return Optional.of(value.floatValue());
+			return Optional.of(value.getValue());
 		} else {
 			return Optional.absent();
 		}
@@ -329,7 +331,7 @@ public class Module {
 		if (result == null) {
 			return Optional.<float[]>absent();
 		} else {
-			int len = length.intValue();
+			int len = length.getValue();
 			float[] arr = new float[len];
 			
 			for (int i = 0; i < len; i++) {
@@ -389,10 +391,10 @@ public class Module {
 		if (result == null) {
 			return Optional.<float[][]>absent();
 		} else {
-			float[][] value = new float[rows.intValue()][cols.intValue()];
-			for (int i = 0; i < rows.intValue(); i++) {
-				for (int j = 0; j < rows.intValue(); j++) {
-					value[i][j] = result.getFloat(arrayIndex(i, j, cols.intValue()) * FLOAT_SIZE);
+			float[][] value = new float[rows.getValue()][cols.getValue()];
+			for (int i = 0; i < rows.getValue(); i++) {
+				for (int j = 0; j < rows.getValue(); j++) {
+					value[i][j] = result.getFloat(arrayIndex(i, j, cols.getValue()) * FLOAT_SIZE);
 				}
 			}
 			
