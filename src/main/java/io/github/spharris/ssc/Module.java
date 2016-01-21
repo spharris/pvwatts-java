@@ -92,17 +92,6 @@ public class Module {
 		return (Ssc)Native.loadLibrary("ssc", Ssc.class);
 	}
 	
-	private static String getSscPath() {
-		String basePath = Module.class.getClassLoader().getResource("ssc").getPath();
-		
-		String os = System.getProperty("os.name").toLowerCase();
-		if (os.startsWith("mac")) {
-			return basePath + "/osx64";
-		} else {
-			return basePath + "/linux64";
-		}
-	}
-	
 	/**
 	 * Package-private constructor to prevent direct instantiation. Use <code>forName</code> instead.
 	 */
@@ -137,6 +126,10 @@ public class Module {
 		
 		// Should never get here.
 		return null; 
+	}
+	
+	public ModuleInfo getShortModuleInfo() {
+		return new ModuleInfo(getName(), getDescription(), getVersion());
 	}
 	
 	public ModuleInfo getModuleInfo() {
@@ -393,7 +386,7 @@ public class Module {
 		} else {
 			float[][] value = new float[rows.getValue()][cols.getValue()];
 			for (int i = 0; i < rows.getValue(); i++) {
-				for (int j = 0; j < rows.getValue(); j++) {
+				for (int j = 0; j < cols.getValue(); j++) {
 					value[i][j] = result.getFloat(arrayIndex(i, j, cols.getValue()) * FLOAT_SIZE);
 				}
 			}

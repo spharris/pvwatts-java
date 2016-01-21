@@ -6,7 +6,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
-import io.github.spharris.ssc.web.Error;
+import io.github.spharris.ssc.web.SscWebError;
 
 @Provider
 public class UnknownModuleHandler implements ExceptionMapper<UnknownModuleNameException> {
@@ -14,7 +14,7 @@ public class UnknownModuleHandler implements ExceptionMapper<UnknownModuleNameEx
 	@Override
 	public Response toResponse(UnknownModuleNameException exception) {
 		Status s = Status.NOT_FOUND;
-		Error e = Error.builder().statusCode(s.getStatusCode())
+		SscWebError e = SscWebError.builder().statusCode(s.getStatusCode())
 				.errorCode("UnknownModuleName")
 				.details("The module with the name " + exception.getModuleName() + " does not exist")
 				.build();

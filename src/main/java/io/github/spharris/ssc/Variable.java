@@ -120,14 +120,15 @@ public class Variable {
 	}
 	
 	public enum DataType {
-		INVALID(0),
-		STRING(1),
-		NUMBER(2),
-		ARRAY(3),
-		MATRIX(4),
-		TABLE(5);
+		INVALID(0, null),
+		STRING(1, String.class),
+		NUMBER(2, Float.class),
+		ARRAY(3, float[].class),
+		MATRIX(4, float[][].class),
+		TABLE(5, null);
 		
 		private int sscConst;
+		private Class<?> clazz;
 		
 		private static Map<Integer, Variable.DataType> sscDataTypeMap = new HashMap<>();
 		static {
@@ -136,12 +137,17 @@ public class Variable {
 			}
 		}
 		
-		private DataType(final int sscConst) {
-			this.sscConst = sscConst; 
+		private DataType(final int sscConst, Class<?> clazz) {
+			this.sscConst = sscConst;
+			this.clazz = clazz;
 		}
 		
 		public static Variable.DataType forInt(int val) {
 			return sscDataTypeMap.get(val);
+		}
+		
+		public Class<?> javaType() {
+			return clazz;
 		}
 	}
 	

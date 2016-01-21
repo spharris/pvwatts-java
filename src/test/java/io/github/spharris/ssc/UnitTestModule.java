@@ -169,6 +169,20 @@ public class UnitTestModule {
 	}
 	
 	@Test
+	public void callsSetMatrixProperlyMoreRows() {
+		Module m = getRealModule();
+		
+		float[][] value = {{1, 2}, {3, 4}, {5, 6}};
+		
+		String varName = "adsf";
+		m.setMatrix(varName, value);
+		
+		float[] expected = { 1, 2, 3, 4, 5, 6 };
+		verify(mockApi).ssc_data_set_matrix(any(Pointer.class), eq(varName),
+				eq(expected), eq(3), eq(2));
+	}
+	
+	@Test
 	public void getVariableCallsAllInfoFunctions() {
 		Module m = getRealModule();
 		

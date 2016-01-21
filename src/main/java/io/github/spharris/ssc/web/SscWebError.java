@@ -2,13 +2,13 @@ package io.github.spharris.ssc.web;
 
 import static com.google.common.base.Preconditions.*;
 
-public class Error {
+public class SscWebError {
 	
 	private final int statusCode;
 	private final String errorCode;
 	private final String details;
 	
-	private Error(int statusCode, String errorCode, String details) {
+	private SscWebError(int statusCode, String errorCode, String details) {
 		checkNotNull(errorCode);
 		
 		this.statusCode = statusCode;
@@ -59,8 +59,8 @@ public class Error {
 			return this;
 		}
 		
-		public Error build() {
-			return new Error(statusCode, errorCode, details);
+		public SscWebError build() {
+			return new SscWebError(statusCode, errorCode, details);
 		}
 	}
 }
