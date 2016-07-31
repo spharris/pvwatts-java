@@ -35,7 +35,7 @@ public class IntegrationTestSsc {
 	@Test
 	public void basicInfoPopulatesCorrectly() {
 		assertThat(ssclib.ssc_build_info(), not(equalTo(null)));
-		assertThat(ssclib.ssc_version(), equalTo(41));
+		assertThat(ssclib.ssc_version(), greaterThan(0));
 	}
 	
 	@Test
@@ -286,7 +286,6 @@ public class IntegrationTestSsc {
 				String s1, Pointer userData) {
 			
 			assertThat(f0, greaterThanOrEqualTo(0f));
-			assertThat(f1, greaterThanOrEqualTo(0f));
 
 			return true;
 		}
@@ -294,8 +293,8 @@ public class IntegrationTestSsc {
 	
 	@Test
 	public void testWithHandler() {
-		initializeComplicatedData(ssclib, data);
-		Pointer module = ssclib.ssc_module_create("pvsamv1");
+		initializeSimulationData(ssclib, data);
+		Pointer module = ssclib.ssc_module_create("layoutarea");
 		
 		SscExecutionHandler handler = new TestHandler();
 		boolean result = ssclib.ssc_module_exec_with_handler(module, data, handler, null);
@@ -311,94 +310,6 @@ public class IntegrationTestSsc {
 	private static void initializeSimulationData(Ssc ssclib, Pointer data) {
 		float[] positions = { 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
 		ssclib.ssc_data_set_matrix(data, "positions", positions, 3, 2);
-	}
-	
-	private static void initializeComplicatedData(Ssc ssclib, Pointer data) {
-		String weatherFile = IntegrationTestModule.class.getClassLoader().getResource("weather/23129.tm2").getPath();
-		ssclib.ssc_data_set_string(data, "solar_resource_file", weatherFile);
-
-		float[] albedo= new float[] {0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f};
-		ssclib.ssc_data_set_array(data, "albedo", albedo, 12);
-
-		ssclib.ssc_data_set_number(data, "system_capacity", 0.24f);
-		ssclib.ssc_data_set_number(data, "modules_per_string", 1);
-		ssclib.ssc_data_set_number(data, "strings_in_parallel", 1);
-		ssclib.ssc_data_set_number(data, "inverter_count", 1);
-
-		ssclib.ssc_data_set_number(data, "ac_loss", 0.1f);
-		ssclib.ssc_data_set_number(data, "acwiring_loss", 0.015f);
-		ssclib.ssc_data_set_number(data, "transformer_loss", 0.02f);
-
-		ssclib.ssc_data_set_number(data, "subarray1_tilt", 20);
-		ssclib.ssc_data_set_number(data, "subarray1_track_mode", 0);
-		ssclib.ssc_data_set_number(data, "subarray1_azimuth", 180);
-		ssclib.ssc_data_set_number(data, "subarray1_shade_mode", 1);
-		ssclib.ssc_data_set_number(data, "subarray1_dcloss", .1f);
-		ssclib.ssc_data_set_number(data, "subarray1_dcwiring_loss", .015f);
-		ssclib.ssc_data_set_number(data, "subarray1_tracking_loss", 0);
-		ssclib.ssc_data_set_number(data, "subarray1_mismatch_loss", .04f);
-		ssclib.ssc_data_set_number(data, "subarray1_nameplate_loss", -0.015f);
-		ssclib.ssc_data_set_number(data, "subarray1_diodeconn_loss", 0);
-
-		float[] soilingfactors = new float[] {0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f};
-		ssclib.ssc_data_set_array(data, "subarray1_soiling", soilingfactors, 12);
-
-		ssclib.ssc_data_set_number(data, "subarray2_enable", 0);
-		ssclib.ssc_data_set_number(data, "subarray2_tilt", 0);
-		ssclib.ssc_data_set_number(data, "subarray2_shade_mode", 1);
-		ssclib.ssc_data_set_number(data, "subarray2_track_mode", 1);
-		ssclib.ssc_data_set_number(data, "subarray2_backtrack", 1);
-
-		ssclib.ssc_data_set_number(data, "subarray3_enable", 0);
-		ssclib.ssc_data_set_number(data, "subarray3_tilt", 0);
-		ssclib.ssc_data_set_number(data, "subarray3_shade_mode", 1);
-		ssclib.ssc_data_set_number(data, "subarray3_track_mode", 1);
-		ssclib.ssc_data_set_number(data, "subarray3_backtrack", 1);
-
-		ssclib.ssc_data_set_number(data, "subarray4_enable", 0);
-		ssclib.ssc_data_set_number(data, "subarray4_tilt", 0);
-		ssclib.ssc_data_set_number(data, "subarray4_shade_mode", 1);
-		ssclib.ssc_data_set_number(data, "subarray4_track_mode", 1);
-		ssclib.ssc_data_set_number(data, "subarray4_backtrack", 1);
-
-		ssclib.ssc_data_set_number(data, "module_model", 1);
-		ssclib.ssc_data_set_number(data, "cec_t_noct", 44.1f);
-		ssclib.ssc_data_set_number(data, "cec_area", 1.618f);
-		ssclib.ssc_data_set_number(data, "cec_n_s", 60);
-		ssclib.ssc_data_set_number(data, "cec_i_sc_ref", 8.37f);
-		ssclib.ssc_data_set_number(data, "cec_v_oc_ref", 37.2f);
-		ssclib.ssc_data_set_number(data, "cec_i_mp_ref", 7.89f);
-		ssclib.ssc_data_set_number(data, "cec_v_mp_ref", 30.4f);
-		ssclib.ssc_data_set_number(data, "cec_alpha_sc", .005022f);
-		ssclib.ssc_data_set_number(data, "cec_beta_oc", -.1302f);
-		ssclib.ssc_data_set_number(data, "cec_a_ref", 1.5731f);
-		ssclib.ssc_data_set_number(data, "cec_i_l_ref", 8.373f);
-		ssclib.ssc_data_set_number(data, "cec_i_o_ref", (float)4.47e-10);
-		ssclib.ssc_data_set_number(data, "cec_r_s", .275f);
-		ssclib.ssc_data_set_number(data, "cec_r_sh_ref", 710.44f);
-		ssclib.ssc_data_set_number(data, "cec_adjust", 6.704f);
-		ssclib.ssc_data_set_number(data, "cec_gamma_r", -0.45f);
-		ssclib.ssc_data_set_number(data, "cec_temp_corr_mode", 0);
-		ssclib.ssc_data_set_number(data, "cec_standoff", 1);
-		ssclib.ssc_data_set_number(data, "cec_height", 0);
-
-		ssclib.ssc_data_set_number(data, "inverter_model", 0);
-		ssclib.ssc_data_set_number(data, "inv_snl_ac_voltage", 208f);
-		ssclib.ssc_data_set_number(data, "inv_snl_paco", 215f);
-		ssclib.ssc_data_set_number(data, "inv_snl_pdco", 225.415261f);
-		ssclib.ssc_data_set_number(data, "inv_snl_vdco", 28.89642857f);
-		ssclib.ssc_data_set_number(data, "inv_snl_pso", 0.802832927f);
-		ssclib.ssc_data_set_number(data, "inv_snl_c0", -8.90E-05f);
-		ssclib.ssc_data_set_number(data, "inv_snl_c1", -8.94E-04f);
-		ssclib.ssc_data_set_number(data, "inv_snl_c2", -2.38E-02f);
-		ssclib.ssc_data_set_number(data, "inv_snl_c3", -8.28E-02f);
-		ssclib.ssc_data_set_number(data, "inv_snl_pnt", 0.04f);
-		ssclib.ssc_data_set_number(data, "inv_snl_vdcmax", 45f);
-		ssclib.ssc_data_set_number(data, "inv_snl_idcmax", 15f);
-		ssclib.ssc_data_set_number(data, "inv_snl_mppt_low", 16f);
-		ssclib.ssc_data_set_number(data, "inv_snl_mppt_hi", 36f);
-
-		ssclib.ssc_data_set_number(data, "adjust:factor", 1);
 	}
 	
 	/**

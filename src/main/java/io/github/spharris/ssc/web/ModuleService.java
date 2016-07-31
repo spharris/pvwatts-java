@@ -20,7 +20,7 @@ import com.google.common.base.Optional;
 
 import io.github.spharris.ssc.ExecutionHandler;
 import io.github.spharris.ssc.Module;
-import io.github.spharris.ssc.ModuleInfo;
+import io.github.spharris.ssc.ModuleSummary;
 import io.github.spharris.ssc.Variable;
 import io.github.spharris.ssc.Variable.VariableType;
 import io.github.spharris.ssc.Variable.DataType;
@@ -33,9 +33,9 @@ public class ModuleService {
 	private UriInfo uriInfo;
 	
 	@GET
-	public List<ModuleInfo> listModules() {
-		List<ModuleInfo> modules = Module.getAvailableModules();
-		for (ModuleInfo mi : modules) {
+	public List<ModuleSummary> listModules() {
+		List<ModuleSummary> modules = Module.getAvailableModules();
+		for (ModuleSummary mi : modules) {
 			mi.setUrl(uriInfo.getAbsolutePath() + mi.getName());
 		}
 		
@@ -44,7 +44,7 @@ public class ModuleService {
 	
 	@GET
 	@Path("/{moduleName}")
-	public ModuleInfo getModuleInfo(@PathParam("moduleName") String moduleName) {
+	public ModuleSummary getModuleInfo(@PathParam("moduleName") String moduleName) {
 		Module m = Module.forName(moduleName);
 		return m.getModuleInfo();
 	}
@@ -109,16 +109,16 @@ public class ModuleService {
 			String name = var.getName();
 			switch (var.getDataType()) {
 			case NUMBER:
-				mod.setNumber(name, ((Number)value).floatValue());
+				mod.setValue(name, ((Number)value).floatValue());
 				break;
 			case STRING:
-				mod.setString(name, (String)value);
+				mod.setValue(name, (String)value);
 				break;
 			case ARRAY:
-				mod.setArray(name, getArray(value));
+				mod.setValue(name, getArray(value));
 				break;
 			case MATRIX:
-				mod.setMatrix(name, getMatrix(value));
+				mod.setValue(name, getMatrix(value));
 				break;
 			default:
 				// Do nothing

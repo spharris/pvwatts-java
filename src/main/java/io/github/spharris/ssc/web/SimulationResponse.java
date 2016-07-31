@@ -5,20 +5,20 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import io.github.spharris.ssc.ModuleInfo;
+import io.github.spharris.ssc.ModuleSummary;
 
 @JsonPropertyOrder({"moduleInfo", "messages", "inputs", "outputs"})
 public final class SimulationResponse {
-	private ModuleInfo moduleInfo;
+	private ModuleSummary moduleInfo;
 	private Map<String, Object> inputs;
 	private Map<String, Object> outputs;
 	private List<LogMessage> messages;
 	
-	public ModuleInfo getModuleInfo() {
+	public ModuleSummary getModuleInfo() {
 		return moduleInfo;
 	}
 	
-	public void setModuleInfo(ModuleInfo info) {
+	public void setModuleInfo(ModuleSummary info) {
 		this.moduleInfo = info;
 	}
 	

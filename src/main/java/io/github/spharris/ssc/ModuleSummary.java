@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ModuleInfo {
+public class ModuleSummary {
 	
 	private final String name;
 	private final String description;
@@ -13,14 +13,14 @@ public class ModuleInfo {
 	private final List<Variable> variables;
 	private String url;
 	
-	ModuleInfo(String name, String description, int version) {
+	ModuleSummary(String name, String description, int version) {
 		this.name = name;
 		this.description = description;
 		this.version = version;
 		this.variables = null;
 	}
 	
-	ModuleInfo(String name, String description, int version, List<Variable> vars) {
+	ModuleSummary(String name, String description, int version, List<Variable> vars) {
 		this.name = name;
 		this.description = description;
 		this.version = version;

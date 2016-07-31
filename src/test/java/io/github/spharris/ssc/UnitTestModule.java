@@ -21,7 +21,9 @@ import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
 
 public class UnitTestModule {
 	
-	Ssc mockApi;
+	private static final String MODULE_NAME = "test module";
+	
+	private Ssc mockApi;
 	
 	@Before
 	public void createMockApi() {
@@ -42,12 +44,11 @@ public class UnitTestModule {
 	
 	@Test
 	public void setNumber() {
-		getRealModule();
-		Module m = new Module("adf", mockApi);
+		Module m = getRealModule();
 		
 		String varName = "var";
 		float value = 0.5f;
-		m.setNumber(varName, value);
+		m.setValue(varName, value);
 		
 		verify(mockApi).ssc_data_set_number(any(Pointer.class), eq(varName), eq(value));
 	}
@@ -64,12 +65,11 @@ public class UnitTestModule {
 	
 	@Test
 	public void setString() {
-		getRealModule();
-		Module m = new Module("adf", mockApi);
+		Module m = getRealModule();
 		
 		String varName = "var";
 		float value = 0.5f;
-		m.setNumber(varName, value);
+		m.setValue(varName, value);
 		
 		verify(mockApi).ssc_data_set_number(any(Pointer.class), eq(varName), eq(value));
 	}
@@ -102,7 +102,7 @@ public class UnitTestModule {
 		
 		thrown.expect(IllegalStateException.class);
 		
-		m.setNumber("var", 0f);
+		m.setValue("var", 0f);
 	}
 	
 	@Test
@@ -131,7 +131,7 @@ public class UnitTestModule {
 		float[] input = new float[0];
 		thrown.expect(IllegalArgumentException.class);
 		
-		m.setArray("asdf", input);
+		m.setValue("asdf", input);
 	}
 	
 	@Test
@@ -141,7 +141,7 @@ public class UnitTestModule {
 		float[][] input = new float[0][1];
 		thrown.expect(IllegalArgumentException.class);
 		
-		m.setMatrix("asdf", input);
+		m.setValue("asdf", input);
 	}
 	
 	@Test
@@ -151,7 +151,7 @@ public class UnitTestModule {
 		float[][] input = new float[1][0];
 		thrown.expect(IllegalArgumentException.class);
 		
-		m.setMatrix("asdf", input);
+		m.setValue("asdf", input);
 	}
 	
 	@Test
@@ -161,7 +161,7 @@ public class UnitTestModule {
 		float[][] value = {{1, 2}, {3, 4}};
 		
 		String varName = "adsf";
-		m.setMatrix(varName, value);
+		m.setValue(varName, value);
 		
 		float[] expected = { 1, 2, 3, 4 };
 		verify(mockApi).ssc_data_set_matrix(any(Pointer.class), eq(varName),
@@ -175,7 +175,7 @@ public class UnitTestModule {
 		float[][] value = {{1, 2}, {3, 4}, {5, 6}};
 		
 		String varName = "adsf";
-		m.setMatrix(varName, value);
+		m.setValue(varName, value);
 		
 		float[] expected = { 1, 2, 3, 4, 5, 6 };
 		verify(mockApi).ssc_data_set_matrix(any(Pointer.class), eq(varName),
@@ -240,8 +240,10 @@ public class UnitTestModule {
 	private Module getRealModule() {
 		Pointer fakePointer = mock(Pointer.class);
 		when(mockApi.ssc_module_create(anyString())).thenReturn(fakePointer);
+		when(mockApi.ssc_module_entry(isA(Integer.class))).thenReturn(fakePointer);
+		when(mockApi.ssc_entry_name(isA(Pointer.class))).thenReturn(MODULE_NAME);
 		
-		Module m = new Module("adf", mockApi);
+		Module m = new Module(MODULE_NAME, mockApi);
 		return m;
 	}
 	
