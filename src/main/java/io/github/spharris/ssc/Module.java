@@ -1,12 +1,18 @@
 package io.github.spharris.ssc;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.Optional;
+import com.google.inject.BindingAnnotation;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.FloatByReference;
@@ -18,14 +24,18 @@ import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
 /**
  * A <code>Module</code> represents an SSC compute module ("pvwattsv1", for example).
  * 
- * Once a module has been created with {@link io.github.spharris.ssc.Module#forName}, you can
- * get information about the available variables, add values for variables, and execute.
+ * Once a module has been created , you can get information about the available variables, add values for variables,
+ * and execute.
  * 
  * <strong>When you are done with a module, it must be freed using {@link #free}. 
  * 
  * @author spharris
  */
 public class Module {
+	
+	@BindingAnnotation
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface SscLibraryName {}
 	
 	private enum ActionType {
 		LOG,
@@ -43,7 +53,10 @@ public class Module {
 	}
 	
 	private static final int FLOAT_SIZE = 4;
-
+	
+	@SscLibraryName
+	private static String SSC_LIB_NAME;
+	
 	private String moduleName;
 	private Pointer module;
 	private Pointer data;
@@ -77,25 +90,12 @@ public class Module {
 		return modules;
 	}
 	
-	/**
-	 * Creates and returns an SSC compute module with the given name. Created modules
-	 * with <tt>forName</tt> use native memory and therefore must be freed when no longer needed.
-	 * 
-	 * @throws UnknownModuleNameException if no such module exists.
-	 */
-	public static Module forName(String modName) {
-		Ssc api = loadSscLibrary();
-		return new Module(modName, api);
-	}
-	
 	private static Ssc loadSscLibrary() {
-		return (Ssc)Native.loadLibrary("ssc", Ssc.class);
+		return (Ssc)Native.loadLibrary(SSC_LIB_NAME, Ssc.class);
 	}
-	
-	/**
-	 * Package-private constructor to prevent direct instantiation. Use <code>forName</code> instead.
-	 */
-	Module(String moduleName, Ssc api) {
+
+	@Inject
+	Module(@Assisted String moduleName, Ssc api) {
 		module = api.ssc_module_create(moduleName);
 		if (module == null) {
 			throw new UnknownModuleNameException(moduleName);
@@ -228,6 +228,22 @@ public class Module {
 		api.ssc_data_set_number(data, variableName, value);
 	}
 	
+	public void setValue(String variableName, int value) {
+		setValue(variableName, (float) value);
+	}
+	
+	public void setValue(String variableName, long value) {
+		setValue(variableName, (float) value);
+	}
+	
+	public void setValue(String variableName, double value) {
+		setValue(variableName, (float) value);
+	}
+	
+	public void setValue(String variableName, Number value) {
+		setValue(variableName, value.floatValue());
+	}
+	
 	/**
 	 * Set a String input value for this module.
 	 * 
@@ -262,6 +278,42 @@ public class Module {
 		api.ssc_data_set_array(data, variableName, value, value.length);
 	}
 	
+	public void setValue(String variableName, int[] value) {
+		float[] floats = new float[value.length];
+		for (int i = 0; i < value.length; i++) {
+			floats[i] = value[i];
+		}
+		
+		setValue(variableName, floats);
+	}
+	
+	public void setValue(String variableName, long[] value) {
+		float[] floats = new float[value.length];
+		for (int i = 0; i < value.length; i++) {
+			floats[i] = value[i];
+		}
+		
+		setValue(variableName, floats);
+	}
+	
+	public void setValue(String variableName, double[] value) {
+		float[] floats = new float[value.length];
+		for (int i = 0; i < value.length; i++) {
+			floats[i] = (float) value[i];
+		}
+		
+		setValue(variableName, floats);
+	}
+	
+	public void setValue(String variableName, Number[] value) {
+		float[] floats = new float[value.length];
+		for (int i = 0; i < value.length; i++) {
+			floats[i] = value[i].floatValue();
+		}
+		
+		setValue(variableName, floats);
+	}
+	
 	/**
 	 * Set an array input value for this module.
 	 * 
@@ -290,6 +342,66 @@ public class Module {
 		api.ssc_data_set_matrix(data, variableName, inputArray, rows, cols);
 	}
 	
+	public void setValue(String variableName, int[][] value) {
+		checkNotNull(value);
+		checkArgument(value.length >= 1, "The number of rows must be >= 1.");
+		checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
+		
+		float[][] floats = new float[value.length][value[0].length];
+		for (int i = 0; i < value.length; i++) {
+			for (int j = 0; j < value[i].length; i++) {
+				floats[i][j] = value[i][j];
+			}
+		}
+		
+		setValue(variableName, floats);
+	}
+	
+	public void setValue(String variableName, long[][] value) {
+		checkNotNull(value);
+		checkArgument(value.length >= 1, "The number of rows must be >= 1.");
+		checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
+		
+		float[][] floats = new float[value.length][value[0].length];
+		for (int i = 0; i < value.length; i++) {
+			for (int j = 0; j < value[i].length; i++) {
+				floats[i][j] = value[i][j];
+			}
+		}
+		
+		setValue(variableName, floats);
+	}
+	
+	public void setValue(String variableName, double[][] value) {
+		checkNotNull(value);
+		checkArgument(value.length >= 1, "The number of rows must be >= 1.");
+		checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
+
+		float[][] floats = new float[value.length][value[0].length];
+		for (int i = 0; i < value.length; i++) {
+			for (int j = 0; j < value[i].length; i++) {
+				floats[i][j] = (float)value[i][j];
+			}
+		}
+		
+		setValue(variableName, floats);
+	}
+	
+	public void setValue(String variableName, Number[][] value) {
+		checkNotNull(value);
+		checkArgument(value.length >= 1, "The number of rows must be >= 1.");
+		checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
+		
+		float[][] floats = new float[value.length][value[0].length];
+		for (int i = 0; i < value.length; i++) {
+			for (int j = 0; j < value[i].length; i++) {
+				floats[i][j] = value[i][j].floatValue();
+			}
+		}
+		
+		setValue(variableName, floats);
+	}
+
 	/**
 	 * Get a numeric input or output number for this module.
 	 * 

@@ -15,14 +15,21 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Optional;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
 
 public class IntegrationTestModule {
+	
+	@Inject private ModuleFactory moduleFactory;
 	
 	private Module module;
 	
 	@Before
 	public void createModule() {
-		module = Module.forName("layoutarea");
+		Guice.createInjector(new SscModule())
+			.injectMembers(this);
+		
+		module = moduleFactory.create("layoutarea");
 	}
 	
 	@After
@@ -140,7 +147,7 @@ public class IntegrationTestModule {
 	
 	@Test
 	public void executeWithHandler() throws Exception {
-		Module m = Module.forName("pvsamv1");
+		Module m = moduleFactory.create("pvsamv1");
 		populateModuleWithSimData(m);
 		
 		ExecutionHandler handler = new ExecutionHandler() {
@@ -168,7 +175,7 @@ public class IntegrationTestModule {
 	
 	@Test
 	public void simpleExecute() throws Exception {
-		Module m = Module.forName("pvsamv1");
+		Module m = moduleFactory.create("pvsamv1");
 		populateModuleWithSimData(m);
 		
 		m.execute();
