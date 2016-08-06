@@ -11,6 +11,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
+import io.github.spharris.pvwatts.PvWattsModule;
+
 public class PvWattsServer {
 
   public static void main(String[] args) throws Exception {
@@ -31,7 +33,7 @@ public class PvWattsServer {
   
   private static ImmutableList<Module> getModules() {
     return ImmutableList.<Module>of(
-      new PvWattsWebModule());
+      new PvWattsModule());
   }
 
 }
