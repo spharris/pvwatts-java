@@ -2,8 +2,8 @@ package io.github.spharris.pvwatts.web;
 
 import com.google.inject.AbstractModule;
 
-import io.github.spharris.pvwatts.service.PvWatts4Service;
-import io.github.spharris.pvwatts.service.PvWatts5Service;
+import io.github.spharris.pvwatts.service.v4.PvWatts4Service;
+import io.github.spharris.pvwatts.service.v5.PvWatts5Service;
 
 public class PvWattsWebModule extends AbstractModule {
   
