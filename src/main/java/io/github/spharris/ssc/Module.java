@@ -22,12 +22,13 @@ import io.github.spharris.ssc.ExecutionHandler.MessageType;
 import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
 
 /**
- * A <code>Module</code> represents an SSC compute module ("pvwattsv1", for example).
+ * <p>A <code>Module</code> represents an SSC compute module ("pvwattsv1", for example). This class
+ * is created via an injected {@link ModuleFactory}.
  * 
- * Once a module has been created , you can get information about the available variables, add
+ * <p>Once a module has been created, you can get information about the available variables, add
  * values for variables, and execute.
  * 
- * <strong>When you are done with a module, it must be freed using {@link #free}.
+ * <p><strong>When you are done with a module, it must be freed using {@link #free}.
  * 
  * @author spharris
  */
