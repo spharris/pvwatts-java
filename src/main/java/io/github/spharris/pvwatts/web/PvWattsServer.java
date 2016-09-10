@@ -6,7 +6,10 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.jboss.resteasy.plugins.guice.GuiceResteasyBootstrapServletContextListener;
 import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.jaxrs.xml.JacksonXMLProvider;
 import com.google.common.collect.ImmutableList;
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -33,7 +36,13 @@ public class PvWattsServer {
   
   private static ImmutableList<Module> getModules() {
     return ImmutableList.<Module>of(
-      new PvWattsModule());
+      new PvWattsModule(),
+      new AbstractModule() {
+        @Override
+        protected void configure() {
+          bind(JacksonJsonProvider.class);
+          bind(JacksonXMLProvider.class);
+        }
+      });
   }
-
 }

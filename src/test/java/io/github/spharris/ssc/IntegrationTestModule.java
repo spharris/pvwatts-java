@@ -13,11 +13,14 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import com.google.common.base.Optional;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 
+@RunWith(JUnit4.class)
 public class IntegrationTestModule {
 
   @Inject

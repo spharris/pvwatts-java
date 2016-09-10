@@ -1,31 +1,28 @@
 package io.github.spharris.pvwatts.service.v4;
 
-import java.util.Map;
-import java.util.Optional;
+import javax.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableMap;
 
 @AutoValue
 public abstract class PvWatts4Request {
 
-  public abstract ImmutableMap<String, String> getRawInputs();
-  public abstract Optional<Float> getSystemSize();
-  public abstract Optional<String> getAddress();
-  public abstract Optional<Float> getLat();
-  public abstract Optional<Float> getLon();
-  public abstract Optional<String> getFileId();
-  public abstract Optional<String> getDataset();
-  public abstract Optional<Integer> getRadius();
-  public abstract Optional<String> getTimeframe();
-  public abstract Optional<Float> getAzimuth();
-  public abstract Optional<Float> getDerate();
-  public abstract Optional<Float> getTilt();
-  public abstract Optional<Integer> getTiltEqLat();
-  public abstract Optional<Integer> getTrackMode();
-  public abstract Optional<Float> getInoct();
-  public abstract Optional<Float> getGamma();
-  public abstract Optional<String> getCallback();
+  public abstract @Nullable Float getSystemSize();
+  public abstract @Nullable String getAddress();
+  public abstract @Nullable Float getLat();
+  public abstract @Nullable Float getLon();
+  public abstract @Nullable String getFileId();
+  public abstract @Nullable String getDataset();
+  public abstract @Nullable Float getRadius();
+  public abstract @Nullable String getTimeframe();
+  public abstract @Nullable Float getAzimuth();
+  public abstract @Nullable Float getDerate();
+  public abstract @Nullable Float getTilt();
+  public abstract @Nullable Float getTiltEqLat();
+  public abstract @Nullable Float getTrackMode();
+  public abstract @Nullable Float getInoct();
+  public abstract @Nullable Float getGamma();
+  public abstract @Nullable String getCallback();
   
   public static Builder builder() {
     return new AutoValue_PvWatts4Request.Builder();
@@ -33,23 +30,22 @@ public abstract class PvWatts4Request {
   
   @AutoValue.Builder
   public abstract static class Builder {
-    public abstract Builder setRawInputs(Map<String, String> rawInputs);
-    public abstract Builder setSystemSize(float systemSize);
-    public abstract Builder setAddress(String address);
-    public abstract Builder setLat(float lat);
-    public abstract Builder setLon(float lon);
-    public abstract Builder setFileId(String fileId);
-    public abstract Builder setDataset(String dataset);
-    public abstract Builder setRadius(int radius);
-    public abstract Builder setTimeframe(String timeframe);
-    public abstract Builder setAzimuth(float azimuth);
-    public abstract Builder setDerate(float derate);
-    public abstract Builder setTilt(float tilt);
-    public abstract Builder setTiltEqLat(int tiltEqLat);
-    public abstract Builder setTrackMode(int trackMode);
-    public abstract Builder setInoct(float inoct);
-    public abstract Builder setGamma(float gamma);
-    public abstract Builder setCallback(String callback);
+    public abstract Builder setSystemSize(@Nullable Float systemSize);
+    public abstract Builder setAddress(@Nullable String address);
+    public abstract Builder setLat(@Nullable Float lat);
+    public abstract Builder setLon(@Nullable Float lon);
+    public abstract Builder setFileId(@Nullable String fileId);
+    public abstract Builder setDataset(@Nullable String dataset);
+    public abstract Builder setRadius(@Nullable Float radius);
+    public abstract Builder setTimeframe(@Nullable String timeframe);
+    public abstract Builder setAzimuth(@Nullable Float azimuth);
+    public abstract Builder setDerate(@Nullable Float derate);
+    public abstract Builder setTilt(@Nullable Float tilt);
+    public abstract Builder setTiltEqLat(@Nullable Float tiltEqLat);
+    public abstract Builder setTrackMode(@Nullable Float trackMode);
+    public abstract Builder setInoct(@Nullable Float inoct);
+    public abstract Builder setGamma(@Nullable Float gamma);
+    public abstract Builder setCallback(@Nullable String callback);
     
     public abstract PvWatts4Request build();
   }

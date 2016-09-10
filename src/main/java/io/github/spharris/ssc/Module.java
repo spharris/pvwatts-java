@@ -128,6 +128,14 @@ public class Module {
     throw new IllegalStateException("You cannot call getEntry for a module that doesn't exist.");
   }
 
+  public int getSscVersion() {
+    return api.ssc_version();
+  }
+  
+  public String getSscBuildInfo() {
+    return api.ssc_build_info();
+  }
+  
   public ModuleSummary getShortModuleInfo() {
     return new ModuleSummary(getName(), getDescription(), getVersion());
   }
@@ -218,27 +226,28 @@ public class Module {
    * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
    * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
    */
-  public void setValue(String variableName, float value) {
+  public Module setValue(String variableName, float value) {
     checkState();
     checkNotNull(variableName);
 
     api.ssc_data_set_number(data, variableName, value);
+    return this;
   }
 
-  public void setValue(String variableName, int value) {
-    setValue(variableName, (float) value);
+  public Module setValue(String variableName, int value) {
+    return setValue(variableName, (float) value);
   }
 
-  public void setValue(String variableName, long value) {
-    setValue(variableName, (float) value);
+  public Module setValue(String variableName, long value) {
+    return setValue(variableName, (float) value);
   }
 
-  public void setValue(String variableName, double value) {
-    setValue(variableName, (float) value);
+  public Module setValue(String variableName, double value) {
+    return setValue(variableName, (float) value);
   }
 
-  public void setValue(String variableName, Number value) {
-    setValue(variableName, value.floatValue());
+  public Module setValue(String variableName, Number value) {
+    return setValue(variableName, value.floatValue());
   }
 
   /**
@@ -251,11 +260,12 @@ public class Module {
    * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is
    *         null
    */
-  public void setValue(String variableName, String value) {
+  public Module setValue(String variableName, String value) {
     checkState();
     checkNotNull(value);
 
     api.ssc_data_set_string(data, variableName, value);
+    return this;
   }
 
   /**
@@ -269,48 +279,49 @@ public class Module {
    *         null
    * @throws {@link java.lang.IllegalArgumentException} if <tt>value</tt> has a length of zero.
    */
-  public void setValue(String variableName, float[] value) {
+  public Module setValue(String variableName, float[] value) {
     checkState();
     checkNotNull(value);
     checkArgument(value.length >= 1, "The length of the array must be >= 1.");
 
     api.ssc_data_set_array(data, variableName, value, value.length);
+    return this;
   }
 
-  public void setValue(String variableName, int[] value) {
+  public Module setValue(String variableName, int[] value) {
     float[] floats = new float[value.length];
     for (int i = 0; i < value.length; i++) {
       floats[i] = value[i];
     }
 
-    setValue(variableName, floats);
+    return setValue(variableName, floats);
   }
 
-  public void setValue(String variableName, long[] value) {
+  public Module setValue(String variableName, long[] value) {
     float[] floats = new float[value.length];
     for (int i = 0; i < value.length; i++) {
       floats[i] = value[i];
     }
 
-    setValue(variableName, floats);
+    return setValue(variableName, floats);
   }
 
-  public void setValue(String variableName, double[] value) {
+  public Module setValue(String variableName, double[] value) {
     float[] floats = new float[value.length];
     for (int i = 0; i < value.length; i++) {
       floats[i] = (float) value[i];
     }
 
-    setValue(variableName, floats);
+    return setValue(variableName, floats);
   }
 
-  public void setValue(String variableName, Number[] value) {
+  public Module setValue(String variableName, Number[] value) {
     float[] floats = new float[value.length];
     for (int i = 0; i < value.length; i++) {
       floats[i] = value[i].floatValue();
     }
 
-    setValue(variableName, floats);
+    return setValue(variableName, floats);
   }
 
   /**
@@ -324,7 +335,7 @@ public class Module {
    *         null
    * @throws {@link java.lang.IllegalArgumentException} if <tt>value</tt> has zero rows or columns
    */
-  public void setValue(String variableName, float[][] value) {
+  public Module setValue(String variableName, float[][] value) {
     checkState();
     checkNotNull(value);
     checkArgument(value.length >= 1, "The number of rows must be >= 1.");
@@ -340,9 +351,10 @@ public class Module {
     }
 
     api.ssc_data_set_matrix(data, variableName, inputArray, rows, cols);
+    return this;
   }
 
-  public void setValue(String variableName, int[][] value) {
+  public Module setValue(String variableName, int[][] value) {
     checkNotNull(value);
     checkArgument(value.length >= 1, "The number of rows must be >= 1.");
     checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
@@ -354,10 +366,10 @@ public class Module {
       }
     }
 
-    setValue(variableName, floats);
+    return setValue(variableName, floats);
   }
 
-  public void setValue(String variableName, long[][] value) {
+  public Module setValue(String variableName, long[][] value) {
     checkNotNull(value);
     checkArgument(value.length >= 1, "The number of rows must be >= 1.");
     checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
@@ -369,10 +381,10 @@ public class Module {
       }
     }
 
-    setValue(variableName, floats);
+    return setValue(variableName, floats);
   }
 
-  public void setValue(String variableName, double[][] value) {
+  public Module setValue(String variableName, double[][] value) {
     checkNotNull(value);
     checkArgument(value.length >= 1, "The number of rows must be >= 1.");
     checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
@@ -384,10 +396,10 @@ public class Module {
       }
     }
 
-    setValue(variableName, floats);
+    return setValue(variableName, floats);
   }
 
-  public void setValue(String variableName, Number[][] value) {
+  public Module setValue(String variableName, Number[][] value) {
     checkNotNull(value);
     checkArgument(value.length >= 1, "The number of rows must be >= 1.");
     checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
@@ -399,7 +411,7 @@ public class Module {
       }
     }
 
-    setValue(variableName, floats);
+    return setValue(variableName, floats);
   }
 
   /**

@@ -1,17 +1,25 @@
 package io.github.spharris.ssc;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.util.List;
-
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import com.google.common.base.Optional;
 import com.sun.jna.Pointer;
@@ -19,6 +27,7 @@ import com.sun.jna.ptr.FloatByReference;
 
 import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
 
+@RunWith(JUnit4.class)
 public class UnitTestModule {
 
   private static final String MODULE_NAME = "test module";
@@ -178,7 +187,7 @@ public class UnitTestModule {
     float[] expected = {1, 2, 3, 4, 5, 6};
     verify(mockApi).ssc_data_set_matrix(any(Pointer.class), eq(varName), eq(expected), eq(3),
         eq(2));
-  }
+  } 
 
   @Test
   public void getVariableCallsAllInfoFunctions() {
