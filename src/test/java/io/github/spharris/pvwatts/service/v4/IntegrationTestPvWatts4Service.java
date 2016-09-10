@@ -38,7 +38,7 @@ public class IntegrationTestPvWatts4Service {
         .setDataset("tmy2")
         .setSystemSize(5f)
         .setDerate(0.85f)
-        .setTrackMode(1f)
+        .setTrackMode(1)
         .build();
     
     PvWatts4Response result = service.execute(request);
