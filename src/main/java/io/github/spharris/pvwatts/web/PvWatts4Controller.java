@@ -20,7 +20,7 @@ import io.github.spharris.pvwatts.service.v4.PvWatts4Response;
 import io.github.spharris.pvwatts.service.v4.PvWatts4Service;
 
 @Path("/")
-public final class PvWatts4Controller {
+final class PvWatts4Controller {
 
   private final PvWatts4Service service;
   
