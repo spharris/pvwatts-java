@@ -9,6 +9,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 
 import io.github.spharris.pvwatts.service.PvWattsServiceModule;
@@ -18,6 +21,8 @@ import io.github.spharris.ssc.SscModule;
 public class IntegrationTestPvWatts4Service {
   
   // https://developer.nrel.gov/api/pvwatts/v4.json?api_key=DEMO_KEY&system_size=4&dataset=tmy2&derate=0.77&lat=33.81666&lon=-118.15&tilt=1.5&track_mode=1&azimuth=30&timeframe=hourly
+  
+  static final float EPSILON = 0.001f;
   
   PvWatts4Request.Builder requestBuilder = PvWatts4Request.builder()
         .setLat(33.816f)
@@ -29,14 +34,16 @@ public class IntegrationTestPvWatts4Service {
         .setDerate(0.77f)
         .setTrackMode(1);
   
+  ObjectMapper mapper = new ObjectMapper()
+      .registerModule(new GuavaModule());
+  
   @Inject PvWatts4Service service;
   
   @Before
   public void createInjector() {
     Guice.createInjector(
-            new SscModule(),
-            new PvWattsServiceModule())
-        .injectMembers(this);
+      new SscModule(),
+      new PvWattsServiceModule()).injectMembers(this);
   }
   
   @Test
@@ -77,7 +84,51 @@ public class IntegrationTestPvWatts4Service {
   }
   
   @Test
-  public void hourlyDataMatchesExpected() {
+  public void hourlyDataMatchesExpected() throws Exception {
+    PvWatts4Response result = service.execute(requestBuilder
+      .setTimeframe("hourly")
+      .build());
     
+    PvWatts4Response expected = loadResponse("long_beach_hourly.json");
+    
+    arraysAreClose(result.getOutputs().getAc(), expected.getOutputs().getAc());
+    arraysAreClose(result.getOutputs().getDc(), expected.getOutputs().getDc());
+    arraysAreClose(result.getOutputs().getDf(), expected.getOutputs().getDf());
+    arraysAreClose(result.getOutputs().getDn(), expected.getOutputs().getDn());
+    arraysAreClose(result.getOutputs().getPoa(), expected.getOutputs().getPoa());
+    arraysAreClose(result.getOutputs().getTamb(), expected.getOutputs().getTamb());
+    arraysAreClose(result.getOutputs().getTcell(), expected.getOutputs().getTcell());
+    arraysAreClose(result.getOutputs().getWspd(), expected.getOutputs().getWspd());
+    
+    arraysAreClose(result.getOutputs().getAcMonthly(), expected.getOutputs().getAcMonthly());
+    arraysAreClose(result.getOutputs().getDcMonthly(), expected.getOutputs().getDcMonthly());
+    arraysAreClose(result.getOutputs().getPoaMonthly(), expected.getOutputs().getPoaMonthly());
+    
+    assertThat(result.getOutputs().getAcAnnual()).isWithin(EPSILON)
+      .of(expected.getOutputs().getAcAnnual());
+    
+    assertThat(result.getOutputs().getSolradAnnual()).isWithin(EPSILON)
+      .of(expected.getOutputs().getSolradAnnual());
+  }
+  
+  @Test
+  public void monthlyDataMatchesExpected() throws Exception {
+    PvWatts4Response result = service.execute(requestBuilder.build());
+    
+    PvWatts4Response expected = loadResponse("long_beach_monthly.json");
+    
+    assertThat(result.getOutputs()).isEqualTo(expected.getOutputs());
+  }
+  
+  private static void arraysAreClose(ImmutableList<Float> result, ImmutableList<Float> expected) {
+    for (int i = 0; i < result.size(); i++) {
+      assertThat(result.get(i)).isWithin(EPSILON).of(expected.get(i));
+    }
+  }
+  
+  private PvWatts4Response loadResponse(String file) throws Exception {
+    return mapper.readValue(
+      getClass().getClassLoader().getResourceAsStream("samples/v4/" + file),
+      PvWatts4Response.class);
   }
 }

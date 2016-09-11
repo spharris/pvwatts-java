@@ -2,6 +2,7 @@ package io.github.spharris.pvwatts.service.v4;
 
 import javax.annotation.Nullable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,16 +34,18 @@ public abstract class PvWatts4Response {
   @AutoValue.Builder
   @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
   public abstract static class Builder {
-    
-    public abstract Builder setInputs(Multimap<String, String> inputs);
-    public abstract Builder setErrors(ImmutableList<String> errors);
+
     public abstract Builder setErrors(String... errors);
-    public abstract Builder setWarnings(ImmutableList<String> warnings);
     public abstract Builder setWarnings(String... warnings);
     public abstract Builder setVersion(String version);
-    public abstract Builder setSscInfo(SscInfo sscInfo);
-    public abstract Builder setStationInfo(StationInfo stationInfo);
     public abstract Builder setOutputs(Outputs outputs);
+    
+    @JsonProperty("errors") public abstract Builder setErrors(ImmutableList<String> errors);
+    @JsonProperty("warnings") public abstract Builder setWarnings(ImmutableList<String> warnings);
+    @JsonProperty("ssc_info") public abstract Builder setSscInfo(SscInfo sscInfo);
+    @JsonProperty("station_info") public abstract Builder setStationInfo(StationInfo stationInfo);
+    
+    @JsonIgnore public abstract Builder setInputs(Multimap<String, String> inputs);
     
     public abstract PvWatts4Response build();
   }
@@ -93,7 +96,7 @@ public abstract class PvWatts4Response {
     @AutoValue.Builder
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     public abstract static class Builder {
-      
+
       public abstract Builder setLat(Float lat);
       public abstract Builder setLon(Float lon);
       public abstract Builder setElev(Float elev);
@@ -101,8 +104,9 @@ public abstract class PvWatts4Response {
       public abstract Builder setLocation(String location);
       public abstract Builder setCity(String city);
       public abstract Builder setState(String state);
-      public abstract Builder setFileName(String fileName);
       public abstract Builder setDistance(Integer distance);
+      
+      @JsonProperty("file_name") public abstract Builder setFileName(String fileName);
       
       public abstract StationInfo build();
     }
@@ -139,12 +143,6 @@ public abstract class PvWatts4Response {
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     public abstract static class Builder {
 
-      public abstract Builder setPoaMonthly(Iterable<Float> poaMonthly);
-      public abstract Builder setDcMonthly(Iterable<Float> dcMonthly);
-      public abstract Builder setAcMonthly(Iterable<Float> acMonthly);
-      public abstract Builder setAcAnnual(Float acAnnual);
-      public abstract Builder setSolradMonthly(Iterable<Float> solradMonthly);
-      public abstract Builder setSolradAnnual(Float solradAnnual);
       public abstract Builder setAc(Iterable<Float> ac);
       public abstract Builder setPoa(Iterable<Float> poa);
       public abstract Builder setDn(Iterable<Float> dn);
@@ -153,6 +151,17 @@ public abstract class PvWatts4Response {
       public abstract Builder setTamb(Iterable<Float> tamb);
       public abstract Builder setTcell(Iterable<Float> tcell);
       public abstract Builder setWspd(Iterable<Float> wspd);
+      
+      @JsonProperty("poa_monthly")
+      public abstract Builder setPoaMonthly(Iterable<Float> poaMonthly);
+      
+      @JsonProperty("solrad_monthly")
+      public abstract Builder setSolradMonthly(Iterable<Float> solradMonthly);
+      
+      @JsonProperty("dc_monthly") public abstract Builder setDcMonthly(Iterable<Float> dcMonthly);
+      @JsonProperty("ac_monthly") public abstract Builder setAcMonthly(Iterable<Float> acMonthly);
+      @JsonProperty("ac_annual") public abstract Builder setAcAnnual(Float acAnnual);
+      @JsonProperty("solrad_annual") public abstract Builder setSolradAnnual(Float solradAnnual);
       
       public abstract Outputs build();
     }
