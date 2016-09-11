@@ -29,10 +29,17 @@ public final class PvWatts4Service {
   }
 
   public PvWatts4Response execute(ImmutableMultimap<String, String> parameters) {
-    return execute(RequestConverter.toPvWatts4Request(parameters));
+    return executeWithResponse(
+      RequestConverter.toPvWatts4Request(parameters),
+      PvWatts4Response.builder().setInputs(parameters));
   }
   
   public PvWatts4Response execute(PvWatts4Request request) {
+    return executeWithResponse(request, PvWatts4Response.builder());
+  }
+  
+  private PvWatts4Response executeWithResponse(PvWatts4Request request,
+      PvWatts4Response.Builder response) {
     Module module = moduleFactory.create(MODULE_NAME);
 
     setRequiredValues(module);
@@ -51,9 +58,8 @@ public final class PvWatts4Service {
     module.execute(messageLoggingHandler(errorListBuilder, warningListBuilder));
     
     ImmutableList<String> errors = errorListBuilder.build();
-    PvWatts4Response.Builder response = PvWatts4Response.builder(); 
     if (errors.isEmpty()) {
-      response = buildResponse(module, request);
+      buildResponse(module, request, response);
     }
     
     response.setErrors(errors);
@@ -71,9 +77,9 @@ public final class PvWatts4Service {
     Variables.ADJUST_CONSTANT.set(1f, module);
   }
   
-  private static PvWatts4Response.Builder buildResponse(Module module, PvWatts4Request request) {
-    PvWatts4Response.Builder builder = PvWatts4Response.builder()
-        .setVersion(SERVICE_VERSION)
+  private static PvWatts4Response.Builder buildResponse(Module module, PvWatts4Request request,
+      PvWatts4Response.Builder response) {
+    response.setVersion(SERVICE_VERSION)
         .setSscInfo(SscInfo.builder()
           .setVersion(module.getSscVersion())
           .setBuild(module.getSscBuildInfo())
@@ -107,9 +113,9 @@ public final class PvWatts4Service {
       outputsBuilder.setWspd(Variables.WSPD.get(module));
     }
 
-    builder.setOutputs(outputsBuilder.build());
+    response.setOutputs(outputsBuilder.build());
     
-    return builder;
+    return response;
   }
   
   private static ExecutionHandler messageLoggingHandler(

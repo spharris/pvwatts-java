@@ -71,6 +71,24 @@ public class IntegrationTestPvWatts4Service {
   }
   
   @Test
+  public void simulationFromParametersWritesInputs() {
+    ImmutableMultimap<String, String> inputs = ImmutableMultimap.<String, String>builder()
+      .put("lat", "33.816")
+      .put("lon", "-118.15")
+      .put("azimuth", "30")
+      .put("tilt", "1.5")
+      .put("dataset", "tmy2")
+      .put("system_size", "4")
+      .put("derate", "0.77")
+      .put("track_mode", "1")
+      .build(); 
+    
+    PvWatts4Response result = service.execute(inputs);
+    
+    assertThat(result.getInputs()).isEqualTo(inputs);
+  }
+  
+  @Test
   public void doesNotPopulateHourlyDataByDefault() {
     PvWatts4Response result = service.execute(requestBuilder.build());
     

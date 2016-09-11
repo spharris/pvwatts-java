@@ -8,17 +8,22 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+
+import io.github.spharris.pvwatts.utils.ImmutableMultimapSerializer;
 
 @AutoValue
 @JsonInclude(Include.NON_NULL)
 @JsonDeserialize(builder = AutoValue_PvWatts4Response.Builder.class)
 public abstract class PvWatts4Response {
   
+  @JsonSerialize(using = ImmutableMultimapSerializer.class)
   public abstract @Nullable ImmutableMultimap<String, String> getInputs();
+
   public abstract @Nullable ImmutableList<String> getErrors();
   public abstract @Nullable ImmutableList<String> getWarnings();
   public abstract @Nullable String getVersion();

@@ -1,25 +1,38 @@
 package io.github.spharris.pvwatts.utils;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Map.Entry;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Iterables;
 
-public class ImmutableMultimapSerializer extends StdSerializer<ImmutableMultimap<String, String>> {
-
-  private static final long serialVersionUID = 295125183211555478L;
-
-  public ImmutableMultimapSerializer() {
-    super(ImmutableMultimap.class, true);
-  }
-
+public class ImmutableMultimapSerializer extends JsonSerializer<ImmutableMultimap<String, String>> {
+  
   @Override
   public void serialize(ImmutableMultimap<String, String> value,
       JsonGenerator gen,
       SerializerProvider provider) throws IOException {
-    // TODO Auto-generated method stub
+    gen.writeStartObject();
     
+    for (Entry<String, Collection<String>> entry : value.asMap().entrySet()) {
+      Collection<String> values = entry.getValue();
+      if (values.isEmpty()) {
+        continue;
+      }
+      
+      gen.writeFieldName(entry.getKey());
+      
+      if (values.size() == 1) {
+        gen.writeObject(Iterables.getOnlyElement(values));
+      } else {
+        gen.writeObject(values);
+      }
+    }
+    
+    gen.writeEndObject();
   }
 }
