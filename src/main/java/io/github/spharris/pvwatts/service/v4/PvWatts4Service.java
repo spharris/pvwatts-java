@@ -5,10 +5,12 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
 
 import io.github.spharris.pvwatts.service.v4.PvWatts4Response.Outputs;
 import io.github.spharris.pvwatts.service.v4.PvWatts4Response.SscInfo;
 import io.github.spharris.pvwatts.service.v4.PvWatts4Response.StationInfo;
+import io.github.spharris.pvwatts.utils.RequestConverter;
 import io.github.spharris.ssc.ExecutionHandler;
 import io.github.spharris.ssc.Module;
 import io.github.spharris.ssc.ModuleFactory;
@@ -26,6 +28,10 @@ public final class PvWatts4Service {
     this.moduleFactory = moduleFactory;
   }
 
+  public PvWatts4Response execute(ImmutableMultimap<String, String> parameters) {
+    return execute(RequestConverter.toPvWatts4Request(parameters));
+  }
+  
   public PvWatts4Response execute(PvWatts4Request request) {
     Module module = moduleFactory.create(MODULE_NAME);
 
@@ -49,7 +55,9 @@ public final class PvWatts4Service {
     if (errors.isEmpty()) {
       response = buildResponse(module, request);
     }
+    
     response.setErrors(errors);
+    response.setWarnings(warningListBuilder.build());
     
     module.free();
     

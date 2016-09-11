@@ -12,6 +12,7 @@ import org.junit.runners.JUnit4;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Guice;
 
 import io.github.spharris.pvwatts.service.PvWattsServiceModule;
@@ -49,6 +50,22 @@ public class IntegrationTestPvWatts4Service {
   @Test
   public void runsPvWatts4Simulation() {
     PvWatts4Response result = service.execute(requestBuilder.build());
+    
+    assertThat(result.getOutputs().getAcAnnual()).isGreaterThan(0f);
+  }
+  
+  @Test
+  public void runsPvWatts4SimulationFromParameters() {
+    PvWatts4Response result = service.execute(ImmutableMultimap.<String, String>builder()
+      .put("lat", "33.816")
+      .put("lon", "-118.15")
+      .put("azimuth", "30")
+      .put("tilt", "1.5")
+      .put("dataset", "tmy2")
+      .put("system_size", "4")
+      .put("derate", "0.77")
+      .put("track_mode", "1")
+      .build());
     
     assertThat(result.getOutputs().getAcAnnual()).isGreaterThan(0f);
   }
@@ -118,6 +135,14 @@ public class IntegrationTestPvWatts4Service {
     PvWatts4Response expected = loadResponse("long_beach_monthly.json");
     
     assertThat(result.getOutputs()).isEqualTo(expected.getOutputs());
+  }
+  
+  @Test
+  public void errorsAndWarningsIsEmpty() throws Exception {
+    PvWatts4Response result = service.execute(requestBuilder.build());
+    
+    assertThat(result.getErrors()).isEmpty();
+    assertThat(result.getWarnings()).isEmpty();
   }
   
   private static void arraysAreClose(ImmutableList<Float> result, ImmutableList<Float> expected) {
