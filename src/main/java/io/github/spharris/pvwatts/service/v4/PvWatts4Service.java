@@ -1,5 +1,7 @@
 package io.github.spharris.pvwatts.service.v4;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
 import com.google.common.collect.ImmutableList;
@@ -54,6 +56,9 @@ public final class PvWatts4Service {
     return response.build();
   }
   
+  /**
+   * Parameters that are always the same for every request, but are still required.
+   */
   private static void setRequiredValues(Module module) {
     Variables.ADJUST_CONSTANT.set(1f, module);
   }
@@ -73,15 +78,28 @@ public final class PvWatts4Service {
           .setLocation(Variables.LOCATION.get(module))
           .setCity(Variables.CITY.get(module))
           .setState(Variables.STATE.get(module))
-          .build())
-        .setOutputs(Outputs.builder()
-          .setPoaMonthly(Variables.POA_MONTHLY.get(module))
-          .setDcMonthly(Variables.DC_MONTHLY.get(module))
-          .setAcMonthly(Variables.AC_MONTHLY.get(module))
-          .setAcAnnual(Variables.AC_ANNUAL.get(module))
-          .setSolradMonthly(Variables.SOLRAD_MONTHLY.get(module))
-          .setSolradAnnual(Variables.SOLRAD_ANNUAL.get(module))
-          .build()); 
+          .build());
+    
+    Outputs.Builder outputsBuilder = Outputs.builder()
+        .setPoaMonthly(Variables.POA_MONTHLY.get(module))
+        .setDcMonthly(Variables.DC_MONTHLY.get(module))
+        .setAcMonthly(Variables.AC_MONTHLY.get(module))
+        .setAcAnnual(Variables.AC_ANNUAL.get(module))
+        .setSolradMonthly(Variables.SOLRAD_MONTHLY.get(module))
+        .setSolradAnnual(Variables.SOLRAD_ANNUAL.get(module));
+    
+    if (Objects.equals(request.getTimeframe(), "hourly")) {
+      outputsBuilder.setAc(Variables.AC.get(module));
+      outputsBuilder.setPoa(Variables.POA.get(module));
+      outputsBuilder.setDn(Variables.DN.get(module));
+      outputsBuilder.setDc(Variables.DC.get(module));
+      outputsBuilder.setDf(Variables.DF.get(module));
+      outputsBuilder.setTamb(Variables.TAMB.get(module));
+      outputsBuilder.setTcell(Variables.TCELL.get(module));
+      outputsBuilder.setWspd(Variables.WSPD.get(module));
+    }
+
+    builder.setOutputs(outputsBuilder.build());
     
     return builder;
   }

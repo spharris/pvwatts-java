@@ -17,7 +17,7 @@ import io.github.spharris.ssc.SscModule;
 @RunWith(JUnit4.class)
 public class IntegrationTestPvWatts4Service {
   
-  static final PvWatts4Request.Builder REQUEST_BUILDER = PvWatts4Request.builder()
+  PvWatts4Request.Builder requestBuilder = PvWatts4Request.builder()
         .setLat(38f)
         .setLon(-118f)
         .setAzimuth(180f)
@@ -39,13 +39,38 @@ public class IntegrationTestPvWatts4Service {
   
   @Test
   public void runsPvWatts4Simulation() {
-    PvWatts4Response result = service.execute(REQUEST_BUILDER.build());
+    PvWatts4Response result = service.execute(requestBuilder.build());
     
     assertThat(result.getOutputs().getAcAnnual()).isGreaterThan(0f);
   }
   
   @Test
   public void doesNotPopulateHourlyDataByDefault() {
+    PvWatts4Response result = service.execute(requestBuilder.build());
     
+    assertThat(result.getOutputs().getAc()).isNull();
+    assertThat(result.getOutputs().getDc()).isNull();
+    assertThat(result.getOutputs().getDf()).isNull();
+    assertThat(result.getOutputs().getDn()).isNull();
+    assertThat(result.getOutputs().getPoa()).isNull();
+    assertThat(result.getOutputs().getTamb()).isNull();
+    assertThat(result.getOutputs().getTcell()).isNull();
+    assertThat(result.getOutputs().getWspd()).isNull();
+  }
+  
+  @Test
+  public void populatesHourlyDataWhenRequested() {
+    PvWatts4Response result = service.execute(requestBuilder
+      .setTimeframe("hourly")
+      .build());
+    
+    assertThat(result.getOutputs().getAc()).hasSize(8760);
+    assertThat(result.getOutputs().getDc()).hasSize(8760);
+    assertThat(result.getOutputs().getDf()).hasSize(8760);
+    assertThat(result.getOutputs().getDn()).hasSize(8760);
+    assertThat(result.getOutputs().getPoa()).hasSize(8760);
+    assertThat(result.getOutputs().getTamb()).hasSize(8760);
+    assertThat(result.getOutputs().getTcell()).hasSize(8760);
+    assertThat(result.getOutputs().getWspd()).hasSize(8760);
   }
 }
