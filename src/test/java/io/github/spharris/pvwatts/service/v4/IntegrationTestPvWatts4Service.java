@@ -17,15 +17,17 @@ import io.github.spharris.ssc.SscModule;
 @RunWith(JUnit4.class)
 public class IntegrationTestPvWatts4Service {
   
+  // https://developer.nrel.gov/api/pvwatts/v4.json?api_key=DEMO_KEY&system_size=4&dataset=tmy2&derate=0.77&lat=33.81666&lon=-118.15&tilt=1.5&track_mode=1&azimuth=30&timeframe=hourly
+  
   PvWatts4Request.Builder requestBuilder = PvWatts4Request.builder()
-        .setLat(38f)
-        .setLon(-118f)
-        .setAzimuth(180f)
-        .setTilt(10f)
+        .setLat(33.816f)
+        .setLon(-118.15f)
+        .setAzimuth(30f)
+        .setTilt(1.5f)
         .setDataset("tmy2")
-        .setSystemSize(5f)
-        .setDerate(0.85f)
-        .setTrackMode(1); 
+        .setSystemSize(4f)
+        .setDerate(0.77f)
+        .setTrackMode(1);
   
   @Inject PvWatts4Service service;
   
@@ -72,5 +74,10 @@ public class IntegrationTestPvWatts4Service {
     assertThat(result.getOutputs().getTamb()).hasSize(8760);
     assertThat(result.getOutputs().getTcell()).hasSize(8760);
     assertThat(result.getOutputs().getWspd()).hasSize(8760);
+  }
+  
+  @Test
+  public void hourlyDataMatchesExpected() {
+    
   }
 }

@@ -4,7 +4,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 @Path("/")
-class PvWatts5Controller {
+public class PvWatts5Controller {
 
   @Path("v5.xml")
   @GET
