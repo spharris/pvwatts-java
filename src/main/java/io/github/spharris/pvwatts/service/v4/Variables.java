@@ -13,9 +13,7 @@ class Variables {
 
   public static final InputVariable<String> SOLAR_RESOURCE_FILE = 
       SscVariables.stringInput("solar_resource_file");
-  public static final InputVariable<Integer> RADIUS = 
-      SscVariables.integerInput("radius");
-  
+    
   public static final InputVariable<Float> SYSTEM_SIZE = SscVariables.numberInput("system_size");
   public static final InputVariable<Float> DERATE = SscVariables.numberInput("derate");
   public static final InputVariable<Integer> TRACK_MODE = SscVariables.integerInput("track_mode");
@@ -49,7 +47,7 @@ class Variables {
   public static final OutputVariable<Float> ELEV = SscVariables.numberOutput("elev");
   
   public static final ImmutableList<SscVariable> INPUT_VARIABLES = ImmutableList.<SscVariable>of(
-        SOLAR_RESOURCE_FILE, RADIUS, SYSTEM_SIZE, DERATE, TRACK_MODE, AZIMUTH, TILT, TILT_EQ_LAT,
+        SOLAR_RESOURCE_FILE, SYSTEM_SIZE, DERATE, TRACK_MODE, AZIMUTH, TILT, TILT_EQ_LAT,
         INOCT, GAMMA, ADJUST_CONSTANT);
   
   public static final ImmutableList<SscVariable> OUTPUT_VARIABLES = ImmutableList.<SscVariable>of( 

@@ -1,7 +1,6 @@
 package io.github.spharris.pvwatts.service.v4;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 import javax.inject.Inject;
 
@@ -18,6 +17,16 @@ import io.github.spharris.ssc.SscModule;
 @RunWith(JUnit4.class)
 public class IntegrationTestPvWatts4Service {
   
+  static final PvWatts4Request.Builder REQUEST_BUILDER = PvWatts4Request.builder()
+        .setLat(38f)
+        .setLon(-118f)
+        .setAzimuth(180f)
+        .setTilt(10f)
+        .setDataset("tmy2")
+        .setSystemSize(5f)
+        .setDerate(0.85f)
+        .setTrackMode(1); 
+  
   @Inject PvWatts4Service service;
   
   @Before
@@ -30,19 +39,13 @@ public class IntegrationTestPvWatts4Service {
   
   @Test
   public void runsPvWatts4Simulation() {
-    PvWatts4Request request = PvWatts4Request.builder()
-        .setLat(38f)
-        .setLon(-118f)
-        .setAzimuth(180f)
-        .setTilt(10f)
-        .setDataset("tmy2")
-        .setSystemSize(5f)
-        .setDerate(0.85f)
-        .setTrackMode(1)
-        .build();
+    PvWatts4Response result = service.execute(REQUEST_BUILDER.build());
     
-    PvWatts4Response result = service.execute(request);
+    assertThat(result.getOutputs().getAcAnnual()).isGreaterThan(0f);
+  }
+  
+  @Test
+  public void doesNotPopulateHourlyDataByDefault() {
     
-    assertThat(result.getOutputs().getAcAnnual(), greaterThan(0f));
   }
 }

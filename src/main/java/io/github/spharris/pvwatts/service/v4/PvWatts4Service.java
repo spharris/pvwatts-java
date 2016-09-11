@@ -3,7 +3,6 @@ package io.github.spharris.pvwatts.service.v4;
 import javax.inject.Inject;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultimap;
 
 import io.github.spharris.pvwatts.service.v4.PvWatts4Response.Outputs;
 import io.github.spharris.pvwatts.service.v4.PvWatts4Response.SscInfo;
@@ -24,56 +23,29 @@ public final class PvWatts4Service {
   public PvWatts4Service(ModuleFactory moduleFactory) {
     this.moduleFactory = moduleFactory;
   }
-  
-  public PvWatts4Response execute(ImmutableMultimap<String, String> request) {
-    return null;
-  }
-  
+
   public PvWatts4Response execute(PvWatts4Request request) {
     Module module = moduleFactory.create(MODULE_NAME);
-    
-    Variables.SOLAR_RESOURCE_FILE.set("target/classes/weather/23129.tm2", module);
-    
-    if (request.getSystemSize() != null) {
-      Variables.SYSTEM_SIZE.set(request.getSystemSize(), module);
-    }
-    
-    if (request.getAzimuth() != null) {
-      Variables.AZIMUTH.set(request.getAzimuth(), module);
-    }
-    
-    if (request.getTilt() != null) {
-      Variables.TILT.set(request.getTilt(), module);
-    }
-    
-    if (request.getDerate() != null) {
-      Variables.DERATE.set(request.getDerate(), module);
-    }
-    
-    if (request.getTrackMode() != null) {
-      Variables.TRACK_MODE.set(request.getTrackMode(), module);
-    }
-    
-    if (request.getTiltEqLat() != null) {
-      Variables.TILT_EQ_LAT.set(request.getTiltEqLat(), module);
-    }
-    
-    if (request.getInoct() != null) {
-      Variables.INOCT.set(request.getInoct(), module);
-    }
-    
-    if (request.getGamma() != null) {
-      Variables.GAMMA.set(request.getGamma(), module);
-    }
-    
-    ImmutableList.Builder<String> builder = ImmutableList.builder();
+
     setRequiredValues(module);
-    module.execute(logMessagesToList(builder));
+    Variables.SOLAR_RESOURCE_FILE.set("target/classes/weather/23129.tm2", module);
+    Variables.SYSTEM_SIZE.set(request.getSystemSize(), module);
+    Variables.AZIMUTH.set(request.getAzimuth(), module);
+    Variables.TILT.set(request.getTilt(), module);
+    Variables.DERATE.set(request.getDerate(), module);
+    Variables.TRACK_MODE.set(request.getTrackMode(), module);
+    Variables.TILT_EQ_LAT.set(request.getTiltEqLat(), module);
+    Variables.INOCT.set(request.getInoct(), module);
+    Variables.GAMMA.set(request.getGamma(), module);
+
+    ImmutableList.Builder<String> errorListBuilder = ImmutableList.builder();
+    ImmutableList.Builder<String> warningListBuilder = ImmutableList.builder();
+    module.execute(messageLoggingHandler(errorListBuilder, warningListBuilder));
     
-    ImmutableList<String> errors = builder.build();
+    ImmutableList<String> errors = errorListBuilder.build();
     PvWatts4Response.Builder response = PvWatts4Response.builder(); 
     if (errors.isEmpty()) {
-      buildResponse(module, request);
+      response = buildResponse(module, request);
     }
     response.setErrors(errors);
     
@@ -114,12 +86,18 @@ public final class PvWatts4Service {
     return builder;
   }
   
-  private static ExecutionHandler logMessagesToList(final ImmutableList.Builder<String> builder) {
+  private static ExecutionHandler messageLoggingHandler(
+      final ImmutableList.Builder<String> errorListBuilder,
+      final ImmutableList.Builder<String> warningListBuilder) {
     return new ExecutionHandler() {
 
       @Override
       public boolean handleLogMessage(MessageType type, float time, String message) {
-        builder.add(message);
+        if (type == MessageType.ERROR || type == MessageType.NOTICE) {
+          errorListBuilder.add(message);
+        } else if (type == MessageType.WARNING) {
+          warningListBuilder.add(message);
+        }
         
         return true;
       }

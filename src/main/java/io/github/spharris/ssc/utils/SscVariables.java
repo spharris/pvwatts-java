@@ -119,11 +119,6 @@ public final class SscVariables {
 
       module.setValue(varName, values);
     }
-
-    @Override
-    public ImmutableList<T> fromString(String value) {
-      throw new UnsupportedOperationException();
-    }
   }
   
   public static InputVariable<Float> numberInput(final String varName) {
@@ -146,15 +141,6 @@ public final class SscVariables {
       checkNotNull(module);
        
       module.setValue(varName, value.floatValue());
-    }
-
-    @Override
-    public Float fromString(String value) {
-      try {
-        return Float.valueOf(value);
-      } catch (NumberFormatException e) {
-        throw new NumberFormatException(String.format("'%s' must be a number", varName));
-      }
     }
   }
   
@@ -179,15 +165,6 @@ public final class SscVariables {
        
       module.setValue(varName, value.floatValue());
     }
-
-    @Override
-    public Integer fromString(String value) {
-      try {
-        return Integer.valueOf(value);
-      } catch (NumberFormatException e) {
-        throw new NumberFormatException(String.format("'%s' must be an integer", varName));
-      }
-    }
   }
   
   public static InputVariable<String> stringInput(String varName) {
@@ -209,11 +186,6 @@ public final class SscVariables {
       
       checkNotNull(module);
       module.setValue(varName, value);
-    }
-
-    @Override
-    public String fromString(String value) {
-      return value;
     }
   }
 }

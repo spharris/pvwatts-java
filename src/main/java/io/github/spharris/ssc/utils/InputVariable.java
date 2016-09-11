@@ -12,10 +12,4 @@ public interface InputVariable<T> extends SscVariable {
    * this method has no effect.
    */
   void set(T value, Module module);
-  
-  /**
-   * Parse the string <code>value</code> to return a value of the appropriate type. Optional
-   * method. 
-   */
-  T fromString(String value);
 }

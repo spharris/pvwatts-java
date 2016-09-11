@@ -91,26 +91,4 @@ public class UnitTestSscVariables {
     
     verify(module).getString(VAR_NAME);
   }
-  
-  @Test
-  public void integerVariableThrowsCustomException() {
-    String variable = "test_var";
-    String message = "'test_var' must be an integer";
-    
-    thrown.expect(NumberFormatException.class);
-    thrown.expectMessage(message);
-    
-    SscVariables.integerInput(variable).fromString("invalid");
-  }
-  
-  @Test
-  public void numberVariableThrowsCustomException() {
-    String variable = "test_var";
-    String message = "'test_var' must be a number";
-    
-    thrown.expect(NumberFormatException.class);
-    thrown.expectMessage(message);
-    
-    SscVariables.numberInput(variable).fromString("invalid");
-  }
 }
