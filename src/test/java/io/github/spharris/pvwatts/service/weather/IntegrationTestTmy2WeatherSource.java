@@ -19,7 +19,7 @@ public class IntegrationTestTmy2WeatherSource {
   
   @Test
   public void returnsClosestData() {
-    String expected = "target/classes/weather/tm2/26528.tm2";
+    String expected = "target/classes/weather/tmy2/26528.tm2";
     
     String result = tm2.getWeatherFile(62.30f, -150.10f, 0);
     
@@ -35,7 +35,7 @@ public class IntegrationTestTmy2WeatherSource {
   
   @Test
   public void radiusOfZeroIsUnlimited() {
-    String expected = "target/classes/weather/tm2/11641.tm2";
+    String expected = "target/classes/weather/tmy2/11641.tm2";
     
     String result = tm2.getWeatherFile(0.0f, 0.0f, 0);
     

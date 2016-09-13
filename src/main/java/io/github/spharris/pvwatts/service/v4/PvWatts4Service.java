@@ -54,8 +54,8 @@ public final class PvWatts4Service {
     Module module = moduleFactory.create(MODULE_NAME);
 
     setRequiredValues(module);
-    Variables.SOLAR_RESOURCE_FILE.set(
-      weatherSources.get("tmy2").getWeatherFile(0, 0, 0), module);
+    Variables.SOLAR_RESOURCE_FILE.set(weatherSources.get("tmy2").getWeatherFile(
+      request.getLat(), request.getLon(), request.getRadius()), module);
     Variables.SYSTEM_SIZE.set(request.getSystemSize(), module);
     Variables.AZIMUTH.set(request.getAzimuth(), module);
     Variables.TILT.set(request.getTilt(), module);

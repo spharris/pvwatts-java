@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableList;
 class Tmy2WeatherSource implements WeatherSource {
 
   private static final String TM2_DATABASE = "weather/tmy2/tmy2_data.csv";
-  private static final String BASE_PATH = "target/classes/weather/tm2/";
+  private static final String BASE_PATH = "target/classes/weather/tmy2/";
   
   @Override
   public String getWeatherFile(float lat, float lon, int radius) {
