@@ -65,7 +65,7 @@ public class UnitTestSscVariables {
   @Test
   public void numberOutputCallsCorrectFunction() {
     when(module.getNumber(isA(String.class))).thenReturn(Optional.of(1.0f));
-    OutputVariable<Float> output = SscVariables.numberOutput(VAR_NAME);
+    SscVariable<Float> output = SscVariables.numberOutput(VAR_NAME);
     
     output.get(module);
     
@@ -75,7 +75,7 @@ public class UnitTestSscVariables {
   @Test
   public void arrayOutputCallsCorrectFunction() {
     when(module.getArray(isA(String.class))).thenReturn(Optional.of(new float[] {1.0f}));
-    OutputVariable<ImmutableList<Float>> output = SscVariables.arrayOutput(VAR_NAME);
+    SscVariable<ImmutableList<Float>> output = SscVariables.arrayOutput(VAR_NAME);
     
     output.get(module);
     
@@ -85,7 +85,7 @@ public class UnitTestSscVariables {
   @Test
   public void stringOutputCallsCorrectFunction() {
     when(module.getString(isA(String.class))).thenReturn(Optional.of("test string"));
-    OutputVariable<String> output = SscVariables.stringOutput(VAR_NAME);
+    SscVariable<String> output = SscVariables.stringOutput(VAR_NAME);
     
     output.get(module);
     

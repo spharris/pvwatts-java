@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 
-import io.github.spharris.pvwatts.service.PvWattsServiceModule;
 import io.github.spharris.pvwatts.service.weather.Annotations.Tmy2;
 import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.ssc.SscModule;
@@ -45,7 +44,7 @@ public class IntegrationTestPvWatts4Service {
   ObjectMapper mapper = new ObjectMapper()
       .registerModule(new GuavaModule());
   
-  @Mock @Tmy2 WeatherSource tmy2WeatherSource;
+  @Mock WeatherSource tmy2WeatherSource;
   @Inject PvWatts4Service service;
   
   @Before
@@ -58,8 +57,7 @@ public class IntegrationTestPvWatts4Service {
         protected void configure() {
           bind(WeatherSource.class).annotatedWith(Tmy2.class).toInstance(tmy2WeatherSource);
         }
-      },
-      new PvWattsServiceModule()).injectMembers(this);
+      }).injectMembers(this);
   }
   
   @Before
@@ -73,6 +71,22 @@ public class IntegrationTestPvWatts4Service {
     PvWatts4Response result = service.execute(requestBuilder.build());
     
     assertThat(result.getOutputs().getAcAnnual()).isGreaterThan(0f);
+  }
+  
+  @Test
+  public void populatesFilename() {
+    PvWatts4Response result = service.execute(ImmutableMultimap.<String, String>builder()
+      .put("lat", "33.816")
+      .put("lon", "-118.15")
+      .put("azimuth", "30")
+      .put("tilt", "1.5")
+      .put("dataset", "tmy2")
+      .put("system_size", "4")
+      .put("derate", "0.77")
+      .put("track_mode", "1")
+      .build());
+    
+    assertThat(result.getStationInfo().getFileName()).isEqualTo("23129.tm2");
   }
   
   @Test

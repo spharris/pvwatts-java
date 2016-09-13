@@ -5,7 +5,7 @@ import io.github.spharris.ssc.Module;
 /**
  * An object representing an input variable to an SSC module.
  */
-public interface InputVariable<T> extends SscVariable {
+public interface InputVariable<T> extends SscVariable<T> {
   
   /**
    * Set <code>value</code> in <code>module</code>. If <code>value</code> is <code>null</code>,

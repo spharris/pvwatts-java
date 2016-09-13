@@ -13,7 +13,7 @@ public final class SscVariables {
   
   private SscVariables() {}
   
-  private static class AbstractVariable implements SscVariable {
+  private static abstract class AbstractVariable<T> implements SscVariable<T> {
     
     protected final String varName;
     
@@ -31,14 +31,13 @@ public final class SscVariables {
   /*
    * Output-related classes
    */
-  public static OutputVariable<ImmutableList<Float>> arrayOutput(String varName) {
-    return new ArrayOutputVariable(varName);
+  public static SscVariable<ImmutableList<Float>> arrayOutput(String varName) {
+    return new ArraySscVariable(varName);
   }
   
-  private static class ArrayOutputVariable extends AbstractVariable 
-      implements OutputVariable<ImmutableList<Float>> {
+  private static class ArraySscVariable extends AbstractVariable<ImmutableList<Float>> {
     
-    ArrayOutputVariable(String varName) {
+    ArraySscVariable(String varName) {
       super(varName);
     }
     
@@ -55,14 +54,13 @@ public final class SscVariables {
     }
   }
   
-  public static OutputVariable<Float> numberOutput(String varName) {
-    return new NumberOutputVariable(varName);
+  public static SscVariable<Float> numberOutput(String varName) {
+    return new NumberSscVariable(varName);
   }
   
-  private static class NumberOutputVariable extends AbstractVariable
-      implements OutputVariable<Float> {
+  private static class NumberSscVariable extends AbstractVariable<Float> {
     
-    NumberOutputVariable(String varName) {
+    NumberSscVariable(String varName) {
       super(varName);
     }
     
@@ -72,14 +70,13 @@ public final class SscVariables {
     }
   }
   
-  public static OutputVariable<String> stringOutput(String varName) {
-    return new StringOutputVariable(varName);
+  public static SscVariable<String> stringOutput(String varName) {
+    return new StringSscVariable(varName);
   }
   
-  private static class StringOutputVariable extends AbstractVariable
-      implements OutputVariable<String> {
+  private static class StringSscVariable extends AbstractVariable<String> {
     
-    StringOutputVariable(String varName) {
+    StringSscVariable(String varName) {
       super(varName);
     }
     
@@ -92,20 +89,20 @@ public final class SscVariables {
   /*
    * Input-related classes
    */
-  public static <T extends Number> InputVariable<ImmutableList<T>> arrayInput(
+  public static InputVariable<ImmutableList<Float>> arrayInput(
       final String varName) {
-    return new ArrayInputVariable<T>(varName);
+    return new ArrayInputVariable(varName);
   }
   
-  private static class ArrayInputVariable<T extends Number> extends AbstractVariable
-      implements InputVariable<ImmutableList<T>> {
+  private static class ArrayInputVariable extends ArraySscVariable
+      implements InputVariable<ImmutableList<Float>> {
 
     ArrayInputVariable(String varName) {
       super(varName);
     }
     
     @Override
-    public void set(ImmutableList<T> value, Module module) {
+    public void set(ImmutableList<Float> value, Module module) {
       if (value == null) {
         return;
       }
@@ -125,7 +122,7 @@ public final class SscVariables {
     return new NumberInputVariable(varName);
   }
   
-  private static class NumberInputVariable extends AbstractVariable
+  private static class NumberInputVariable extends NumberSscVariable
       implements InputVariable<Float> {
 
     NumberInputVariable(String varName) {
@@ -148,7 +145,7 @@ public final class SscVariables {
     return new IntegerInputVariable(varName);
   }
   
-  private static class IntegerInputVariable extends AbstractVariable
+  private static class IntegerInputVariable extends AbstractVariable<Integer>
       implements InputVariable<Integer> {
 
     IntegerInputVariable(String varName) {
@@ -165,13 +162,19 @@ public final class SscVariables {
        
       module.setValue(varName, value.floatValue());
     }
+    
+    @Override
+    public Integer get(Module module) {
+      checkNotNull(module);
+      return (int) Math.floor(module.getNumber(varName).get());
+    }
   }
   
   public static InputVariable<String> stringInput(String varName) {
     return new StringInputVariable(varName);
   }
   
-  private static class StringInputVariable extends AbstractVariable
+  private static class StringInputVariable extends StringSscVariable
       implements InputVariable<String> {
     
     StringInputVariable(String varName) {

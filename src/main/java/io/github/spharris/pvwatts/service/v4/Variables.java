@@ -3,7 +3,6 @@ package io.github.spharris.pvwatts.service.v4;
 import com.google.common.collect.ImmutableList;
 
 import io.github.spharris.ssc.utils.InputVariable;
-import io.github.spharris.ssc.utils.OutputVariable;
 import io.github.spharris.ssc.utils.SscVariable;
 import io.github.spharris.ssc.utils.SscVariables;
 
@@ -28,50 +27,36 @@ class Variables {
   public static final InputVariable<Float> ADJUST_CONSTANT =
       SscVariables.numberInput("adjust:constant");
   
-  public static final OutputVariable<ImmutableList<Float>> POA_MONTHLY = 
+  public static final SscVariable<ImmutableList<Float>> POA_MONTHLY = 
       SscVariables.arrayOutput("poa_monthly");
-  public static final OutputVariable<ImmutableList<Float>> SOLRAD_MONTHLY = 
+  public static final SscVariable<ImmutableList<Float>> SOLRAD_MONTHLY = 
       SscVariables.arrayOutput("solrad_monthly");
-  public static final OutputVariable<ImmutableList<Float>> DC_MONTHLY = 
+  public static final SscVariable<ImmutableList<Float>> DC_MONTHLY = 
       SscVariables.arrayOutput("dc_monthly");
-  public static final OutputVariable<ImmutableList<Float>> AC_MONTHLY = 
+  public static final SscVariable<ImmutableList<Float>> AC_MONTHLY = 
       SscVariables.arrayOutput("ac_monthly");
-  public static final OutputVariable<ImmutableList<Float>> MONTHLY_ENERGY = 
+  public static final SscVariable<ImmutableList<Float>> MONTHLY_ENERGY = 
       SscVariables.arrayOutput("monthly_energy");
-  public static final OutputVariable<Float> SOLRAD_ANNUAL = 
+  public static final SscVariable<Float> SOLRAD_ANNUAL = 
       SscVariables.numberOutput("solrad_annual");
-  public static final OutputVariable<Float> AC_ANNUAL = SscVariables.numberOutput("ac_annual");
-  public static final OutputVariable<Float> ANNUAL_ENERGY = 
+  public static final SscVariable<Float> AC_ANNUAL = SscVariables.numberOutput("ac_annual");
+  public static final SscVariable<Float> ANNUAL_ENERGY = 
       SscVariables.numberOutput("annual_energy");
-  public static final OutputVariable<ImmutableList<Float>> AC = SscVariables.arrayOutput("ac");
-  public static final OutputVariable<ImmutableList<Float>> POA = SscVariables.arrayOutput("poa");
-  public static final OutputVariable<ImmutableList<Float>> DN = SscVariables.arrayOutput("dn");
-  public static final OutputVariable<ImmutableList<Float>> DC = SscVariables.arrayOutput("dc");
-  public static final OutputVariable<ImmutableList<Float>> DF = SscVariables.arrayOutput("df");
-  public static final OutputVariable<ImmutableList<Float>> TAMB = SscVariables.arrayOutput("tamb");
-  public static final OutputVariable<ImmutableList<Float>> TCELL =
+  public static final SscVariable<ImmutableList<Float>> AC = SscVariables.arrayOutput("ac");
+  public static final SscVariable<ImmutableList<Float>> POA = SscVariables.arrayOutput("poa");
+  public static final SscVariable<ImmutableList<Float>> DN = SscVariables.arrayOutput("dn");
+  public static final SscVariable<ImmutableList<Float>> DC = SscVariables.arrayOutput("dc");
+  public static final SscVariable<ImmutableList<Float>> DF = SscVariables.arrayOutput("df");
+  public static final SscVariable<ImmutableList<Float>> TAMB = SscVariables.arrayOutput("tamb");
+  public static final SscVariable<ImmutableList<Float>> TCELL =
       SscVariables.arrayOutput("tcell");
-  public static final OutputVariable<ImmutableList<Float>> WSPD = SscVariables.arrayOutput("wspd");
+  public static final SscVariable<ImmutableList<Float>> WSPD = SscVariables.arrayOutput("wspd");
   
-  public static final OutputVariable<String> LOCATION = SscVariables.stringOutput("location");
-  public static final OutputVariable<String> CITY = SscVariables.stringOutput("city");
-  public static final OutputVariable<String> STATE = SscVariables.stringOutput("state");
-  public static final OutputVariable<Float> LAT = SscVariables.numberOutput("lat");
-  public static final OutputVariable<Float> LON = SscVariables.numberOutput("lon");
-  public static final OutputVariable<Float> TZ = SscVariables.numberOutput("tz");
-  public static final OutputVariable<Float> ELEV = SscVariables.numberOutput("elev");
-  
-  public static final ImmutableList<SscVariable> INPUT_VARIABLES = ImmutableList.<SscVariable>of(
-        SOLAR_RESOURCE_FILE, SYSTEM_SIZE, DERATE, TRACK_MODE, AZIMUTH, TILT, TILT_EQ_LAT,
-        INOCT, GAMMA, ADJUST_CONSTANT);
-  
-  public static final ImmutableList<SscVariable> OUTPUT_VARIABLES = ImmutableList.<SscVariable>of( 
-      POA_MONTHLY, SOLRAD_MONTHLY, DC_MONTHLY, AC_MONTHLY, MONTHLY_ENERGY, SOLRAD_ANNUAL,
-      AC_ANNUAL, ANNUAL_ENERGY, LOCATION, CITY, STATE, LAT, LON, TZ, ELEV);
-  
-  public static final ImmutableList<SscVariable> ALL_VARIABLES =
-      ImmutableList.<SscVariable>builder()
-        .addAll(INPUT_VARIABLES)
-        .addAll(OUTPUT_VARIABLES)
-        .build();
+  public static final SscVariable<String> LOCATION = SscVariables.stringOutput("location");
+  public static final SscVariable<String> CITY = SscVariables.stringOutput("city");
+  public static final SscVariable<String> STATE = SscVariables.stringOutput("state");
+  public static final SscVariable<Float> LAT = SscVariables.numberOutput("lat");
+  public static final SscVariable<Float> LON = SscVariables.numberOutput("lon");
+  public static final SscVariable<Float> TZ = SscVariables.numberOutput("tz");
+  public static final SscVariable<Float> ELEV = SscVariables.numberOutput("elev");
 }
