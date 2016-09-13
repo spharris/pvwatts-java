@@ -5,11 +5,14 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 
 import io.github.spharris.pvwatts.service.v4.PvWatts4Response.Outputs;
 import io.github.spharris.pvwatts.service.v4.PvWatts4Response.SscInfo;
 import io.github.spharris.pvwatts.service.v4.PvWatts4Response.StationInfo;
+import io.github.spharris.pvwatts.service.weather.Annotations.Tmy2;
+import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.pvwatts.utils.RequestConverter;
 import io.github.spharris.ssc.ExecutionHandler;
 import io.github.spharris.ssc.Module;
@@ -22,10 +25,16 @@ public final class PvWatts4Service {
   private static final String MODULE_NAME = "pvwattsv1"; 
   
   private final ModuleFactory moduleFactory;
+  private ImmutableMap<String, WeatherSource> weatherSources;
   
   @Inject
-  public PvWatts4Service(ModuleFactory moduleFactory) {
+  public PvWatts4Service(
+      ModuleFactory moduleFactory,
+      @Tmy2 WeatherSource tmy2WeatherLocator) {
     this.moduleFactory = moduleFactory;
+    this.weatherSources = ImmutableMap.<String, WeatherSource>builder()
+        .put("tmy2", tmy2WeatherLocator)
+        .build();
   }
 
   public PvWatts4Response execute(ImmutableMultimap<String, String> parameters) {
@@ -43,7 +52,8 @@ public final class PvWatts4Service {
     Module module = moduleFactory.create(MODULE_NAME);
 
     setRequiredValues(module);
-    Variables.SOLAR_RESOURCE_FILE.set("target/classes/weather/23129.tm2", module);
+    Variables.SOLAR_RESOURCE_FILE.set(
+      weatherSources.get("tmy2").getWeatherFile(0, 0, 0), module);
     Variables.SYSTEM_SIZE.set(request.getSystemSize(), module);
     Variables.AZIMUTH.set(request.getAzimuth(), module);
     Variables.TILT.set(request.getTilt(), module);

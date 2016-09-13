@@ -1,24 +1,31 @@
 package io.github.spharris.pvwatts.service.v4;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.Matchers.anyFloat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.when;
 
 import javax.inject.Inject;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 
 import io.github.spharris.pvwatts.service.PvWattsServiceModule;
+import io.github.spharris.pvwatts.service.weather.Annotations.Tmy2;
+import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.ssc.SscModule;
 
-@RunWith(JUnit4.class)
+@RunWith(MockitoJUnitRunner.class)
 public class IntegrationTestPvWatts4Service {
   
   // https://developer.nrel.gov/api/pvwatts/v4.json?api_key=DEMO_KEY&system_size=4&dataset=tmy2&derate=0.77&lat=33.81666&lon=-118.15&tilt=1.5&track_mode=1&azimuth=30&timeframe=hourly
@@ -38,13 +45,27 @@ public class IntegrationTestPvWatts4Service {
   ObjectMapper mapper = new ObjectMapper()
       .registerModule(new GuavaModule());
   
+  @Mock @Tmy2 WeatherSource tmy2WeatherSource;
   @Inject PvWatts4Service service;
   
   @Before
   public void createInjector() {
     Guice.createInjector(
       new SscModule(),
+      new AbstractModule() {
+        
+        @Override
+        protected void configure() {
+          bind(WeatherSource.class).annotatedWith(Tmy2.class).toInstance(tmy2WeatherSource);
+        }
+      },
       new PvWattsServiceModule()).injectMembers(this);
+  }
+  
+  @Before
+  public void returnWeatherData() {
+    when(tmy2WeatherSource.getWeatherFile(anyFloat(), anyFloat(), anyInt())).thenReturn(
+      "target/test-classes/weather/23129.tm2");
   }
   
   @Test
