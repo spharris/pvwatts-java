@@ -30,10 +30,10 @@ public final class PvWatts4Service {
   @Inject
   public PvWatts4Service(
       ModuleFactory moduleFactory,
-      @Tmy2 WeatherSource tmy2WeatherLocator) {
+      @Tmy2 WeatherSource tmy2WeatherSource) {
     this.moduleFactory = moduleFactory;
     this.weatherSources = ImmutableMap.<String, WeatherSource>builder()
-        .put("tmy2", tmy2WeatherLocator)
+        .put("tmy2", tmy2WeatherSource)
         .build();
   }
 
