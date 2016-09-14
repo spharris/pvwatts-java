@@ -7,7 +7,7 @@ import io.github.spharris.ssc.utils.SscVariable;
 import io.github.spharris.ssc.utils.SscVariables;
 
 /**
- * Input and output variables for the PVWatts4 SSC Module ("pvwattsv1")
+ * Input and output variables for PVWatts modules (both v4 and v5)
  */
 class Variables {
 
@@ -17,11 +17,19 @@ class Variables {
       SscVariables.stringInput("solar_resource_file");
     
   public static final InputVariable<Float> SYSTEM_SIZE = SscVariables.numberInput("system_size");
+  public static final InputVariable<Float> SYSTEM_CAPACITY =
+      SscVariables.numberInput("system_capacity");
+  public static final InputVariable<Integer> MODULE_TYPE = SscVariables.integerInput("module_type");
   public static final InputVariable<Float> DERATE = SscVariables.numberInput("derate");
+  public static final InputVariable<Float> LOSSES = SscVariables.numberInput("losses");
+  public static final InputVariable<Float> INV_EFF = SscVariables.numberInput("inv_eff");
+  public static final InputVariable<Integer> ARRAY_TYPE = SscVariables.integerInput("array_type");
   public static final InputVariable<Integer> TRACK_MODE = SscVariables.integerInput("track_mode");
   public static final InputVariable<Float> AZIMUTH = SscVariables.numberInput("azimuth");
   public static final InputVariable<Float> TILT = SscVariables.numberInput("tilt");
   public static final InputVariable<Integer> TILT_EQ_LAT = SscVariables.integerInput("tilt_eq_lat");
+  public static final InputVariable<Float> DC_AC_RATIO = SscVariables.numberInput("dc_ac_ratio");
+  public static final InputVariable<Float> GCR = SscVariables.numberInput("gcr");
   public static final InputVariable<Float> INOCT = SscVariables.numberInput("inoct");
   public static final InputVariable<Float> GAMMA = SscVariables.numberInput("gamma");
   public static final InputVariable<Float> ADJUST_CONSTANT =
@@ -42,6 +50,8 @@ class Variables {
   public static final SscVariable<Float> AC_ANNUAL = SscVariables.numberOutput("ac_annual");
   public static final SscVariable<Float> ANNUAL_ENERGY = 
       SscVariables.numberOutput("annual_energy");
+  public static final SscVariable<Float> CAPACITY_FACTOR = 
+      SscVariables.numberOutput("capacity_factor");
   public static final SscVariable<ImmutableList<Float>> AC = SscVariables.arrayOutput("ac");
   public static final SscVariable<ImmutableList<Float>> POA = SscVariables.arrayOutput("poa");
   public static final SscVariable<ImmutableList<Float>> DN = SscVariables.arrayOutput("dn");

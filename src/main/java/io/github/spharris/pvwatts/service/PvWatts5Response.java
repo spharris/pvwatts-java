@@ -18,8 +18,8 @@ import io.github.spharris.pvwatts.utils.ImmutableMultimapSerializer;
 
 @AutoValue
 @JsonInclude(Include.NON_NULL)
-@JsonDeserialize(builder = AutoValue_PvWatts4Response.Builder.class)
-public abstract class PvWatts4Response {
+@JsonDeserialize(builder = AutoValue_PvWatts5Response.Builder.class)
+public abstract class PvWatts5Response {
   
   @JsonSerialize(using = ImmutableMultimapSerializer.class)
   public abstract @Nullable ImmutableMultimap<String, String> getInputs();
@@ -33,7 +33,7 @@ public abstract class PvWatts4Response {
   @JsonProperty("station_info") public abstract @Nullable StationInfo getStationInfo();
 
   public static Builder builder() {
-      return new AutoValue_PvWatts4Response.Builder();
+      return new AutoValue_PvWatts5Response.Builder();
   }
   
   @AutoValue.Builder
@@ -52,19 +52,19 @@ public abstract class PvWatts4Response {
     
     @JsonIgnore public abstract Builder setInputs(Multimap<String, String> inputs);
     
-    public abstract PvWatts4Response build();
+    public abstract PvWatts5Response build();
   }
   
   @AutoValue
   @JsonInclude(Include.NON_NULL)
-  @JsonDeserialize(builder = AutoValue_PvWatts4Response_SscInfo.Builder.class)
+  @JsonDeserialize(builder = AutoValue_PvWatts5Response_SscInfo.Builder.class)
   public abstract static class SscInfo {
 
     public abstract @Nullable Integer getVersion();
     public abstract @Nullable String getBuild();
     
     public static Builder builder() {
-      return new AutoValue_PvWatts4Response_SscInfo.Builder();
+      return new AutoValue_PvWatts5Response_SscInfo.Builder();
     }
     
     @AutoValue.Builder
@@ -80,7 +80,7 @@ public abstract class PvWatts4Response {
   
   @AutoValue
   @JsonInclude(Include.NON_NULL)
-  @JsonDeserialize(builder = AutoValue_PvWatts4Response_StationInfo.Builder.class)
+  @JsonDeserialize(builder = AutoValue_PvWatts5Response_StationInfo.Builder.class)
   public abstract static class StationInfo {
     
     public abstract @Nullable Float getLat();
@@ -92,10 +92,10 @@ public abstract class PvWatts4Response {
     public abstract @Nullable String getState();
     public abstract @Nullable Integer getDistance();
     
-    @JsonProperty("file_name") public abstract @Nullable String getFileName();
+    @JsonProperty("solar_resource_file") public abstract @Nullable String getSolarResourceFile();
 
     public static Builder builder() {
-      return new AutoValue_PvWatts4Response_StationInfo.Builder();
+      return new AutoValue_PvWatts5Response_StationInfo.Builder();
     }
 
     @AutoValue.Builder
@@ -111,7 +111,8 @@ public abstract class PvWatts4Response {
       public abstract Builder setState(String state);
       public abstract Builder setDistance(Integer distance);
       
-      @JsonProperty("file_name") public abstract Builder setFileName(String fileName);
+      @JsonProperty("solar_resource_file")
+      public abstract Builder setSolarResourceFile(String solarResourceFile);
       
       public abstract StationInfo build();
     }
@@ -119,7 +120,7 @@ public abstract class PvWatts4Response {
   
   @AutoValue
   @JsonInclude(Include.NON_NULL)
-  @JsonDeserialize(builder = AutoValue_PvWatts4Response_Outputs.Builder.class)
+  @JsonDeserialize(builder = AutoValue_PvWatts5Response_Outputs.Builder.class)
   public abstract static class Outputs {
 
     public abstract @Nullable ImmutableList<Float> getAc();
@@ -136,12 +137,13 @@ public abstract class PvWatts4Response {
     @JsonProperty("ac_monthly") public abstract @Nullable ImmutableList<Float> getAcMonthly();
     @JsonProperty("ac_annual") public abstract @Nullable Float getAcAnnual();
     @JsonProperty("solrad_annual") public abstract @Nullable Float getSolradAnnual();
+    @JsonProperty("capacity_factor") public abstract @Nullable Float getCapacityFactor();
     
     @JsonProperty("solrad_monthly")
     public abstract @Nullable ImmutableList<Float> getSolradMonthly();
     
     public static Builder builder() {
-      return new AutoValue_PvWatts4Response_Outputs.Builder();
+      return new AutoValue_PvWatts5Response_Outputs.Builder();
     }
 
     @AutoValue.Builder
@@ -162,6 +164,9 @@ public abstract class PvWatts4Response {
       
       @JsonProperty("solrad_monthly")
       public abstract Builder setSolradMonthly(Iterable<Float> solradMonthly);
+      
+      @JsonProperty("capacity_factor")
+      public abstract Builder setCapacityFactor(Float capacityFactor);
       
       @JsonProperty("dc_monthly") public abstract Builder setDcMonthly(Iterable<Float> dcMonthly);
       @JsonProperty("ac_monthly") public abstract Builder setAcMonthly(Iterable<Float> acMonthly);
