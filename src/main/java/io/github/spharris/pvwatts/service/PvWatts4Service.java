@@ -1,6 +1,7 @@
-package io.github.spharris.pvwatts.service.v4;
+package io.github.spharris.pvwatts.service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -10,9 +11,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
 
-import io.github.spharris.pvwatts.service.v4.PvWatts4Response.Outputs;
-import io.github.spharris.pvwatts.service.v4.PvWatts4Response.SscInfo;
-import io.github.spharris.pvwatts.service.v4.PvWatts4Response.StationInfo;
+import io.github.spharris.pvwatts.service.PvWatts4Response.Outputs;
+import io.github.spharris.pvwatts.service.PvWatts4Response.SscInfo;
+import io.github.spharris.pvwatts.service.PvWatts4Response.StationInfo;
 import io.github.spharris.pvwatts.service.weather.Annotations.Tmy2;
 import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.pvwatts.utils.RequestConverter;
@@ -25,6 +26,12 @@ public final class PvWatts4Service {
   public static final String SERVICE_VERSION = "0.0.1";
   
   private static final String MODULE_NAME = "pvwattsv1"; 
+  private static final PvWatts4Request DEFAULT_REQUEST = PvWatts4Request.builder()
+      .setRadius(100)
+      .setTimeframe("monthly")
+      .setTiltEqLat(0)
+      .setTrackMode(1)
+      .build();
   
   private final ModuleFactory moduleFactory;
   private ImmutableMap<String, WeatherSource> weatherSources;
@@ -46,7 +53,7 @@ public final class PvWatts4Service {
   }
   
   public PvWatts4Response execute(PvWatts4Request request) {
-    return executeWithResponse(request, PvWatts4Response.builder());
+    return executeWithResponse(setDefaults(request), PvWatts4Response.builder());
   }
   
   private PvWatts4Response executeWithResponse(PvWatts4Request request,
@@ -68,7 +75,7 @@ public final class PvWatts4Service {
     ImmutableList.Builder<String> errorListBuilder = ImmutableList.builder();
     ImmutableList.Builder<String> warningListBuilder = ImmutableList.builder();
     module.execute(messageLoggingHandler(errorListBuilder, warningListBuilder));
-    
+
     ImmutableList<String> errors = errorListBuilder.build();
     if (errors.isEmpty()) {
       buildResponse(module, request, response);
@@ -87,6 +94,20 @@ public final class PvWatts4Service {
    */
   private static void setRequiredValues(Module module) {
     Variables.ADJUST_CONSTANT.set(1f, module);
+  }
+  
+  /**
+   * Set default values on the request if they're not already set
+   */
+  private static PvWatts4Request setDefaults(PvWatts4Request request) {
+    return request.toBuilder()
+      .setRadius(Optional.ofNullable(request.getRadius()).orElse(DEFAULT_REQUEST.getRadius()))
+      .setTimeframe(
+        Optional.ofNullable(request.getTimeframe()).orElse(DEFAULT_REQUEST.getTimeframe()))
+      .setTiltEqLat(
+        Optional.ofNullable(request.getTiltEqLat()).orElse(DEFAULT_REQUEST.getTiltEqLat()))
+      .setTrackMode(Optional.ofNullable(request.getTrackMode()).orElse(DEFAULT_REQUEST.getTrackMode()))
+      .build();
   }
   
   private static PvWatts4Response.Builder buildResponse(Module module, PvWatts4Request request,

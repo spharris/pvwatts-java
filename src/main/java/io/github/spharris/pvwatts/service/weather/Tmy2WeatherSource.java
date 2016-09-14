@@ -12,7 +12,11 @@ class Tmy2WeatherSource implements WeatherSource {
   private static final String BASE_PATH = "target/classes/weather/tmy2/";
   
   @Override
-  public String getWeatherFile(float lat, float lon, int radius) {
+  public String getWeatherFile(Float lat, Float lon, Integer radius) {
+    if (lat == null || lon == null || radius == null) {
+      return null;
+    }
+
     DataRecord closestStation = Collections.min(loadDatabase(), byDistanceFrom(lat, lon));
     double distance = Haversine.haversine(closestStation.lat, closestStation.lon, lat, lon);
     

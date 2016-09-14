@@ -3,7 +3,7 @@ package io.github.spharris.pvwatts.utils;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
 
-import io.github.spharris.pvwatts.service.v4.PvWatts4Request;
+import io.github.spharris.pvwatts.service.PvWatts4Request;
 
 public class RequestConverter {
 

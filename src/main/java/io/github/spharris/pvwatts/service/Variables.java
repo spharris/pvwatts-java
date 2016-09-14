@@ -1,4 +1,4 @@
-package io.github.spharris.pvwatts.service.v4;
+package io.github.spharris.pvwatts.service;
 
 import com.google.common.collect.ImmutableList;
 

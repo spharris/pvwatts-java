@@ -1,4 +1,4 @@
-package io.github.spharris.pvwatts.service.v4;
+package io.github.spharris.pvwatts.service;
 
 import javax.annotation.Nullable;
 
@@ -14,6 +14,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
+import io.github.spharris.pvwatts.service.AutoValue_PvWatts4Response;
+import io.github.spharris.pvwatts.service.AutoValue_PvWatts4Response_Outputs;
+import io.github.spharris.pvwatts.service.AutoValue_PvWatts4Response_SscInfo;
+import io.github.spharris.pvwatts.service.AutoValue_PvWatts4Response_StationInfo;
+import io.github.spharris.pvwatts.service.AutoValue_PvWatts4Response_SscInfo.Builder;
 import io.github.spharris.pvwatts.utils.ImmutableMultimapSerializer;
 
 @AutoValue

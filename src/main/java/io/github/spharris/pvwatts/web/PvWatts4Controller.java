@@ -14,8 +14,8 @@ import javax.ws.rs.core.UriInfo;
 
 import com.google.common.collect.ImmutableMultimap;
 
-import io.github.spharris.pvwatts.service.v4.PvWatts4Response;
-import io.github.spharris.pvwatts.service.v4.PvWatts4Service;
+import io.github.spharris.pvwatts.service.PvWatts4Response;
+import io.github.spharris.pvwatts.service.PvWatts4Service;
 
 @Path("/")
 public final class PvWatts4Controller {

@@ -1,4 +1,4 @@
-package io.github.spharris.pvwatts.service.v4;
+package io.github.spharris.pvwatts.service;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.anyFloat;
@@ -21,6 +21,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 
 import io.github.spharris.pvwatts.service.weather.Annotations.Tmy2;
+import io.github.spharris.pvwatts.service.PvWatts4Request;
+import io.github.spharris.pvwatts.service.PvWatts4Response;
+import io.github.spharris.pvwatts.service.PvWatts4Service;
 import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.ssc.SscModule;
 

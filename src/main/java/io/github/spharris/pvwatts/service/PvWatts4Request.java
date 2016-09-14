@@ -1,4 +1,4 @@
-package io.github.spharris.pvwatts.service.v4;
+package io.github.spharris.pvwatts.service;
 
 import javax.annotation.Nullable;
 
@@ -23,6 +23,8 @@ public abstract class PvWatts4Request {
   public abstract @Nullable Float getInoct();
   public abstract @Nullable Float getGamma();
   public abstract @Nullable String getCallback();
+  
+  public abstract Builder toBuilder();
   
   public static Builder builder() {
     return new AutoValue_PvWatts4Request.Builder();

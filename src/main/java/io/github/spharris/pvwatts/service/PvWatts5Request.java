@@ -1,4 +1,4 @@
-package io.github.spharris.pvwatts.service.v5;
+package io.github.spharris.pvwatts.service;
 
 import com.google.auto.value.AutoValue;
 
