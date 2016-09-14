@@ -14,15 +14,18 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
+import io.github.spharris.pvwatts.Configuration;
 import io.github.spharris.pvwatts.PvWattsModule;
 
 public class PvWattsServer {
 
   public static void main(String[] args) throws Exception {
+    Configuration.loadConfig(PvWattsServer.class.getResourceAsStream("configuration.properties"));
+    
     Server server = new Server(3000);
-
-    Injector injector = Guice.createInjector(getModules());
     ServletContextHandler handler = new ServletContextHandler(server, "/pvwatts");
+    
+    Injector injector = Guice.createInjector(getModules());
     handler.addEventListener(injector.getInstance(
       GuiceResteasyBootstrapServletContextListener.class));
 
