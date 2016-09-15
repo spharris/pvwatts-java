@@ -5,6 +5,9 @@ import com.google.inject.AbstractModule;
 import io.github.spharris.pvwatts.service.weather.WeatherModule;
 import io.github.spharris.ssc.ModuleFactory;
 
+/**
+ * Module for PvWatts services and dependencies
+ */
 public final class PvWattsServiceModule extends AbstractModule {
 
   @Override

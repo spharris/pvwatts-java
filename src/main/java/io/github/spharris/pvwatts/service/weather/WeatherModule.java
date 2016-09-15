@@ -5,6 +5,9 @@ import com.google.inject.multibindings.MapBinder;
 
 import io.github.spharris.pvwatts.Configuration;
 
+/**
+ * Module for provided weather sources.
+ */
 public class WeatherModule extends AbstractModule {
 
   @Override

@@ -6,6 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+/**
+ * A simple class to hold configuration information
+ */
 public final class Configuration {
   
   private static final Configuration INSTANCE = new Configuration();

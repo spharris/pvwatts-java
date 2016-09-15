@@ -8,22 +8,18 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Comparator;
 
-import javax.inject.Inject;
-
 import com.google.common.collect.ImmutableList;
 
-class LocalDirectoryWeatherSource implements WeatherSource {
+/**
+ * A weather source that reads weather files from the specified directory and finds the one closest
+ * to the specified latitude and longitude. 
+ */
+public class LocalDirectoryWeatherSource implements WeatherSource {
   
   private final Path path;
   private final WeatherSummarizer summarizer;
   
-  LocalDirectoryWeatherSource() {
-    path = null;
-    summarizer = null;
-  }
-  
-  @Inject
-  LocalDirectoryWeatherSource(String directory, WeatherSummarizer summarizer) {
+  public LocalDirectoryWeatherSource(String directory, WeatherSummarizer summarizer) {
     this.path = Paths.get(directory);
     this.summarizer = summarizer;
   }

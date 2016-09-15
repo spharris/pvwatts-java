@@ -21,6 +21,9 @@ import io.github.spharris.ssc.ExecutionHandler;
 import io.github.spharris.ssc.Module;
 import io.github.spharris.ssc.ModuleFactory;
 
+/**
+ * A service for PvWatts4 (pvwattsv1)
+ */
 public final class PvWatts4Service {
   
   public static final String SERVICE_VERSION = "0.0.1";
