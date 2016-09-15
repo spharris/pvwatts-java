@@ -1,16 +1,15 @@
 package io.github.spharris.pvwatts.service;
 
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Iterables;
 
 import io.github.spharris.pvwatts.service.PvWatts4Response.Outputs;
 import io.github.spharris.pvwatts.service.PvWatts4Response.SscInfo;
@@ -126,8 +125,8 @@ public final class PvWatts4Service {
           .setLocation(Variables.LOCATION.get(module))
           .setCity(Variables.CITY.get(module))
           .setState(Variables.STATE.get(module))
-          .setFileName(Iterables.getLast(Splitter.on("/").splitToList(
-              Variables.SOLAR_RESOURCE_FILE.get(module))))
+          .setFileName(Paths.get(
+            Variables.SOLAR_RESOURCE_FILE.get(module)).getFileName().toString())
           .build());
     
     Outputs.Builder outputsBuilder = Outputs.builder()

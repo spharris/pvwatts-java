@@ -20,7 +20,8 @@ import io.github.spharris.pvwatts.PvWattsModule;
 public class PvWattsServer {
 
   public static void main(String[] args) throws Exception {
-    Configuration.loadConfig(PvWattsServer.class.getResourceAsStream("configuration.properties"));
+    Configuration.loadConfig(
+      PvWattsServer.class.getClassLoader().getResourceAsStream("configuration.properties"));
     
     Server server = new Server(3000);
     ServletContextHandler handler = new ServletContextHandler(server, "/pvwatts");
