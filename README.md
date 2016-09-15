@@ -18,10 +18,10 @@ The [web api](#web-api) uses the underlying `PvWatts4Service` and `PvWatts5Servi
 
 To get started, you can download common datasets from the following locations:
 
-    * **TMY2** - [http://rredc.nrel.gov/solar/old_data/nsrdb/1961-1990/tmy2/]
-      (http://rredc.nrel.gov/solar/old_data/nsrdb/1961-1990/tmy2/)
-    * **TMY3** - [http://rredc.nrel.gov/solar/old_data/nsrdb/1991-2005/tmy3/]
-      (http://rredc.nrel.gov/solar/old_data/nsrdb/1991-2005/tmy3/)
+  * **TMY2** - [http://rredc.nrel.gov/solar/old_data/nsrdb/1961-1990/tmy2/]
+    (http://rredc.nrel.gov/solar/old_data/nsrdb/1961-1990/tmy2/)
+  * **TMY3** - [http://rredc.nrel.gov/solar/old_data/nsrdb/1991-2005/tmy3/]
+    (http://rredc.nrel.gov/solar/old_data/nsrdb/1991-2005/tmy3/)
 
 Simply download the entire archive of files and extract them to the `pvwatts.weatherDirectory` directory. **pvwatts-java** will find the files there.
 
