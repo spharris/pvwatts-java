@@ -4,6 +4,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.file.Paths;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,12 +20,14 @@ public class UnitTestConfiguration {
   @Test
   public void loadsConfiguration() {
     Configuration.loadConfig(CONFIG_DATA);
-    assertThat(Configuration.weatherDirectory()).isEqualTo("weatherDir/");
+    assertThat(Configuration.weatherDirectory().toString())
+        .isEqualTo(Paths.get("weatherDir/").toString());
   }
   
   @Test
   public void loadsDefaults() {
     Configuration.loadConfig(new ByteArrayInputStream(new byte[0]));
-    assertThat(Configuration.weatherDirectory()).isEqualTo("weather/");
+    assertThat(Configuration.weatherDirectory().toString())
+        .isEqualTo(Paths.get("weather/").toString());
   }
 }

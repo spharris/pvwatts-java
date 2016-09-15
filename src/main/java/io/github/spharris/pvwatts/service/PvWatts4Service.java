@@ -1,5 +1,6 @@
 package io.github.spharris.pvwatts.service;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -14,7 +15,6 @@ import com.google.common.collect.Iterables;
 import io.github.spharris.pvwatts.service.PvWatts4Response.Outputs;
 import io.github.spharris.pvwatts.service.PvWatts4Response.SscInfo;
 import io.github.spharris.pvwatts.service.PvWatts4Response.StationInfo;
-import io.github.spharris.pvwatts.service.weather.Annotations.Tmy2;
 import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.pvwatts.utils.RequestConverter;
 import io.github.spharris.ssc.ExecutionHandler;
@@ -39,11 +39,9 @@ public final class PvWatts4Service {
   @Inject
   public PvWatts4Service(
       ModuleFactory moduleFactory,
-      @Tmy2 WeatherSource tmy2WeatherSource) {
+      Map<String, WeatherSource> weatherSources) {
     this.moduleFactory = moduleFactory;
-    this.weatherSources = ImmutableMap.<String, WeatherSource>builder()
-        .put("tmy2", tmy2WeatherSource)
-        .build();
+    this.weatherSources = ImmutableMap.copyOf(weatherSources);
   }
 
   public PvWatts4Response execute(ImmutableMultimap<String, String> parameters) {

@@ -2,28 +2,34 @@ package io.github.spharris.pvwatts.service.weather;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class IntegrationTestTmy2WeatherSource {
+public class IntegrationTestLocalDirectoryWeatherSource {
   
+  Path basePath; 
   WeatherSource tm2;
   
   @Before
-  public void initializeSource() {
-    tm2 = new Tmy2WeatherSource();
+  public void initializeSource() throws Exception {
+    basePath = Paths.get(
+        getClass().getClassLoader().getResource("weather/tmy2/").toURI());
+    tm2 = new LocalDirectoryWeatherSource(basePath.toString(), new Tm2FileSummarizer());
   }
   
   @Test
   public void returnsClosestData() {
-    String expected = "target/classes/weather/tmy2/26528.tm2";
+    String expected = basePath.resolve("23129.tm2").toString();
     
-    String result = tm2.getWeatherFile(62.30f, -150.10f, 0);
+    String result = tm2.getWeatherFile(33.816f, -118.15f, 25);
     
-    assertThat(result).isEqualTo(expected);
+    assertThat(result).isEqualTo( expected);
   }
   
   @Test
@@ -35,7 +41,7 @@ public class IntegrationTestTmy2WeatherSource {
   
   @Test
   public void radiusOfZeroIsUnlimited() {
-    String expected = "target/classes/weather/tmy2/11641.tm2";
+    String expected = basePath.resolve("11641.tm2").toString();
     
     String result = tm2.getWeatherFile(0.0f, 0.0f, 0);
     

@@ -170,7 +170,7 @@ public class IntegrationTestModule {
   }
 
   private static void populateModuleWithSimData(Module m) throws Exception {
-    String weatherFile = "target/test-classes/weather/23129.tm2";
+    String weatherFile = "target/test-classes/weather/tmy2/23129.tm2";
     m.setValue("solar_resource_file", weatherFile);
     m.setValue("albedo",
         new float[] {0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f});

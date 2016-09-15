@@ -2,13 +2,15 @@ package io.github.spharris.pvwatts;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public final class Configuration {
   
   private static final Configuration INSTANCE = new Configuration();
   
-  private String weatherDirectory;
+  private Path weatherDirectory;
   
   private Configuration() {}
   
@@ -20,10 +22,11 @@ public final class Configuration {
       throw new IllegalArgumentException("Could not load configuration properties.", e);
     }
     
-    INSTANCE.weatherDirectory = properties.getProperty("pvwatts.weatherDirectory", "weather/");
+    INSTANCE.weatherDirectory = Paths.get(
+      properties.getProperty("pvwatts.weatherDirectory", "weather/"));
   }
   
-  public static String weatherDirectory() {
+  public static Path weatherDirectory() {
     return INSTANCE.weatherDirectory;
   }
 }

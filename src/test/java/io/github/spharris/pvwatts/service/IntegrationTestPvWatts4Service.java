@@ -19,11 +19,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.multibindings.MapBinder;
 
-import io.github.spharris.pvwatts.service.weather.Annotations.Tmy2;
-import io.github.spharris.pvwatts.service.PvWatts4Request;
-import io.github.spharris.pvwatts.service.PvWatts4Response;
-import io.github.spharris.pvwatts.service.PvWatts4Service;
 import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.ssc.SscModule;
 
@@ -58,7 +55,10 @@ public class IntegrationTestPvWatts4Service {
         
         @Override
         protected void configure() {
-          bind(WeatherSource.class).annotatedWith(Tmy2.class).toInstance(tmy2WeatherSource);
+          MapBinder.<String, WeatherSource>newMapBinder(binder(),
+            String.class,
+            WeatherSource.class)
+          .addBinding("tmy2").toInstance(tmy2WeatherSource);
         }
       }).injectMembers(this);
   }
@@ -66,7 +66,7 @@ public class IntegrationTestPvWatts4Service {
   @Before
   public void returnWeatherData() {
     when(tmy2WeatherSource.getWeatherFile(anyFloat(), anyFloat(), anyInt())).thenReturn(
-      "target/test-classes/weather/23129.tm2");
+      "target/test-classes/weather/tmy2/23129.tm2");
   }
   
   @Test
