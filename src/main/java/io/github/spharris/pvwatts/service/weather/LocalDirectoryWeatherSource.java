@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -44,20 +47,19 @@ public class LocalDirectoryWeatherSource implements WeatherSource {
   
   private ImmutableList<WeatherDataRecord> loadSummaryData() {
     
-    ImmutableList.Builder<WeatherDataRecord> builder = ImmutableList.builder();
     File[] files = path.toFile().listFiles();
-    for (File file : files) {
-      // TODO(spharris): Recurse into subdirectories?
-      if (file.isFile()) {
-        try(Reader reader = new FileReader(file)) {
-          builder.add(summarizer.summarizeFile(reader));
-        } catch (IOException e) {
-          // TODO(spharris): Anything to do here?
-        }
-      }
-    }
-
-    return builder.build();
+    return ImmutableList.<WeatherDataRecord>copyOf(
+      Arrays.stream(files).parallel()
+          .filter(File::isFile)
+          .map((file) -> {
+              try(Reader reader = new FileReader(file)) {
+                return summarizer.summarizeFile(reader);
+              } catch (IOException e) {
+                return null;
+              }
+          })
+          .filter(Objects::nonNull)
+          .collect(Collectors.toList()));
   }
   
   private Comparator<WeatherDataRecord> byDistanceFrom(final float lat, final float lon) {
