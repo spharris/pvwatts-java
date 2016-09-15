@@ -11,6 +11,12 @@ class Tmy2WeatherSource implements WeatherSource {
   private static final String TM2_DATABASE = "weather/tmy2/tmy2_data.csv";
   private static final String BASE_PATH = "target/classes/weather/tmy2/";
   
+  Tmy2WeatherSource() {}
+  
+  Tmy2WeatherSource(String path) {
+    
+  }
+  
   @Override
   public String getWeatherFile(Float lat, Float lon, Integer radius) {
     if (lat == null || lon == null || radius == null) {
