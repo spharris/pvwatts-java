@@ -31,25 +31,11 @@ public final class PvWattsController {
     this.v5Service = v5Service;
   }
   
-  @Path("v4.xml")
-  @GET
-  @Produces(MediaType.APPLICATION_XML)
-  public PvWatts4Response  versionFourXmlResource(@Context UriInfo uriInfo) {
-    return v4Service.execute(transformMap(uriInfo.getQueryParameters()));
-  }
-  
   @Path("v4.json")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public PvWatts4Response versionFourJsonResource(@Context UriInfo uriInfo) {
     return v4Service.execute(transformMap(uriInfo.getQueryParameters()));
-  }
-  
-  @Path("v5.xml")
-  @GET
-  @Produces(MediaType.APPLICATION_XML)
-  public PvWatts5Response  versionFiveXmlResource(@Context UriInfo uriInfo) {
-    return v5Service.execute(transformMap(uriInfo.getQueryParameters()));
   }
   
   @Path("v5.json")
