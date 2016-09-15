@@ -29,6 +29,7 @@ public final class PvWatts4Service {
   
   private static final String MODULE_NAME = "pvwattsv1"; 
   private static final PvWatts4Request DEFAULT_REQUEST = PvWatts4Request.builder()
+      .setDataset("tmy3")
       .setRadius(100)
       .setTimeframe("monthly")
       .setTiltEqLat(0)
@@ -61,7 +62,7 @@ public final class PvWatts4Service {
     Module module = moduleFactory.create(MODULE_NAME);
 
     setRequiredValues(module);
-    Variables.SOLAR_RESOURCE_FILE.set(weatherSources.get("tmy2").getWeatherFile(
+    Variables.SOLAR_RESOURCE_FILE.set(weatherSources.get(request.getDataset()).getWeatherFile(
       request.getLat(), request.getLon(), request.getRadius()), module);
     Variables.SYSTEM_SIZE.set(request.getSystemSize(), module);
     Variables.AZIMUTH.set(request.getAzimuth(), module);
@@ -101,6 +102,7 @@ public final class PvWatts4Service {
    */
   private static PvWatts4Request setDefaults(PvWatts4Request request) {
     return request.toBuilder()
+      .setDataset(Optional.ofNullable(request.getDataset()).orElse(DEFAULT_REQUEST.getDataset()))
       .setRadius(Optional.ofNullable(request.getRadius()).orElse(DEFAULT_REQUEST.getRadius()))
       .setTimeframe(
         Optional.ofNullable(request.getTimeframe()).orElse(DEFAULT_REQUEST.getTimeframe()))

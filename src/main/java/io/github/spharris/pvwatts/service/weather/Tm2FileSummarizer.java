@@ -3,6 +3,9 @@ package io.github.spharris.pvwatts.service.weather;
 import java.io.IOException;
 import java.io.Reader;
 
+/**
+ * Summarize a .tm2 file.
+ */
 public class Tm2FileSummarizer implements WeatherSummarizer {
 
   /**

@@ -13,13 +13,16 @@ public class WeatherModule extends AbstractModule {
   @Override
   protected void configure() {
     MapBinder<String, WeatherSource> weatherBinder = MapBinder.newMapBinder(
-      binder(),
-      String.class,
-      WeatherSource.class);
+      binder(), String.class, WeatherSource.class);
     
     weatherBinder.addBinding("tmy2").toInstance(
       new LocalDirectoryWeatherSource(
         Configuration.weatherDirectory().resolve("tmy2").toAbsolutePath().toString(),
         new Tm2FileSummarizer()));
+
+    weatherBinder.addBinding("tmy3").toInstance(
+      new LocalDirectoryWeatherSource(
+        Configuration.weatherDirectory().resolve("tmy3").toAbsolutePath().toString(),
+        new Tmy3CsvFileSummarizer()));
   }
 }

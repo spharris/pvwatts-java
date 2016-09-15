@@ -41,7 +41,6 @@ public class LocalDirectoryWeatherSource implements WeatherSource {
     return path.resolve(closestStation.getFilename()).toString();
   }
   
-  
   private ImmutableList<WeatherDataRecord> loadSummaryData() {
     
     ImmutableList.Builder<WeatherDataRecord> builder = ImmutableList.builder();
