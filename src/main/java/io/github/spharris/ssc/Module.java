@@ -9,8 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Qualifier;
+
 import com.google.common.base.Optional;
-import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.sun.jna.Native;
@@ -34,7 +35,7 @@ import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
  */
 public class Module {
 
-  @BindingAnnotation
+  @Qualifier
   @Retention(RetentionPolicy.RUNTIME)
   @interface SscLibraryName {}
 
