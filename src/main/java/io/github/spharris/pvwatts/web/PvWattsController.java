@@ -16,29 +16,47 @@ import com.google.common.collect.ImmutableMultimap;
 
 import io.github.spharris.pvwatts.service.PvWatts4Response;
 import io.github.spharris.pvwatts.service.PvWatts4Service;
+import io.github.spharris.pvwatts.service.PvWatts5Response;
+import io.github.spharris.pvwatts.service.PvWatts5Service;
 
 @Path("/")
-public final class PvWatts4Controller {
+public final class PvWattsController {
 
-  private final PvWatts4Service service;
+  private final PvWatts4Service v4Service;
+  private final PvWatts5Service v5Service;
   
   @Inject
-  public PvWatts4Controller(PvWatts4Service service) {
-    this.service = service;
+  public PvWattsController(PvWatts4Service v4Service, PvWatts5Service v5Service) {
+    this.v4Service = v4Service;
+    this.v5Service = v5Service;
   }
   
   @Path("v4.xml")
   @GET
   @Produces(MediaType.APPLICATION_XML)
   public PvWatts4Response  versionFourXmlResource(@Context UriInfo uriInfo) {
-    return service.execute(transformMap(uriInfo.getQueryParameters()));
+    return v4Service.execute(transformMap(uriInfo.getQueryParameters()));
   }
   
   @Path("v4.json")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public PvWatts4Response versionFourJsonResource(@Context UriInfo uriInfo) {
-    return service.execute(transformMap(uriInfo.getQueryParameters()));
+    return v4Service.execute(transformMap(uriInfo.getQueryParameters()));
+  }
+  
+  @Path("v5.xml")
+  @GET
+  @Produces(MediaType.APPLICATION_XML)
+  public PvWatts5Response  versionFiveXmlResource(@Context UriInfo uriInfo) {
+    return v5Service.execute(transformMap(uriInfo.getQueryParameters()));
+  }
+  
+  @Path("v5.json")
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  public PvWatts5Response versionFiveJsonResource(@Context UriInfo uriInfo) {
+    return v5Service.execute(transformMap(uriInfo.getQueryParameters()));
   }
 
   private static ImmutableMultimap<String, String> transformMap(

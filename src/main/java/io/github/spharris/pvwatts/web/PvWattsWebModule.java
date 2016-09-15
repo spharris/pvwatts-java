@@ -12,7 +12,6 @@ public class PvWattsWebModule extends AbstractModule {
     requireBinding(PvWatts4Service.class);
     requireBinding(PvWatts5Service.class);
     
-    bind(PvWatts4Controller.class);
-    bind(PvWatts5Controller.class);
+    bind(PvWattsController.class);
   }
 }
