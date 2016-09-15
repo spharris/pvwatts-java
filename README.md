@@ -14,7 +14,7 @@ You can see the documentation for those APIs [here (v4)](https://developer.nrel.
 The [web api](#web-api) uses the underlying `PvWatts4Service` and `PvWatts5Service` classes in order to run simulations. These services accept a `PvWattsXRequest` and return a `PvWattsXResponse` containing the inputs and outputs of each service. The requests and responses contain the same data as the [APIs](#web-api) linked above.
 
 ## Weather Data
-**pvwatts-java** understands `.tm2` files and TMY3-formatted `.csv` files, but no weather data is included in the package. By default, **pvwatts-java** will look for TMY2 and TMY3 data in the `tmy2` and `tmy3` subdirectories of the directory specified in the `pvwatts.weatherDirectory` property, which is set in `configuration.properties`.
+**pvwatts-java** understands `.tm2` files and TMY3-formatted `.csv` files, but no weather data is included in the package. By default, **pvwatts-java** will look for TMY2 and TMY3 data in the `tmy2` and `tmy3` subdirectories of the directory specified in the `pvwatts.weatherDirectory` property. This property can be set in `configuration.properties`.
 
 To get started, you can download common datasets from the following locations:
 

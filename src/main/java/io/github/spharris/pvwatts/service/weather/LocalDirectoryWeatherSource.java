@@ -3,6 +3,7 @@ package io.github.spharris.pvwatts.service.weather;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -48,8 +49,8 @@ public class LocalDirectoryWeatherSource implements WeatherSource {
     for (File file : files) {
       // TODO(spharris): Recurse into subdirectories?
       if (file.isFile()) {
-        try {
-          builder.add(summarizer.summarizeFile(new FileReader(file)));
+        try(Reader reader = new FileReader(file)) {
+          builder.add(summarizer.summarizeFile(reader));
         } catch (IOException e) {
           // TODO(spharris): Anything to do here?
         }
