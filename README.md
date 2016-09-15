@@ -2,6 +2,17 @@
 
 **pvwatts-java** is a relatively faithful implementation of the NREL PVWatts [v4](https://developer.nrel.gov/docs/solar/pvwatts-v4/) and [v5](https://developer.nrel.gov/docs/solar/pvwatts-v5/) APIs. This is accomplished via the [SAM SDK](https://sam.nrel.gov/sdk).
 
+## Development Status
+Simulation results for PVWatts 4 and PVWatts 5 match those from the official API fairly closely, and the numbers that matter (energy production) match exactly. With that said, there are currently a few differences between **pvwatts-java** and the official implementation:
+
+  1. Error messages returned by **pvwatts-java** are not always the same as 
+     those returned by PVWatts.
+  2. Simulation location can only be specified by `lat` and `lon`, not
+     `address`. This is unlikely to change.
+  3. For v5, `capacity_factor` does not match. This is due to a version
+     difference in the SSC library being used.
+  4. Other minor differences.
+
 ## Usage
 **pvwatts-java** is usable in two ways: as a drop-in replacement for the [PvWatts JSON APIs](https://developer.nrel.gov/docs/solar/) or as a library that you can call directly.
 
