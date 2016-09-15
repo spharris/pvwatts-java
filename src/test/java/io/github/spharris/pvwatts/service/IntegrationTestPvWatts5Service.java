@@ -71,7 +71,7 @@ public class IntegrationTestPvWatts5Service {
   @Before
   public void returnWeatherData() {
     when(tmy2WeatherSource.getWeatherFile(anyFloat(), anyFloat(), anyInt())).thenReturn(
-      "target/test-classes/weather/197774_33.65_-117.86.tmy.csv");
+      "target/test-classes/weather/tmy2/23129.tm2");
   }
   
   @Test
