@@ -48,7 +48,7 @@ public class LocalDirectoryWeatherSource implements WeatherSource {
   private ImmutableList<WeatherDataRecord> loadSummaryData() {
     
     File[] files = path.toFile().listFiles();
-    return ImmutableList.<WeatherDataRecord>copyOf(
+    return ImmutableList.copyOf(
       Arrays.stream(files).parallel()
           .filter(File::isFile)
           .map((file) -> {
