@@ -19,6 +19,8 @@ import com.google.common.collect.ImmutableList;
  * to the specified latitude and longitude. 
  */
 public class LocalDirectoryWeatherSource implements WeatherSource {
+
+  private static final double MI_TO_KM = 5280.0 * 12.0 * 2.54 / 100.0 / 1000.0;
   
   private final Path path;
   private final WeatherSummarizer summarizer;
@@ -38,7 +40,8 @@ public class LocalDirectoryWeatherSource implements WeatherSource {
     double distance = Haversine.haversine(
       closestStation.getLat(), closestStation.getLon(), lat, lon);
     
-    if (radius != 0 && distance > (double) radius) {
+    double kmRadius = (double) radius * MI_TO_KM;
+    if (radius != 0 && distance > kmRadius) {
       return null;
     }
 

@@ -11,7 +11,7 @@ public interface WeatherSource {
    * 
    * @param lat
    * @param lon
-   * @param radius The search radius (in km)
+   * @param radius The search radius (in mi)
    * 
    * @returns The location of the weather file to use, if available. <code>null</code> otherwise.
    */
