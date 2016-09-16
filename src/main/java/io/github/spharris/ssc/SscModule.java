@@ -33,7 +33,7 @@ import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
  * 
  * @author spharris
  */
-public class SscModule {
+public class SscModule implements Freeable {
 
   @Qualifier
   @Retention(RetentionPolicy.RUNTIME)
@@ -526,10 +526,7 @@ public class SscModule {
     return (i * cols) + j;
   }
 
-  /**
-   * Frees the underlying pointers associated with this module. Subsequent calls to other module
-   * functions will result in an {@link java.lang.IllegalStateException}
-   */
+  @Override
   public void free() {
     if (!freed) {
       api.ssc_module_free(module);
@@ -538,6 +535,7 @@ public class SscModule {
     }
   }
 
+  @Override
   public boolean isFreed() {
     return freed;
   }

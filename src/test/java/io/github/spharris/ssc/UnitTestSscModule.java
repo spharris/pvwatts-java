@@ -12,12 +12,12 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.base.Optional;
 import com.sun.jna.Pointer;
@@ -25,17 +25,12 @@ import com.sun.jna.ptr.FloatByReference;
 
 import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
 
-@RunWith(JUnit4.class)
+@RunWith(MockitoJUnitRunner.class)
 public class UnitTestSscModule {
 
   private static final String MODULE_NAME = "test module";
 
-  private Ssc mockApi;
-
-  @Before
-  public void createMockApi() {
-    mockApi = mock(Ssc.class);
-  }
+  @Mock private Ssc mockApi;
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
