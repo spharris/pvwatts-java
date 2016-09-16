@@ -28,13 +28,13 @@ public class UnitTestVariable {
 
   @Test
   public void equalsWorks() {
-    Variable v1 = Variable.buildVariable().varType(Variable.VariableType.forInt(1))
-        .dataType(Variable.DataType.forInt(1)).name("Name").label("Label").units("Units")
-        .meta("Meta").group("Group").required("Required").build();
+    Variable v1 = Variable.builder().setVariableType(Variable.VariableType.forInt(1))
+        .setDataType(Variable.DataType.forInt(1)).setName("Name").setLabel("Label").setUnits("Units")
+        .setMeta("Meta").setGroup("Group").setRequired("Required").build();
 
-    Variable v2 = Variable.buildVariable().varType(Variable.VariableType.forInt(1))
-        .dataType(Variable.DataType.forInt(1)).name("Name").label("Label").units("Units")
-        .meta("Meta").group("Group").required("Required").build();
+    Variable v2 = Variable.builder().setVariableType(Variable.VariableType.forInt(1))
+        .setDataType(Variable.DataType.forInt(1)).setName("Name").setLabel("Label").setUnits("Units")
+        .setMeta("Meta").setGroup("Group").setRequired("Required").build();
 
     assertThat(v1).isEqualTo(v2);
   }

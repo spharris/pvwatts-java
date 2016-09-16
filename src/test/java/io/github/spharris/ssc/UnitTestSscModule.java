@@ -188,46 +188,26 @@ public class UnitTestSscModule {
   } 
 
   @Test
-  public void getVariableCallsAllInfoFunctions() {
-    SscModule m = getRealModule();
-
-    Pointer p = mock(Pointer.class);
-    when(mockApi.ssc_module_var_info(any(Pointer.class), eq(0))).thenReturn(p);
-
-    m.getVariables();
-
-    verify(mockApi, times(2)).ssc_module_var_info(any(Pointer.class), any(Integer.class));
-    verify(mockApi).ssc_info_var_type(any(Pointer.class));
-    verify(mockApi).ssc_info_data_type(any(Pointer.class));
-    verify(mockApi).ssc_info_name(any(Pointer.class));
-    verify(mockApi).ssc_info_label(any(Pointer.class));
-    verify(mockApi).ssc_info_units(any(Pointer.class));
-    verify(mockApi).ssc_info_meta(any(Pointer.class));
-    verify(mockApi).ssc_info_group(any(Pointer.class));
-    verify(mockApi).ssc_info_required(any(Pointer.class));
-  }
-
-  @Test
   public void getsVariableData() {
     SscModule m = getRealModule();
 
     Pointer p = mock(Pointer.class);
     when(mockApi.ssc_module_var_info(any(Pointer.class), eq(0))).thenReturn(p);
 
-    when(mockApi.ssc_info_var_type(any(Pointer.class))).thenReturn(1);
-    when(mockApi.ssc_info_data_type(any(Pointer.class))).thenReturn(1);
-    when(mockApi.ssc_info_name(any(Pointer.class))).thenReturn("Name");
-    when(mockApi.ssc_info_label(any(Pointer.class))).thenReturn("Label");
-    when(mockApi.ssc_info_units(any(Pointer.class))).thenReturn("Units");
-    when(mockApi.ssc_info_meta(any(Pointer.class))).thenReturn("Meta");
-    when(mockApi.ssc_info_group(any(Pointer.class))).thenReturn("Group");
-    when(mockApi.ssc_info_required(any(Pointer.class))).thenReturn("Required");
+    when(mockApi.ssc_info_var_type(p)).thenReturn(1);
+    when(mockApi.ssc_info_data_type(p)).thenReturn(1);
+    when(mockApi.ssc_info_name(p)).thenReturn("Name");
+    when(mockApi.ssc_info_label(p)).thenReturn("Label");
+    when(mockApi.ssc_info_units(p)).thenReturn("Units");
+    when(mockApi.ssc_info_meta(p)).thenReturn("Meta");
+    when(mockApi.ssc_info_group(p)).thenReturn("Group");
+    when(mockApi.ssc_info_required(p)).thenReturn("Required");
 
     List<Variable> vars = m.getVariables();
 
-    Variable expected = Variable.buildVariable().varType(Variable.VariableType.forInt(1))
-        .dataType(Variable.DataType.forInt(1)).name("Name").label("Label").units("Units")
-        .meta("Meta").group("Group").required("Required").build();
+    Variable expected = Variable.builder().setVariableType(Variable.VariableType.forInt(1))
+        .setDataType(Variable.DataType.forInt(1)).setName("Name").setLabel("Label").setUnits("Units")
+        .setMeta("Meta").setGroup("Group").setRequired("Required").build();
 
     assertThat(vars).hasSize(1);
     assertThat(vars.get(0)).isEqualTo(expected);

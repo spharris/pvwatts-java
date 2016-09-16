@@ -100,19 +100,19 @@ public class IntegrationTestSscModule {
   public void getsAllVariables() {
     List<Variable> vars = module.getVariables();
 
-    Variable v1 = Variable.buildVariable().varType(Variable.VariableType.INPUT)
-        .dataType(Variable.DataType.MATRIX).name("positions")
-        .label("Positions within calculataed area").group("layoutarea").required("*").units("")
-        .meta("").build();
+    Variable v1 = Variable.builder().setVariableType(Variable.VariableType.INPUT)
+        .setDataType(Variable.DataType.MATRIX).setName("positions")
+        .setLabel("Positions within calculataed area").setGroup("layoutarea").setRequired("*").setUnits("")
+        .setMeta("").build();
 
-    Variable v2 = Variable.buildVariable().varType(Variable.VariableType.OUTPUT)
-        .dataType(Variable.DataType.MATRIX).name("convex_hull")
-        .label("Convex hull bounding the region").group("layoutarea").required("*").units("")
-        .meta("").build();
+    Variable v2 = Variable.builder().setVariableType(Variable.VariableType.OUTPUT)
+        .setDataType(Variable.DataType.MATRIX).setName("convex_hull")
+        .setLabel("Convex hull bounding the region").setGroup("layoutarea").setRequired("*").setUnits("")
+        .setMeta("").build();
 
-    Variable v3 = Variable.buildVariable().varType(Variable.VariableType.OUTPUT)
-        .dataType(Variable.DataType.NUMBER).name("area").label("Area inside the convex hull")
-        .group("layoutarea").required("*").units("").meta("").build();
+    Variable v3 = Variable.builder().setVariableType(Variable.VariableType.OUTPUT)
+        .setDataType(Variable.DataType.NUMBER).setName("area").setLabel("Area inside the convex hull")
+        .setGroup("layoutarea").setRequired("*").setUnits("").setMeta("").build();
 
     assertThat(vars).hasSize(3);
     assertThat(vars).containsExactly(v1, v2, v3);

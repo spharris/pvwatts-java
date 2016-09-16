@@ -79,7 +79,11 @@ public class SscModule {
       String desc = api.ssc_entry_description(entry);
       int version = api.ssc_entry_version(entry);
 
-      modules.add(new SscModuleSummary(name, desc, version));
+      modules.add(SscModuleSummary.builder()
+        .setName(name)
+        .setDescription(desc)
+        .setVersion(version)
+        .build());
 
       i++;
       entry = api.ssc_module_entry(i);
@@ -133,13 +137,14 @@ public class SscModule {
   public String getSscBuildInfo() {
     return api.ssc_build_info();
   }
-  
-  public SscModuleSummary getShortModuleInfo() {
-    return new SscModuleSummary(getName(), getDescription(), getVersion());
-  }
 
-  public SscModuleSummary getModuleInfo() {
-    return new SscModuleSummary(getName(), getDescription(), getVersion(), getVariables());
+  public SscModuleSummary getModuleSummary() {
+    return SscModuleSummary.builder()
+        .setName(getName())
+        .setDescription(getDescription())
+        .setVersion(getVersion())
+        .setVariables(getVariables())
+        .build();
   }
 
   /**
@@ -174,12 +179,12 @@ public class SscModule {
     int i = 0;
     Pointer infoPointer = api.ssc_module_var_info(module, i);
     while (infoPointer != null) {
-      Variable var = Variable.buildVariable()
-          .varType(Variable.VariableType.forInt(api.ssc_info_var_type(infoPointer)))
-          .dataType(Variable.DataType.forInt(api.ssc_info_data_type(infoPointer)))
-          .name(api.ssc_info_name(infoPointer)).label(api.ssc_info_label(infoPointer))
-          .units(api.ssc_info_units(infoPointer)).meta(api.ssc_info_meta(infoPointer))
-          .group(api.ssc_info_group(infoPointer)).required(api.ssc_info_required(infoPointer))
+      Variable var = Variable.builder()
+          .setVariableType(Variable.VariableType.forInt(api.ssc_info_var_type(infoPointer)))
+          .setDataType(Variable.DataType.forInt(api.ssc_info_data_type(infoPointer)))
+          .setName(api.ssc_info_name(infoPointer)).setLabel(api.ssc_info_label(infoPointer))
+          .setUnits(api.ssc_info_units(infoPointer)).setMeta(api.ssc_info_meta(infoPointer))
+          .setGroup(api.ssc_info_group(infoPointer)).setRequired(api.ssc_info_required(infoPointer))
           .build();
 
       variables.add(var);
