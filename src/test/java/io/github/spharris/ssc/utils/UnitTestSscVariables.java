@@ -39,7 +39,7 @@ public class UnitTestSscVariables {
     
     input.set(value, data);
     
-    verify(data).setValue(VAR_NAME, value);
+    verify(data).setNumber(VAR_NAME, value);
   }
   
   @Test
@@ -49,7 +49,7 @@ public class UnitTestSscVariables {
     
     input.set(ImmutableList.of(1.0f), data);
     
-    verify(data).setValue(VAR_NAME, expected);
+    verify(data).setArray(VAR_NAME, expected);
   }
   
   @Test
@@ -59,7 +59,7 @@ public class UnitTestSscVariables {
     
     input.set(value, data);
     
-    verify(data).setValue(VAR_NAME, value);
+    verify(data).setString(VAR_NAME, value);
   }
   
   @Test

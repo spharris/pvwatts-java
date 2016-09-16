@@ -35,7 +35,7 @@ public class IntegrationTestDataContainer {
     String field = "field";
     float value = 0.5f;
 
-    data.setValue(field, value);
+    data.setNumber(field, value);
     Optional<Float> result = data.getNumber(field);
 
     assertThat(result.isPresent()).isTrue();
@@ -47,7 +47,7 @@ public class IntegrationTestDataContainer {
     String field = "field";
     float[] values = {0.5f, 0.5f, 0.5f};
 
-    data.setValue(field, values);
+    data.setArray(field, values);
     Optional<float[]> result = data.getArray(field);
 
     assertThat(result.isPresent()).isTrue();
@@ -59,7 +59,7 @@ public class IntegrationTestDataContainer {
     String field = "field";
     float[][] values = {{1, 2}, {3, 4}};
 
-    data.setValue(field, values);
+    data.setMatrix(field, values);
     Optional<float[][]> result = data.getMatrix(field);
 
     assertThat(result.isPresent()).isTrue();
@@ -71,7 +71,7 @@ public class IntegrationTestDataContainer {
     String field = "field";
     float[][] values = {{1, 2}, {3, 4}, {5, 6}};
 
-    data.setValue(field, values);
+    data.setMatrix(field, values);
     Optional<float[][]> result = data.getMatrix(field);
 
     assertThat(result.isPresent()).isTrue();
@@ -83,7 +83,7 @@ public class IntegrationTestDataContainer {
     String field = "field";
     float[][] values = {{1, 2, 3}, {4, 5, 6}};
 
-    data.setValue(field, values);
+    data.setMatrix(field, values);
     Optional<float[][]> result = data.getMatrix(field);
 
     assertThat(result.isPresent()).isTrue();

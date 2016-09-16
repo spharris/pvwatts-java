@@ -114,7 +114,7 @@ public final class SscVariables {
         values[i] = value.get(i).floatValue();
       }
 
-      data.setValue(varName, values);
+      data.setArray(varName, values);
     }
   }
   
@@ -137,7 +137,7 @@ public final class SscVariables {
       
       checkNotNull(data);
        
-      data.setValue(varName, value.floatValue());
+      data.setNumber(varName, value.floatValue());
     }
   }
   
@@ -160,7 +160,7 @@ public final class SscVariables {
       
       checkNotNull(data);
        
-      data.setValue(varName, value.floatValue());
+      data.setNumber(varName, value.floatValue());
     }
     
     @Override
@@ -188,7 +188,7 @@ public final class SscVariables {
       }
       
       checkNotNull(data);
-      data.setValue(varName, value);
+      data.setString(varName, value);
     }
   }
 }

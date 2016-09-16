@@ -48,7 +48,7 @@ public class DataContainer implements Freeable {
    * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
    * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
    */
-  public DataContainer setValue(String variableName, float value) {
+  public DataContainer setNumber(String variableName, float value) {
     checkState();
     checkNotNull(variableName);
 
@@ -56,20 +56,20 @@ public class DataContainer implements Freeable {
     return this;
   }
 
-  public DataContainer setValue(String variableName, int value) {
-    return setValue(variableName, (float) value);
+  public DataContainer setNumber(String variableName, int value) {
+    return setNumber(variableName, (float) value);
   }
 
-  public DataContainer setValue(String variableName, long value) {
-    return setValue(variableName, (float) value);
+  public DataContainer setNumber(String variableName, long value) {
+    return setNumber(variableName, (float) value);
   }
 
-  public DataContainer setValue(String variableName, double value) {
-    return setValue(variableName, (float) value);
+  public DataContainer setNumber(String variableName, double value) {
+    return setNumber(variableName, (float) value);
   }
 
-  public DataContainer setValue(String variableName, Number value) {
-    return setValue(variableName, value.floatValue());
+  public DataContainer setNumber(String variableName, Number value) {
+    return setNumber(variableName, value.floatValue());
   }
 
   /**
@@ -82,7 +82,7 @@ public class DataContainer implements Freeable {
    * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is
    *         null
    */
-  public DataContainer setValue(String variableName, String value) {
+  public DataContainer setString(String variableName, String value) {
     checkState();
     checkNotNull(value);
 
@@ -101,7 +101,7 @@ public class DataContainer implements Freeable {
    *         null
    * @throws {@link java.lang.IllegalArgumentException} if <tt>value</tt> has a length of zero.
    */
-  public DataContainer setValue(String variableName, float[] value) {
+  public DataContainer setArray(String variableName, float[] value) {
     checkState();
     checkNotNull(value);
     checkArgument(value.length >= 1, "The length of the array must be >= 1.");
@@ -110,40 +110,40 @@ public class DataContainer implements Freeable {
     return this;
   }
 
-  public DataContainer setValue(String variableName, int[] value) {
+  public DataContainer setArray(String variableName, int[] value) {
     float[] floats = new float[value.length];
     for (int i = 0; i < value.length; i++) {
       floats[i] = value[i];
     }
 
-    return setValue(variableName, floats);
+    return setArray(variableName, floats);
   }
 
-  public DataContainer setValue(String variableName, long[] value) {
+  public DataContainer setArray(String variableName, long[] value) {
     float[] floats = new float[value.length];
     for (int i = 0; i < value.length; i++) {
       floats[i] = value[i];
     }
 
-    return setValue(variableName, floats);
+    return setArray(variableName, floats);
   }
 
-  public DataContainer setValue(String variableName, double[] value) {
+  public DataContainer setArray(String variableName, double[] value) {
     float[] floats = new float[value.length];
     for (int i = 0; i < value.length; i++) {
       floats[i] = (float) value[i];
     }
 
-    return setValue(variableName, floats);
+    return setArray(variableName, floats);
   }
 
-  public DataContainer setValue(String variableName, Number[] value) {
+  public DataContainer setArray(String variableName, Number[] value) {
     float[] floats = new float[value.length];
     for (int i = 0; i < value.length; i++) {
       floats[i] = value[i].floatValue();
     }
 
-    return setValue(variableName, floats);
+    return setArray(variableName, floats);
   }
 
   /**
@@ -157,7 +157,7 @@ public class DataContainer implements Freeable {
    *         null
    * @throws {@link java.lang.IllegalArgumentException} if <tt>value</tt> has zero rows or columns
    */
-  public DataContainer setValue(String variableName, float[][] value) {
+  public DataContainer setMatrix(String variableName, float[][] value) {
     checkState();
     checkNotNull(value);
     checkArgument(value.length >= 1, "The number of rows must be >= 1.");
@@ -176,7 +176,7 @@ public class DataContainer implements Freeable {
     return this;
   }
 
-  public DataContainer setValue(String variableName, int[][] value) {
+  public DataContainer setMatrix(String variableName, int[][] value) {
     checkNotNull(value);
     checkArgument(value.length >= 1, "The number of rows must be >= 1.");
     checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
@@ -188,10 +188,10 @@ public class DataContainer implements Freeable {
       }
     }
 
-    return setValue(variableName, floats);
+    return setMatrix(variableName, floats);
   }
 
-  public DataContainer setValue(String variableName, long[][] value) {
+  public DataContainer setMatrix(String variableName, long[][] value) {
     checkNotNull(value);
     checkArgument(value.length >= 1, "The number of rows must be >= 1.");
     checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
@@ -203,10 +203,10 @@ public class DataContainer implements Freeable {
       }
     }
 
-    return setValue(variableName, floats);
+    return setMatrix(variableName, floats);
   }
 
-  public DataContainer setValue(String variableName, double[][] value) {
+  public DataContainer setMatrix(String variableName, double[][] value) {
     checkNotNull(value);
     checkArgument(value.length >= 1, "The number of rows must be >= 1.");
     checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
@@ -218,10 +218,10 @@ public class DataContainer implements Freeable {
       }
     }
 
-    return setValue(variableName, floats);
+    return setMatrix(variableName, floats);
   }
 
-  public DataContainer setValue(String variableName, Number[][] value) {
+  public DataContainer setMatrix(String variableName, Number[][] value) {
     checkNotNull(value);
     checkArgument(value.length >= 1, "The number of rows must be >= 1.");
     checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
@@ -233,7 +233,7 @@ public class DataContainer implements Freeable {
       }
     }
 
-    return setValue(variableName, floats);
+    return setMatrix(variableName, floats);
   }
 
   /**

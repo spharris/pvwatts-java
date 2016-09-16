@@ -40,7 +40,7 @@ public class UnitTestDataContainer {
   public void setNumber() {
     String varName = "var";
     float value = 0.5f;
-    data.setValue(varName, value);
+    data.setNumber(varName, value);
 
     verify(mockApi).ssc_data_set_number(any(Pointer.class), eq(varName), eq(value));
   }
@@ -58,7 +58,7 @@ public class UnitTestDataContainer {
   public void setString() {
     String varName = "var";
     float value = 0.5f;
-    data.setValue(varName, value);
+    data.setNumber(varName, value);
 
     verify(mockApi).ssc_data_set_number(any(Pointer.class), eq(varName), eq(value));
   }
@@ -87,7 +87,7 @@ public class UnitTestDataContainer {
 
     thrown.expect(IllegalStateException.class);
 
-    data.setValue("var", 0f);
+    data.setNumber("var", 0f);
   }
 
   @Test
@@ -110,7 +110,7 @@ public class UnitTestDataContainer {
     float[] input = new float[0];
     thrown.expect(IllegalArgumentException.class);
 
-    data.setValue("asdf", input);
+    data.setArray("asdf", input);
   }
 
   @Test
@@ -118,7 +118,7 @@ public class UnitTestDataContainer {
     float[][] input = new float[0][1];
     thrown.expect(IllegalArgumentException.class);
 
-    data.setValue("asdf", input);
+    data.setMatrix("asdf", input);
   }
 
   @Test
@@ -126,7 +126,7 @@ public class UnitTestDataContainer {
     float[][] input = new float[1][0];
     thrown.expect(IllegalArgumentException.class);
 
-    data.setValue("asdf", input);
+    data.setMatrix("asdf", input);
   }
 
   @Test
@@ -134,7 +134,7 @@ public class UnitTestDataContainer {
     float[][] value = {{1, 2}, {3, 4}};
 
     String varName = "adsf";
-    data.setValue(varName, value);
+    data.setMatrix(varName, value);
 
     float[] expected = {1, 2, 3, 4};
     verify(mockApi).ssc_data_set_matrix(any(Pointer.class), eq(varName), eq(expected), eq(2),
@@ -146,7 +146,7 @@ public class UnitTestDataContainer {
     float[][] value = {{1, 2}, {3, 4}, {5, 6}};
 
     String varName = "adsf";
-    data.setValue(varName, value);
+    data.setMatrix(varName, value);
 
     float[] expected = {1, 2, 3, 4, 5, 6};
     verify(mockApi).ssc_data_set_matrix(any(Pointer.class), eq(varName), eq(expected), eq(3),
