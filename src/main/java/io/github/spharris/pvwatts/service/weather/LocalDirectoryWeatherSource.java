@@ -49,20 +49,21 @@ public class LocalDirectoryWeatherSource implements WeatherSource {
   }
   
   private ImmutableList<WeatherDataRecord> loadSummaryData() {
-    
     File[] files = path.toFile().listFiles();
-    return ImmutableList.copyOf(
-      Arrays.stream(files).parallel()
-          .filter(File::isFile)
-          .map((file) -> {
-              try(Reader reader = new FileReader(file)) {
-                return summarizer.summarizeFile(reader);
-              } catch (IOException e) {
-                return null;
-              }
-          })
-          .filter(Objects::nonNull)
-          .collect(Collectors.toList()));
+    ImmutableList.Builder<WeatherDataRecord> builder = ImmutableList.builder();
+    Arrays.stream(files).parallel()
+        .filter(File::isFile)
+        .map((file) -> {
+          try(Reader reader = new FileReader(file)) {
+            return summarizer.summarizeFile(reader);
+          } catch (IOException e) {
+            return null;
+          }
+        })
+        .filter(Objects::nonNull)
+        .forEach(builder::add);
+    
+    return builder.build();
   }
   
   private Comparator<WeatherDataRecord> byDistanceFrom(final float lat, final float lon) {
