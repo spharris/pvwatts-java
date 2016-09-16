@@ -9,8 +9,7 @@ Simulation results for PVWatts 4 and PVWatts 5 match those from the official API
      those returned by PVWatts.
   2. Simulation location can only be specified by `lat` and `lon`, not
      `address`. This is unlikely to change.
-  3. For v5, `capacity_factor` does not match. This is due to a version
-     difference in the SSC library being used.
+  3. Similarly, `file_id` does nothing. 
   4. Other minor differences.
 
 ## Usage
