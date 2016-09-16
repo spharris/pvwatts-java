@@ -134,14 +134,15 @@ public final class PvWatts5Service {
             Variables.SOLAR_RESOURCE_FILE.get(module)).getFileName().toString())
           .build());
     
+    Float acAnnual= Variables.AC_ANNUAL.get(module);
     Outputs.Builder outputsBuilder = Outputs.builder()
         .setPoaMonthly(Variables.POA_MONTHLY.get(module))
         .setDcMonthly(Variables.DC_MONTHLY.get(module))
         .setAcMonthly(Variables.AC_MONTHLY.get(module))
-        .setAcAnnual(Variables.AC_ANNUAL.get(module))
+        .setAcAnnual(acAnnual)
         .setSolradMonthly(Variables.SOLRAD_MONTHLY.get(module))
         .setSolradAnnual(Variables.SOLRAD_ANNUAL.get(module))
-        .setCapacityFactor(Variables.CAPACITY_FACTOR.get(module));
+        .setCapacityFactor(acAnnual / (request.getSystemCapacity() * 8760.0f) * 100.0f);
     
     if (Objects.equals(request.getTimeframe(), "hourly")) {
       outputsBuilder.setAc(Variables.AC.get(module));

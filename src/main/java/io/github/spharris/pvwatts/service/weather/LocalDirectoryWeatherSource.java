@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -49,8 +50,7 @@ public class LocalDirectoryWeatherSource implements WeatherSource {
   
   private ImmutableList<WeatherDataRecord> loadSummaryData() {
     File[] files = path.toFile().listFiles();
-    ImmutableList.Builder<WeatherDataRecord> builder = ImmutableList.builder();
-    Arrays.stream(files).parallel()
+    return ImmutableList.copyOf(Arrays.stream(files).parallel()
         .filter(File::isFile)
         .map((file) -> {
           try(Reader reader = new FileReader(file)) {
@@ -60,17 +60,15 @@ public class LocalDirectoryWeatherSource implements WeatherSource {
           }
         })
         .filter(Objects::nonNull)
-        .forEach(builder::add);
-    
-    return builder.build();
+        .collect(Collectors.toList()));
   }
   
   private Comparator<WeatherDataRecord> byDistanceFrom(final float lat, final float lon) {
     return (left, right) -> {
-        double leftDist = Haversine.haversine(left.getLat(), left.getLon(), lat, lon);
-        double rightDist = Haversine.haversine(right.getLat(), right.getLon(), lat, lon);
-        
-        return Double.compare(leftDist, rightDist);
+      double leftDist = Haversine.haversine(left.getLat(), left.getLon(), lat, lon);
+      double rightDist = Haversine.haversine(right.getLat(), right.getLon(), lat, lon);
+
+      return Double.compare(leftDist, rightDist);
     };
   }
 }

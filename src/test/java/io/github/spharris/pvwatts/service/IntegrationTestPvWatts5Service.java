@@ -161,8 +161,8 @@ public class IntegrationTestPvWatts5Service {
     
     // Skip capacity factor because it seems to be calculated differently in this version
     // of SSC
-    //assertThat(result.getOutputs().getCapacityFactor()).isWithin(EPSILON).of(
-      //expected.getOutputs().getCapacityFactor());
+    assertThat(result.getOutputs().getCapacityFactor()).isWithin(EPSILON).of(
+      expected.getOutputs().getCapacityFactor());
   }
   
   @Test
@@ -183,8 +183,8 @@ public class IntegrationTestPvWatts5Service {
     
     // Skip capacity factor because it seems to be calculated differently in this version
     // of SSC
-    //assertThat(result.getOutputs().getCapacityFactor()).isWithin(EPSILON).of(
-      //expected.getOutputs().getCapacityFactor());
+    assertThat(result.getOutputs().getCapacityFactor()).isWithin(EPSILON).of(
+      expected.getOutputs().getCapacityFactor());
   }
   
   @Test
