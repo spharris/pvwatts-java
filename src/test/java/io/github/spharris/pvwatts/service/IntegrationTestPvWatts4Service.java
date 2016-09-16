@@ -22,6 +22,7 @@ import com.google.inject.Guice;
 import com.google.inject.multibindings.MapBinder;
 
 import io.github.spharris.pvwatts.service.weather.WeatherSource;
+import io.github.spharris.pvwatts.utils.RequestConverter;
 import io.github.spharris.ssc.SscModule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -31,17 +32,21 @@ public class IntegrationTestPvWatts4Service {
   
   static final float EPSILON = 0.001f;
   
-  PvWatts4Request.Builder requestBuilder = PvWatts4Request.builder()
-        .setLat(33.816f)
-        .setLon(-118.15f)
-        .setAzimuth(30f)
-        .setTilt(1.5f)
-        .setDataset("tmy2")
-        .setSystemSize(4f)
-        .setDerate(0.77f)
-        .setTrackMode(1);
+  final ImmutableMultimap<String, String> urlParameters = ImmutableMultimap.<String, String>builder()
+      .put("lat", "33.816")
+      .put("lon", "-118.15")
+      .put("azimuth", "30")
+      .put("tilt", "1.5")
+      .put("dataset", "tmy2")
+      .put("system_size", "4")
+      .put("derate", "0.77")
+      .put("track_mode", "1")
+      .build();
   
-  ObjectMapper mapper = new ObjectMapper()
+  final PvWatts4Request.Builder requestBuilder =
+      RequestConverter.toPvWatts4Request(urlParameters).toBuilder();
+  
+  final ObjectMapper mapper = new ObjectMapper()
       .registerModule(new GuavaModule());
   
   @Mock WeatherSource tmy2WeatherSource;
@@ -78,52 +83,23 @@ public class IntegrationTestPvWatts4Service {
   
   @Test
   public void populatesFilename() {
-    PvWatts4Response result = service.execute(ImmutableMultimap.<String, String>builder()
-      .put("lat", "33.816")
-      .put("lon", "-118.15")
-      .put("azimuth", "30")
-      .put("tilt", "1.5")
-      .put("dataset", "tmy2")
-      .put("system_size", "4")
-      .put("derate", "0.77")
-      .put("track_mode", "1")
-      .build());
+    PvWatts4Response result = service.execute(urlParameters);
     
     assertThat(result.getStationInfo().getFileName()).isEqualTo("23129.tm2");
   }
   
   @Test
   public void runsPvWatts4SimulationFromParameters() {
-    PvWatts4Response result = service.execute(ImmutableMultimap.<String, String>builder()
-      .put("lat", "33.816")
-      .put("lon", "-118.15")
-      .put("azimuth", "30")
-      .put("tilt", "1.5")
-      .put("dataset", "tmy2")
-      .put("system_size", "4")
-      .put("derate", "0.77")
-      .put("track_mode", "1")
-      .build());
+    PvWatts4Response result = service.execute(urlParameters);
     
     assertThat(result.getOutputs().getAcAnnual()).isGreaterThan(0f);
   }
   
   @Test
   public void simulationFromParametersWritesInputs() {
-    ImmutableMultimap<String, String> inputs = ImmutableMultimap.<String, String>builder()
-      .put("lat", "33.816")
-      .put("lon", "-118.15")
-      .put("azimuth", "30")
-      .put("tilt", "1.5")
-      .put("dataset", "tmy2")
-      .put("system_size", "4")
-      .put("derate", "0.77")
-      .put("track_mode", "1")
-      .build(); 
+    PvWatts4Response result = service.execute(urlParameters);
     
-    PvWatts4Response result = service.execute(inputs);
-    
-    assertThat(result.getInputs()).isEqualTo(inputs);
+    assertThat(result.getInputs()).isEqualTo(urlParameters);
   }
   
   @Test

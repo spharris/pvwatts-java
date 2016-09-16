@@ -1,10 +1,6 @@
 package io.github.spharris.ssc;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 import org.junit.After;
 import org.junit.Before;
@@ -20,6 +16,8 @@ import com.sun.jna.ptr.IntByReference;
 @RunWith(JUnit4.class)
 public class IntegrationTestSsc {
 
+  static final float EPSILON = 0f;
+  
   private Ssc ssclib;
   private Pointer data;
 
@@ -40,13 +38,13 @@ public class IntegrationTestSsc {
 
   @Test
   public void basicInfoPopulatesCorrectly() {
-    assertThat(ssclib.ssc_build_info(), not(equalTo(null)));
-    assertThat(ssclib.ssc_version(), greaterThan(0));
+    assertThat(ssclib.ssc_build_info()).isNotNull();
+    assertThat(ssclib.ssc_version()).isGreaterThan(0);
   }
 
   @Test
   public void dataIsLoaded() {
-    assertThat(data, not(equalTo(null)));
+    assertThat(data).isNotNull();
   }
 
   @Test
@@ -58,8 +56,8 @@ public class IntegrationTestSsc {
     FloatByReference out = new FloatByReference();
     boolean status = ssclib.ssc_data_get_number(data, name, out);
 
-    assertThat(status, equalTo(true));
-    assertThat(out.getValue(), equalTo(targetVal));
+    assertThat(status).isTrue();
+    assertThat(out.getValue()).isWithin(EPSILON).of(targetVal);
   }
 
   @Test
@@ -70,7 +68,7 @@ public class IntegrationTestSsc {
     ssclib.ssc_data_set_string(data, name, targetString);
     String result = ssclib.ssc_data_get_string(data, name);
 
-    assertThat(result, equalTo(targetString));
+    assertThat(result).isEqualTo(targetString);
   }
 
   @Test
@@ -83,10 +81,10 @@ public class IntegrationTestSsc {
     IntByReference length = new IntByReference();
     Pointer result = ssclib.ssc_data_get_array(data, name, length);
 
-    assertThat(length.getValue(), equalTo(array.length));
+    assertThat(length.getValue()).isEqualTo(array.length);
     for (int i = 0; i < length.getValue(); i++) {
       // Offset is by byte (float = 4 bytes)
-      assertThat(result.getFloat(i * 4), equalTo(value));
+      assertThat(result.getFloat(i * 4)).isWithin(EPSILON).of(value);
     }
   }
 
@@ -102,12 +100,12 @@ public class IntegrationTestSsc {
     IntByReference cols = new IntByReference();
     Pointer result = ssclib.ssc_data_get_matrix(data, name, rows, cols);
 
-    assertThat(rows.getValue(), equalTo(n));
-    assertThat(cols.getValue(), equalTo(n));
+    assertThat(rows.getValue()).isEqualTo(n);
+    assertThat(cols.getValue()).isEqualTo(n);
     for (int i = 0; i < rows.getValue(); i++) {
       for (int j = 0; j < cols.getValue(); j++) {
         // Offset is by byte (float = 4 bytes)
-        assertThat(result.getFloat((i * j + j) * 4), equalTo(value));
+        assertThat(result.getFloat((i * j + j) * 4)).isWithin(EPSILON).of(value);
       }
     }
   }
@@ -124,7 +122,7 @@ public class IntegrationTestSsc {
     Pointer resultTable = ssclib.ssc_data_get_table(data, name);
     String resultString = ssclib.ssc_data_get_string(resultTable, name);
 
-    assertThat(resultString, equalTo(val));
+    assertThat(resultString).isEqualTo(val);
   }
 
   @Test
@@ -136,7 +134,7 @@ public class IntegrationTestSsc {
     ssclib.ssc_data_clear(data);
 
     String resultString = ssclib.ssc_data_get_string(data, name);
-    assertThat(resultString, equalTo(null));
+    assertThat(resultString).isNull();
   }
 
   @Test
@@ -147,12 +145,12 @@ public class IntegrationTestSsc {
     ssclib.ssc_data_set_string(data, name, targetString);
     int type = ssclib.ssc_data_query(data, name);
 
-    assertThat(type, equalTo(1));
+    assertThat(type).isEqualTo(1);
   }
 
   @Test
   public void dataFirstWithNoDataReturnsNull() {
-    assertThat(ssclib.ssc_data_first(data), equalTo(null));
+    assertThat(ssclib.ssc_data_first(data)).isNull();
   }
 
   @Test
@@ -163,7 +161,7 @@ public class IntegrationTestSsc {
     ssclib.ssc_data_set_string(data, name, targetString);
     String result = ssclib.ssc_data_first(data);
 
-    assertThat(result, equalTo(name));
+    assertThat(result).isEqualTo(name);
   }
 
   @Test
@@ -171,16 +169,16 @@ public class IntegrationTestSsc {
     int i = 0;
     Pointer entry = ssclib.ssc_module_entry(i);
     do {
-      assertThat(entry, not(equalTo(null)));
+      assertThat(entry).isNotNull();
 
       String name = ssclib.ssc_entry_name(entry);
-      assertThat(name, not(equalTo(null)));
+      assertThat(name).isNotNull();
 
       String description = ssclib.ssc_entry_description(entry);
-      assertThat(description, not(equalTo(null)));
+      assertThat(description).isNotNull();
 
       int version = ssclib.ssc_entry_version(entry);
-      assertThat(version, greaterThanOrEqualTo(0));
+      assertThat(version).isAtLeast(0);
 
       i++;
       entry = ssclib.ssc_module_entry(i);
@@ -190,13 +188,13 @@ public class IntegrationTestSsc {
   @Test
   public void unknownModuleReturnsNull() {
     Pointer module = ssclib.ssc_module_create("unknown");
-    assertThat(module, equalTo(null));
+    assertThat(module).isNull();
   }
 
   @Test
   public void createAndFreeModule() {
     Pointer module = ssclib.ssc_module_create("pvwattsv1");
-    assertThat(module, not(equalTo(null)));
+    assertThat(module).isNotNull();
 
     ssclib.ssc_module_free(module);
   }
@@ -208,18 +206,18 @@ public class IntegrationTestSsc {
     int i = 0;
     Pointer info = ssclib.ssc_module_var_info(module, i);
     do {
-      assertThat(info, not(equalTo(null)));
+      assertThat(info).isNotNull();
 
       ssclib.ssc_info_name(info);
-      assertThat(ssclib.ssc_info_var_type(info), greaterThanOrEqualTo(0));
-      assertThat(ssclib.ssc_info_data_type(info), greaterThanOrEqualTo(0));
-      assertThat(ssclib.ssc_info_name(info), not(equalTo(null)));
-      assertThat(ssclib.ssc_info_label(info), not(equalTo(null)));
-      assertThat(ssclib.ssc_info_units(info), not(equalTo(null)));
-      assertThat(ssclib.ssc_info_meta(info), not(equalTo(null)));
-      assertThat(ssclib.ssc_info_group(info), not(equalTo(null)));
-      assertThat(ssclib.ssc_info_required(info), not(equalTo(null)));
-      assertThat(ssclib.ssc_info_constraints(info), not(equalTo(null)));
+      assertThat(ssclib.ssc_info_var_type(info)).isAtLeast(0);
+      assertThat(ssclib.ssc_info_data_type(info)).isAtLeast(0);
+      assertThat(ssclib.ssc_info_name(info)).isNotNull();
+      assertThat(ssclib.ssc_info_label(info)).isNotNull();
+      assertThat(ssclib.ssc_info_units(info)).isNotNull();
+      assertThat(ssclib.ssc_info_meta(info)).isNotNull();
+      assertThat(ssclib.ssc_info_group(info)).isNotNull();
+      assertThat(ssclib.ssc_info_required(info)).isNotNull();
+      assertThat(ssclib.ssc_info_constraints(info)).isNotNull();
 
       i++;
       info = ssclib.ssc_module_var_info(module, i);
@@ -237,7 +235,7 @@ public class IntegrationTestSsc {
     boolean result = ssclib.ssc_module_exec_simple("layoutarea", data);
 
     // Assert
-    assertThat(result, equalTo(true));
+    assertThat(result).isTrue();
     checkSimulationData(ssclib, data);
   }
 
@@ -247,7 +245,7 @@ public class IntegrationTestSsc {
 
     String result = ssclib.ssc_module_exec_simple_nothread("layoutarea", data);
 
-    assertThat(result, equalTo(null));
+    assertThat(result).isNull();
     checkSimulationData(ssclib, data);
   }
 
@@ -258,7 +256,7 @@ public class IntegrationTestSsc {
     Pointer module = ssclib.ssc_module_create("layoutarea");
     boolean result = ssclib.ssc_module_exec(module, data);
 
-    assertThat(result, equalTo(true));
+    assertThat(result).isTrue();
     checkSimulationData(ssclib, data);
     ssclib.ssc_module_free(module);
   }
@@ -268,17 +266,17 @@ public class IntegrationTestSsc {
     Pointer module = ssclib.ssc_module_create("layoutarea");
     boolean result = ssclib.ssc_module_exec(module, data);
 
-    assertThat(result, equalTo(false));
+    assertThat(result).isFalse();
 
     int i = 0;
     IntByReference itemType = new IntByReference();
     FloatByReference time = new FloatByReference();
     String logMsg = ssclib.ssc_module_log(module, i, itemType, time);
     do {
-      assertThat(logMsg, not(equalTo(null)));
+      assertThat(logMsg).isNotNull();
 
-      assertThat(itemType.getValue(), greaterThan(0));
-      assertThat(time.getValue(), not(equalTo((0f))));
+      assertThat(itemType.getValue()).isGreaterThan(0);
+      assertThat(time.getValue()).isNotWithin(EPSILON).of(0f);
 
       i++;
       logMsg = ssclib.ssc_module_log(module, i, itemType, time);
@@ -291,7 +289,7 @@ public class IntegrationTestSsc {
     public boolean update(Pointer module, Pointer handler, int action, float f0, float f1,
         String s0, String s1, Pointer userData) {
 
-      assertThat(f0, greaterThanOrEqualTo(0f));
+      assertThat(f0).isAtLeast(0f);
 
       return true;
     }
@@ -305,7 +303,7 @@ public class IntegrationTestSsc {
     SscExecutionHandler handler = new TestHandler();
     boolean result = ssclib.ssc_module_exec_with_handler(module, data, handler, null);
 
-    assertThat(result, equalTo(true));
+    assertThat(result).isTrue();
     ssclib.ssc_module_free(module);
   }
 
@@ -325,14 +323,14 @@ public class IntegrationTestSsc {
   private static void checkSimulationData(Ssc ssclib, Pointer data) {
     FloatByReference val = new FloatByReference();
     boolean status = ssclib.ssc_data_get_number(data, "area", val);
-    assertThat(status, equalTo(true));
-    assertThat(val.getValue(), greaterThanOrEqualTo(0f));
+    assertThat(status).isTrue();
+    assertThat(val.getValue()).isAtLeast(0f);
 
     IntByReference rows = new IntByReference();
     IntByReference cols = new IntByReference();
     Pointer mtx = ssclib.ssc_data_get_matrix(data, "convex_hull", rows, cols);
-    assertThat(mtx, not(equalTo(null)));
-    assertThat(rows.getValue(), greaterThan(0));
-    assertThat(cols.getValue(), greaterThan(0));
+    assertThat(mtx).isNotNull();
+    assertThat(rows.getValue()).isGreaterThan(0);
+    assertThat(cols.getValue()).isGreaterThan(0);
   }
 }

@@ -1,8 +1,6 @@
 package io.github.spharris.ssc;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -69,7 +67,7 @@ public class UnitTestModule {
         any(FloatByReference.class))).thenReturn(false);
 
     Optional<Float> val = m.getNumber("asdf");
-    assertThat(val.isPresent(), equalTo(false));
+    assertThat(val.isPresent()).isFalse();
   }
 
   @Test
@@ -89,7 +87,7 @@ public class UnitTestModule {
     when(mockApi.ssc_data_get_string(any(Pointer.class), any(String.class))).thenReturn(null);
 
     Optional<String> val = m.getString("asdf");
-    assertThat(val.isPresent(), equalTo(false));
+    assertThat(val.isPresent()).isFalse();
   }
 
   @Test
@@ -99,8 +97,8 @@ public class UnitTestModule {
     when(mockApi.ssc_data_get_string(any(Pointer.class), any(String.class))).thenReturn(returnVal);
 
     Optional<String> val = m.getString("asdf");
-    assertThat(val.isPresent(), equalTo(true));
-    assertThat(val.get(), equalTo(returnVal));
+    assertThat(val.isPresent()).isTrue();
+    assertThat(val.get()).isEqualTo(returnVal);
   }
 
   @Test
@@ -231,8 +229,8 @@ public class UnitTestModule {
         .dataType(Variable.DataType.forInt(1)).name("Name").label("Label").units("Units")
         .meta("Meta").group("Group").required("Required").build();
 
-    assertThat(vars, hasSize(1));
-    assertThat(vars.get(0), equalTo(expected));
+    assertThat(vars).hasSize(1);
+    assertThat(vars.get(0)).isEqualTo(expected);
   }
 
   private Module getRealModule() {

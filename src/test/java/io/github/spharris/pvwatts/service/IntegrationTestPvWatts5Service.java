@@ -31,7 +31,7 @@ public class IntegrationTestPvWatts5Service {
   // https://developer.nrel.gov/api/pvwatts/v5.json?api_key=DEMO_KEY&system_capacity=4&dataset=tmy2&lat=33.81666&lon=-118.15&tilt=1.5&track_mode=1&azimuth=30&array_type=0&module_type=0&losses=15
 
   static final float EPSILON = 0.001f;
-  ImmutableMultimap<String, String> urlParameters = ImmutableMultimap.<String, String>builder()
+  final ImmutableMultimap<String, String> urlParameters = ImmutableMultimap.<String, String>builder()
       .put("lat", "33.816")
       .put("lon", "-118.15")
       .put("azimuth", "30")
@@ -43,10 +43,10 @@ public class IntegrationTestPvWatts5Service {
       .put("module_type", "0")
       .build();
   
-  PvWatts5Request.Builder requestBuilder =
+  final PvWatts5Request.Builder requestBuilder =
       RequestConverter.toPvWatts5Request(urlParameters).toBuilder();
   
-  ObjectMapper mapper = new ObjectMapper()
+  final ObjectMapper mapper = new ObjectMapper()
       .registerModule(new GuavaModule());
   
   @Mock WeatherSource tmy2WeatherSource;

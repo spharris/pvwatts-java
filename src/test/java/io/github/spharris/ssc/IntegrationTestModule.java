@@ -1,12 +1,6 @@
 package io.github.spharris.ssc;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 import java.util.List;
 
@@ -23,6 +17,8 @@ import com.google.inject.Inject;
 @RunWith(JUnit4.class)
 public class IntegrationTestModule {
 
+  static final float EPSILON = 0f;
+  
   @Inject
   private ModuleFactory moduleFactory;
 
@@ -48,8 +44,8 @@ public class IntegrationTestModule {
     module.setValue(field, value);
     Optional<Float> result = module.getNumber(field);
 
-    assertThat(result.isPresent(), equalTo(true));
-    assertThat(result.get(), equalTo(value));
+    assertThat(result.isPresent()).isTrue();
+    assertThat(result.get()).isWithin(EPSILON).of(value);
   }
 
   @Test
@@ -60,8 +56,8 @@ public class IntegrationTestModule {
     module.setValue(field, values);
     Optional<float[]> result = module.getArray(field);
 
-    assertThat(result.isPresent(), equalTo(true));
-    assertThat(result.get(), equalTo(values));
+    assertThat(result.isPresent()).isTrue();
+    assertThat(result.get()).hasValuesWithin(EPSILON).of(values);
   }
 
   @Test
@@ -72,8 +68,8 @@ public class IntegrationTestModule {
     module.setValue(field, values);
     Optional<float[][]> result = module.getMatrix(field);
 
-    assertThat(result.isPresent(), equalTo(true));
-    assertThat(result.get(), equalTo(values));
+    assertThat(result.isPresent()).isTrue();
+    assertThat(result.get()).isEqualTo(values);
   }
 
   @Test
@@ -84,8 +80,8 @@ public class IntegrationTestModule {
     module.setValue(field, values);
     Optional<float[][]> result = module.getMatrix(field);
 
-    assertThat(result.isPresent(), equalTo(true));
-    assertThat(result.get(), equalTo(values));
+    assertThat(result.isPresent()).isTrue();
+    assertThat(result.get()).isEqualTo(values);
   }
 
   @Test
@@ -96,8 +92,8 @@ public class IntegrationTestModule {
     module.setValue(field, values);
     Optional<float[][]> result = module.getMatrix(field);
 
-    assertThat(result.isPresent(), equalTo(true));
-    assertThat(result.get(), equalTo(values));
+    assertThat(result.isPresent()).isTrue();
+    assertThat(result.get()).isEqualTo(values);
   }
 
   @Test
@@ -118,15 +114,15 @@ public class IntegrationTestModule {
         .dataType(Variable.DataType.NUMBER).name("area").label("Area inside the convex hull")
         .group("layoutarea").required("*").units("").meta("").build();
 
-    assertThat(vars, hasSize(3));
-    assertThat(vars, contains(v1, v2, v3));
+    assertThat(vars).hasSize(3);
+    assertThat(vars).containsExactly(v1, v2, v3);
   }
 
   @Test
   public void getAllModules() {
     List<ModuleSummary> modules = Module.getAvailableModules();
 
-    assertThat(modules, hasSize(greaterThan(0)));
+    assertThat(modules).isNotEmpty();
   }
 
   @Test
@@ -138,21 +134,21 @@ public class IntegrationTestModule {
 
       @Override
       public boolean handleLogMessage(MessageType type, float time, String message) {
-        assertThat(type, not(equalTo(null)));
+        assertThat(type).isNotNull();
         return true;
       }
 
       @Override
       public boolean handleProgressUpdate(float percentComplete, float time, String text) {
-        assertThat(percentComplete, greaterThanOrEqualTo(0f));
-        assertThat(time, greaterThanOrEqualTo(0f));
+        assertThat(percentComplete).isAtLeast(0f);
+        assertThat(time).isAtLeast(0f);
         return true;
       }
     };
 
     m.execute(handler);
 
-    assertThat(m.getNumber("annual_dc_gross").get(), greaterThan(0f));
+    assertThat(m.getNumber("annual_dc_gross").get()).isGreaterThan(0f);
 
     m.free();
   }
@@ -164,7 +160,7 @@ public class IntegrationTestModule {
 
     m.execute();
 
-    assertThat(m.getNumber("annual_dc_gross").get(), greaterThan(0f));
+    assertThat(m.getNumber("annual_dc_gross").get()).isGreaterThan(0f);
 
     m.free();
   }
