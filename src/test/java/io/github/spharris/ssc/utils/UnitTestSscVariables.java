@@ -16,7 +16,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
-import io.github.spharris.ssc.SscModule;
+import io.github.spharris.ssc.DataContainer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UnitTestSscVariables {
@@ -25,11 +25,11 @@ public class UnitTestSscVariables {
 
   @Rule public ExpectedException thrown = ExpectedException.none();
   
-  @Mock private SscModule module;
+  @Mock DataContainer data;
   
   @Before
   public void mockModule() {
-    module = mock(SscModule.class);
+    data = mock(DataContainer.class);
   }
   
   @Test
@@ -37,9 +37,9 @@ public class UnitTestSscVariables {
     InputVariable<Float> input = SscVariables.numberInput(VAR_NAME);
     float value = 1.0f;
     
-    input.set(value, module);
+    input.set(value, data);
     
-    verify(module).setValue(VAR_NAME, value);
+    verify(data).setValue(VAR_NAME, value);
   }
   
   @Test
@@ -47,9 +47,9 @@ public class UnitTestSscVariables {
     InputVariable<ImmutableList<Float>> input = SscVariables.arrayInput(VAR_NAME);
     float[] expected = new float[] { 1.0f };
     
-    input.set(ImmutableList.of(1.0f), module);
+    input.set(ImmutableList.of(1.0f), data);
     
-    verify(module).setValue(VAR_NAME, expected);
+    verify(data).setValue(VAR_NAME, expected);
   }
   
   @Test
@@ -57,38 +57,38 @@ public class UnitTestSscVariables {
     InputVariable<String> input = SscVariables.stringInput(VAR_NAME);
     String value = "value";
     
-    input.set(value, module);
+    input.set(value, data);
     
-    verify(module).setValue(VAR_NAME, value);
+    verify(data).setValue(VAR_NAME, value);
   }
   
   @Test
   public void numberOutputCallsCorrectFunction() {
-    when(module.getNumber(isA(String.class))).thenReturn(Optional.of(1.0f));
+    when(data.getNumber(isA(String.class))).thenReturn(Optional.of(1.0f));
     SscVariable<Float> output = SscVariables.numberOutput(VAR_NAME);
     
-    output.get(module);
+    output.get(data);
     
-    verify(module).getNumber(VAR_NAME);
+    verify(data).getNumber(VAR_NAME);
   }
   
   @Test
   public void arrayOutputCallsCorrectFunction() {
-    when(module.getArray(isA(String.class))).thenReturn(Optional.of(new float[] {1.0f}));
+    when(data.getArray(isA(String.class))).thenReturn(Optional.of(new float[] {1.0f}));
     SscVariable<ImmutableList<Float>> output = SscVariables.arrayOutput(VAR_NAME);
     
-    output.get(module);
+    output.get(data);
     
-    verify(module).getArray(VAR_NAME);
+    verify(data).getArray(VAR_NAME);
   }
   
   @Test
   public void stringOutputCallsCorrectFunction() {
-    when(module.getString(isA(String.class))).thenReturn(Optional.of("test string"));
+    when(data.getString(isA(String.class))).thenReturn(Optional.of("test string"));
     SscVariable<String> output = SscVariables.stringOutput(VAR_NAME);
     
-    output.get(module);
+    output.get(data);
     
-    verify(module).getString(VAR_NAME);
+    verify(data).getString(VAR_NAME);
   }
 }

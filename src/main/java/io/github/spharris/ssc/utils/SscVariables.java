@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableList;
 
-import io.github.spharris.ssc.SscModule;
+import io.github.spharris.ssc.DataContainer;
 
 /**
  * Various implementations of {@link InputVariable} and {@link OutputVariable} interfaces
@@ -42,8 +42,8 @@ public final class SscVariables {
     }
     
     @Override
-    public ImmutableList<Float> get(SscModule module) {
-      float[] values = module.getArray(varName).get();
+    public ImmutableList<Float> get(DataContainer data) {
+      float[] values = data.getArray(varName).get();
       
       ImmutableList.Builder<Float> builder = ImmutableList.builder();
       for (float value : values) {
@@ -65,8 +65,8 @@ public final class SscVariables {
     }
     
     @Override
-    public Float get(SscModule module) {
-      return module.getNumber(varName).get();
+    public Float get(DataContainer data) {
+      return data.getNumber(varName).get();
     }
   }
   
@@ -81,8 +81,8 @@ public final class SscVariables {
     }
     
     @Override
-    public String get(SscModule module) {
-      return module.getString(varName).get();
+    public String get(DataContainer data) {
+      return data.getString(varName).get();
     }
   }
   
@@ -102,19 +102,19 @@ public final class SscVariables {
     }
     
     @Override
-    public void set(ImmutableList<Float> value, SscModule module) {
+    public void set(ImmutableList<Float> value, DataContainer data) {
       if (value == null) {
         return;
       }
       
-      checkNotNull(module);
+      checkNotNull(data);
 
       float[] values = new float[value.size()];
       for (int i = 0; i < value.size(); i++) {
         values[i] = value.get(i).floatValue();
       }
 
-      module.setValue(varName, values);
+      data.setValue(varName, values);
     }
   }
   
@@ -130,14 +130,14 @@ public final class SscVariables {
     }
 
     @Override
-    public void set(Float value, SscModule module) {
+    public void set(Float value, DataContainer data) {
       if (value == null) {
         return;
       }
       
-      checkNotNull(module);
+      checkNotNull(data);
        
-      module.setValue(varName, value.floatValue());
+      data.setValue(varName, value.floatValue());
     }
   }
   
@@ -153,20 +153,20 @@ public final class SscVariables {
     }
 
     @Override
-    public void set(Integer value, SscModule module) {
+    public void set(Integer value, DataContainer data) {
       if (value == null) {
         return;
       }
       
-      checkNotNull(module);
+      checkNotNull(data);
        
-      module.setValue(varName, value.floatValue());
+      data.setValue(varName, value.floatValue());
     }
     
     @Override
-    public Integer get(SscModule module) {
-      checkNotNull(module);
-      return (int) Math.floor(module.getNumber(varName).get());
+    public Integer get(DataContainer data) {
+      checkNotNull(data);
+      return (int) Math.floor(data.getNumber(varName).get());
     }
   }
   
@@ -182,13 +182,13 @@ public final class SscVariables {
     }
     
     @Override
-    public void set(String value, SscModule module) {
+    public void set(String value, DataContainer data) {
       if (value == null) {
         return;
       }
       
-      checkNotNull(module);
-      module.setValue(varName, value);
+      checkNotNull(data);
+      data.setValue(varName, value);
     }
   }
 }

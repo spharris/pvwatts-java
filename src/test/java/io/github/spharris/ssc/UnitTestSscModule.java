@@ -19,9 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.google.common.base.Optional;
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.FloatByReference;
 
 import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
 
@@ -45,67 +43,6 @@ public class UnitTestSscModule {
   }
 
   @Test
-  public void setNumber() {
-    SscModule m = getRealModule();
-
-    String varName = "var";
-    float value = 0.5f;
-    m.setValue(varName, value);
-
-    verify(mockApi).ssc_data_set_number(any(Pointer.class), eq(varName), eq(value));
-  }
-
-  @Test
-  public void getNonExistentNumber() {
-    SscModule m = getRealModule();
-    when(mockApi.ssc_data_get_number(any(Pointer.class), any(String.class),
-        any(FloatByReference.class))).thenReturn(false);
-
-    Optional<Float> val = m.getNumber("asdf");
-    assertThat(val.isPresent()).isFalse();
-  }
-
-  @Test
-  public void setString() {
-    SscModule m = getRealModule();
-
-    String varName = "var";
-    float value = 0.5f;
-    m.setValue(varName, value);
-
-    verify(mockApi).ssc_data_set_number(any(Pointer.class), eq(varName), eq(value));
-  }
-
-  @Test
-  public void getNonExistentString() {
-    SscModule m = getRealModule();
-    when(mockApi.ssc_data_get_string(any(Pointer.class), any(String.class))).thenReturn(null);
-
-    Optional<String> val = m.getString("asdf");
-    assertThat(val.isPresent()).isFalse();
-  }
-
-  @Test
-  public void getString() {
-    SscModule m = getRealModule();
-    String returnVal = "Hello, world!";
-    when(mockApi.ssc_data_get_string(any(Pointer.class), any(String.class))).thenReturn(returnVal);
-
-    Optional<String> val = m.getString("asdf");
-    assertThat(val.isPresent()).isTrue();
-    assertThat(val.get()).isEqualTo(returnVal);
-  }
-
-  @Test
-  public void setNumberThrowsErrorOnFreedModule() {
-    SscModule m = getFreedModule();
-
-    thrown.expect(IllegalStateException.class);
-
-    m.setValue("var", 0f);
-  }
-
-  @Test
   public void freeCallsSccFree() {
     SscModule m = getRealModule();
 
@@ -123,64 +60,6 @@ public class UnitTestSscModule {
 
     verify(mockApi, times(1)).ssc_module_free(any(Pointer.class));
   }
-
-  @Test
-  public void arrayLengthGreaterThanZero() {
-    SscModule m = getRealModule();
-
-    float[] input = new float[0];
-    thrown.expect(IllegalArgumentException.class);
-
-    m.setValue("asdf", input);
-  }
-
-  @Test
-  public void mtxRowsGreaterThanZero() {
-    SscModule m = getRealModule();
-
-    float[][] input = new float[0][1];
-    thrown.expect(IllegalArgumentException.class);
-
-    m.setValue("asdf", input);
-  }
-
-  @Test
-  public void mtxColsGreaterThanZero() {
-    SscModule m = getRealModule();
-
-    float[][] input = new float[1][0];
-    thrown.expect(IllegalArgumentException.class);
-
-    m.setValue("asdf", input);
-  }
-
-  @Test
-  public void callsSetMatrixProperly() {
-    SscModule m = getRealModule();
-
-    float[][] value = {{1, 2}, {3, 4}};
-
-    String varName = "adsf";
-    m.setValue(varName, value);
-
-    float[] expected = {1, 2, 3, 4};
-    verify(mockApi).ssc_data_set_matrix(any(Pointer.class), eq(varName), eq(expected), eq(2),
-        eq(2));
-  }
-
-  @Test
-  public void callsSetMatrixProperlyMoreRows() {
-    SscModule m = getRealModule();
-
-    float[][] value = {{1, 2}, {3, 4}, {5, 6}};
-
-    String varName = "adsf";
-    m.setValue(varName, value);
-
-    float[] expected = {1, 2, 3, 4, 5, 6};
-    verify(mockApi).ssc_data_set_matrix(any(Pointer.class), eq(varName), eq(expected), eq(3),
-        eq(2));
-  } 
 
   @Test
   public void getsVariableData() {
@@ -215,13 +94,6 @@ public class UnitTestSscModule {
     when(mockApi.ssc_entry_name(isA(Pointer.class))).thenReturn(MODULE_NAME);
 
     SscModule m = new SscModule(MODULE_NAME, mockApi);
-    return m;
-  }
-
-  private SscModule getFreedModule() {
-    SscModule m = getRealModule();
-    m.free();
-
     return m;
   }
 }

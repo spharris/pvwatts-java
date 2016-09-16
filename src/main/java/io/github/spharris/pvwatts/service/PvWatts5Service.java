@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -16,6 +17,7 @@ import io.github.spharris.pvwatts.service.PvWatts5Response.SscInfo;
 import io.github.spharris.pvwatts.service.PvWatts5Response.StationInfo;
 import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.pvwatts.utils.RequestConverter;
+import io.github.spharris.ssc.DataContainer;
 import io.github.spharris.ssc.ExecutionHandler;
 import io.github.spharris.ssc.SscModule;
 import io.github.spharris.ssc.SscModuleFactory;
@@ -38,13 +40,16 @@ public final class PvWatts5Service {
       .build();
   
   private final SscModuleFactory moduleFactory;
-  private ImmutableMap<String, WeatherSource> weatherSources;
+  private final Provider<DataContainer> dataContainerProvider;
+  private final ImmutableMap<String, WeatherSource> weatherSources;
   
   @Inject
   public PvWatts5Service(
       SscModuleFactory moduleFactory,
+      Provider<DataContainer> dataContainerProvider,
       Map<String, WeatherSource> weatherSources) {
     this.moduleFactory = moduleFactory;
+    this.dataContainerProvider = dataContainerProvider;
     this.weatherSources = ImmutableMap.copyOf(weatherSources);
   }
 
@@ -61,33 +66,35 @@ public final class PvWatts5Service {
   private PvWatts5Response executeWithResponse(PvWatts5Request request,
       PvWatts5Response.Builder response) {
     SscModule module = moduleFactory.create(MODULE_NAME);
+    DataContainer data = dataContainerProvider.get();
 
-    setRequiredValues(module);
+    setRequiredValues(data);
     Variables.SOLAR_RESOURCE_FILE.set(weatherSources.get(request.getDataset()).getWeatherFile(
-      request.getLat(), request.getLon(), request.getRadius()), module);
-    Variables.SYSTEM_CAPACITY.set(request.getSystemCapacity(), module);
-    Variables.MODULE_TYPE.set(request.getModuleType(), module);
-    Variables.LOSSES.set(request.getLosses(), module);
-    Variables.ARRAY_TYPE.set(request.getArrayType(), module);
-    Variables.TILT.set(request.getTilt(), module);
-    Variables.AZIMUTH.set(request.getAzimuth(), module);
-    Variables.DC_AC_RATIO.set(request.getDcAcRatio(), module);
-    Variables.GCR.set(request.getGcr(), module);
-    Variables.INV_EFF.set(request.getInvEff(), module);
+      request.getLat(), request.getLon(), request.getRadius()), data);
+    Variables.SYSTEM_CAPACITY.set(request.getSystemCapacity(), data);
+    Variables.MODULE_TYPE.set(request.getModuleType(), data);
+    Variables.LOSSES.set(request.getLosses(), data);
+    Variables.ARRAY_TYPE.set(request.getArrayType(), data);
+    Variables.TILT.set(request.getTilt(), data);
+    Variables.AZIMUTH.set(request.getAzimuth(), data);
+    Variables.DC_AC_RATIO.set(request.getDcAcRatio(), data);
+    Variables.GCR.set(request.getGcr(), data);
+    Variables.INV_EFF.set(request.getInvEff(), data);
 
     ImmutableList.Builder<String> errorListBuilder = ImmutableList.builder();
     ImmutableList.Builder<String> warningListBuilder = ImmutableList.builder();
-    module.execute(messageLoggingHandler(errorListBuilder, warningListBuilder));
+    module.execute(data, messageLoggingHandler(errorListBuilder, warningListBuilder));
 
     ImmutableList<String> errors = errorListBuilder.build();
     if (errors.isEmpty()) {
-      buildResponse(module, request, response);
+      buildResponse(module, data, request, response);
     }
     
     response.setErrors(errors);
     response.setWarnings(warningListBuilder.build());
     
     module.free();
+    data.free();
     
     return response.build();
   }
@@ -95,8 +102,8 @@ public final class PvWatts5Service {
   /**
    * Parameters that are always the same for every request, but are still required.
    */
-  private static void setRequiredValues(SscModule module) {
-    Variables.ADJUST_CONSTANT.set(1f, module);
+  private static void setRequiredValues(DataContainer data) {
+    Variables.ADJUST_CONSTANT.set(1f, data);
   }
   
   /**
@@ -115,44 +122,44 @@ public final class PvWatts5Service {
       .build();
   }
   
-  private static PvWatts5Response.Builder buildResponse(SscModule module, PvWatts5Request request,
-      PvWatts5Response.Builder response) {
+  private static PvWatts5Response.Builder buildResponse(SscModule module, DataContainer data,
+      PvWatts5Request request, PvWatts5Response.Builder response) {
     response.setVersion(SERVICE_VERSION)
         .setSscInfo(SscInfo.builder()
           .setVersion(module.getSscVersion())
           .setBuild(module.getSscBuildInfo())
           .build())
         .setStationInfo(StationInfo.builder()
-          .setLat(Variables.LAT.get(module))
-          .setLon(Variables.LON.get(module))
-          .setElev(Variables.ELEV.get(module))
-          .setTz(Variables.TZ.get(module))
-          .setLocation(Variables.LOCATION.get(module))
-          .setCity(Variables.CITY.get(module))
-          .setState(Variables.STATE.get(module))
+          .setLat(Variables.LAT.get(data))
+          .setLon(Variables.LON.get(data))
+          .setElev(Variables.ELEV.get(data))
+          .setTz(Variables.TZ.get(data))
+          .setLocation(Variables.LOCATION.get(data))
+          .setCity(Variables.CITY.get(data))
+          .setState(Variables.STATE.get(data))
           .setSolarResourceFile(Paths.get(
-            Variables.SOLAR_RESOURCE_FILE.get(module)).getFileName().toString())
+            Variables.SOLAR_RESOURCE_FILE.get(data)).getFileName().toString())
           .build());
     
-    Float acAnnual= Variables.AC_ANNUAL.get(module);
+    Float acAnnual= Variables.AC_ANNUAL.get(data);
     Outputs.Builder outputsBuilder = Outputs.builder()
-        .setPoaMonthly(Variables.POA_MONTHLY.get(module))
-        .setDcMonthly(Variables.DC_MONTHLY.get(module))
-        .setAcMonthly(Variables.AC_MONTHLY.get(module))
+        .setPoaMonthly(Variables.POA_MONTHLY.get(data))
+        .setDcMonthly(Variables.DC_MONTHLY.get(data))
+        .setAcMonthly(Variables.AC_MONTHLY.get(data))
         .setAcAnnual(acAnnual)
-        .setSolradMonthly(Variables.SOLRAD_MONTHLY.get(module))
-        .setSolradAnnual(Variables.SOLRAD_ANNUAL.get(module))
+        .setSolradMonthly(Variables.SOLRAD_MONTHLY.get(data))
+        .setSolradAnnual(Variables.SOLRAD_ANNUAL.get(data))
         .setCapacityFactor(acAnnual / (request.getSystemCapacity() * 8760.0f) * 100.0f);
     
     if (Objects.equals(request.getTimeframe(), "hourly")) {
-      outputsBuilder.setAc(Variables.AC.get(module));
-      outputsBuilder.setPoa(Variables.POA.get(module));
-      outputsBuilder.setDn(Variables.DN.get(module));
-      outputsBuilder.setDc(Variables.DC.get(module));
-      outputsBuilder.setDf(Variables.DF.get(module));
-      outputsBuilder.setTamb(Variables.TAMB.get(module));
-      outputsBuilder.setTcell(Variables.TCELL.get(module));
-      outputsBuilder.setWspd(Variables.WSPD.get(module));
+      outputsBuilder.setAc(Variables.AC.get(data));
+      outputsBuilder.setPoa(Variables.POA.get(data));
+      outputsBuilder.setDn(Variables.DN.get(data));
+      outputsBuilder.setDc(Variables.DC.get(data));
+      outputsBuilder.setDf(Variables.DF.get(data));
+      outputsBuilder.setTamb(Variables.TAMB.get(data));
+      outputsBuilder.setTcell(Variables.TCELL.get(data));
+      outputsBuilder.setWspd(Variables.WSPD.get(data));
     }
 
     response.setOutputs(outputsBuilder.build());

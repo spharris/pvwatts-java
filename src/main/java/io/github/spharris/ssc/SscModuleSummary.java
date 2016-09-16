@@ -5,6 +5,9 @@ import javax.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
+/**
+ * A summary of a particular SSC compute module.
+ */
 @AutoValue
 public abstract class SscModuleSummary {
 

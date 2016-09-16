@@ -1,23 +1,16 @@
 package io.github.spharris.ssc;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.inject.Qualifier;
-
-import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.FloatByReference;
-import com.sun.jna.ptr.IntByReference;
 
 import io.github.spharris.ssc.ExecutionHandler.MessageType;
 import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
@@ -34,30 +27,9 @@ import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
  * @author spharris
  */
 public class SscModule implements Freeable {
-
-  @Qualifier
-  @Retention(RetentionPolicy.RUNTIME)
-  @interface SscLibraryName {}
-
-  private enum ActionType {
-    LOG, UPDATE;
-
-    public static ActionType forInt(int action) {
-      checkArgument(action == 0 || action == 1, "action must have a value of 0 or 1");
-
-      if (action == 0) {
-        return LOG;
-      } else {
-        return UPDATE;
-      }
-    }
-  }
-
-  private static final int FLOAT_SIZE = 4;
-
+ 
   private String moduleName;
   private Pointer module;
-  private Pointer data;
   private Pointer entry;
   private Ssc api;
   private List<Variable> variables;
@@ -67,10 +39,10 @@ public class SscModule implements Freeable {
   /**
    * Gets a list of the available modules.
    */
-  public static List<SscModuleSummary> getAvailableModules() {
+  public static ImmutableList<SscModuleSummary> getAvailableModules() {
     Ssc api = loadSscLibrary();
 
-    List<SscModuleSummary> modules = new LinkedList<>();
+    ImmutableList.Builder<SscModuleSummary> builder = ImmutableList.builder();
 
     int i = 0;
     Pointer entry = api.ssc_module_entry(i);
@@ -79,7 +51,7 @@ public class SscModule implements Freeable {
       String desc = api.ssc_entry_description(entry);
       int version = api.ssc_entry_version(entry);
 
-      modules.add(SscModuleSummary.builder()
+      builder.add(SscModuleSummary.builder()
         .setName(name)
         .setDescription(desc)
         .setVersion(version)
@@ -89,7 +61,7 @@ public class SscModule implements Freeable {
       entry = api.ssc_module_entry(i);
     }
 
-    return modules;
+    return builder.build();
   }
 
   private static Ssc loadSscLibrary() {
@@ -98,15 +70,14 @@ public class SscModule implements Freeable {
 
   @Inject
   SscModule(@Assisted String moduleName, Ssc api) {
-    module = api.ssc_module_create(moduleName);
+    this.module = api.ssc_module_create(moduleName);
     if (module == null) {
       throw new UnknownModuleNameException(moduleName);
     }
 
     this.moduleName = moduleName;
     this.api = api;
-    entry = getEntry();
-    data = api.ssc_data_create();
+    this.entry = getEntry();
   }
 
   /**
@@ -196,12 +167,13 @@ public class SscModule implements Freeable {
     return variables;
   }
 
-  public void execute() {
-    api.ssc_module_exec(module, data);
+  public void execute(DataContainer data) {
+    checkState();
+    api.ssc_module_exec(module, data.getPointer());
   }
 
-  public void execute(final ExecutionHandler handler) {
-
+  public void execute(DataContainer data, final ExecutionHandler handler) {
+    checkState();
     SscExecutionHandler wrapper = new SscExecutionHandler() {
 
       @Override
@@ -217,320 +189,27 @@ public class SscModule implements Freeable {
       }
     };
 
-    api.ssc_module_exec_with_handler(module, data, wrapper, null);
+    api.ssc_module_exec_with_handler(module, data.getPointer(), wrapper, null);
   }
 
-  /**
-   * Set a numeric input value for this module.
-   * 
-   * @param variableName The name of the variable to set.
-   * @param value The value.
-   * 
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
-   */
-  public SscModule setValue(String variableName, float value) {
-    checkState();
-    checkNotNull(variableName);
+  private enum ActionType {
+    LOG, UPDATE;
 
-    api.ssc_data_set_number(data, variableName, value);
-    return this;
-  }
+    public static ActionType forInt(int action) {
+      checkArgument(action == 0 || action == 1, "action must have a value of 0 or 1");
 
-  public SscModule setValue(String variableName, int value) {
-    return setValue(variableName, (float) value);
-  }
-
-  public SscModule setValue(String variableName, long value) {
-    return setValue(variableName, (float) value);
-  }
-
-  public SscModule setValue(String variableName, double value) {
-    return setValue(variableName, (float) value);
-  }
-
-  public SscModule setValue(String variableName, Number value) {
-    return setValue(variableName, value.floatValue());
-  }
-
-  /**
-   * Set a String input value for this module.
-   * 
-   * @param variableName The name of the variable to set.
-   * @param value The value.
-   * 
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is
-   *         null
-   */
-  public SscModule setValue(String variableName, String value) {
-    checkState();
-    checkNotNull(value);
-
-    api.ssc_data_set_string(data, variableName, value);
-    return this;
-  }
-
-  /**
-   * Set an array input value for this module.
-   * 
-   * @param variableName The name of the variable to set.
-   * @param value The value.
-   * 
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is
-   *         null
-   * @throws {@link java.lang.IllegalArgumentException} if <tt>value</tt> has a length of zero.
-   */
-  public SscModule setValue(String variableName, float[] value) {
-    checkState();
-    checkNotNull(value);
-    checkArgument(value.length >= 1, "The length of the array must be >= 1.");
-
-    api.ssc_data_set_array(data, variableName, value, value.length);
-    return this;
-  }
-
-  public SscModule setValue(String variableName, int[] value) {
-    float[] floats = new float[value.length];
-    for (int i = 0; i < value.length; i++) {
-      floats[i] = value[i];
-    }
-
-    return setValue(variableName, floats);
-  }
-
-  public SscModule setValue(String variableName, long[] value) {
-    float[] floats = new float[value.length];
-    for (int i = 0; i < value.length; i++) {
-      floats[i] = value[i];
-    }
-
-    return setValue(variableName, floats);
-  }
-
-  public SscModule setValue(String variableName, double[] value) {
-    float[] floats = new float[value.length];
-    for (int i = 0; i < value.length; i++) {
-      floats[i] = (float) value[i];
-    }
-
-    return setValue(variableName, floats);
-  }
-
-  public SscModule setValue(String variableName, Number[] value) {
-    float[] floats = new float[value.length];
-    for (int i = 0; i < value.length; i++) {
-      floats[i] = value[i].floatValue();
-    }
-
-    return setValue(variableName, floats);
-  }
-
-  /**
-   * Set an array input value for this module.
-   * 
-   * @param variableName The name of the variable to set.
-   * @param value The value.
-   * 
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is
-   *         null
-   * @throws {@link java.lang.IllegalArgumentException} if <tt>value</tt> has zero rows or columns
-   */
-  public SscModule setValue(String variableName, float[][] value) {
-    checkState();
-    checkNotNull(value);
-    checkArgument(value.length >= 1, "The number of rows must be >= 1.");
-    checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
-
-    int rows = value.length;
-    int cols = value[0].length;
-    float[] inputArray = new float[rows * cols];
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
-        inputArray[arrayIndex(i, j, cols)] = value[i][j];
+      if (action == 0) {
+        return LOG;
+      } else {
+        return UPDATE;
       }
     }
-
-    api.ssc_data_set_matrix(data, variableName, inputArray, rows, cols);
-    return this;
-  }
-
-  public SscModule setValue(String variableName, int[][] value) {
-    checkNotNull(value);
-    checkArgument(value.length >= 1, "The number of rows must be >= 1.");
-    checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
-
-    float[][] floats = new float[value.length][value[0].length];
-    for (int i = 0; i < value.length; i++) {
-      for (int j = 0; j < value[i].length; i++) {
-        floats[i][j] = value[i][j];
-      }
-    }
-
-    return setValue(variableName, floats);
-  }
-
-  public SscModule setValue(String variableName, long[][] value) {
-    checkNotNull(value);
-    checkArgument(value.length >= 1, "The number of rows must be >= 1.");
-    checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
-
-    float[][] floats = new float[value.length][value[0].length];
-    for (int i = 0; i < value.length; i++) {
-      for (int j = 0; j < value[i].length; i++) {
-        floats[i][j] = value[i][j];
-      }
-    }
-
-    return setValue(variableName, floats);
-  }
-
-  public SscModule setValue(String variableName, double[][] value) {
-    checkNotNull(value);
-    checkArgument(value.length >= 1, "The number of rows must be >= 1.");
-    checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
-
-    float[][] floats = new float[value.length][value[0].length];
-    for (int i = 0; i < value.length; i++) {
-      for (int j = 0; j < value[i].length; i++) {
-        floats[i][j] = (float) value[i][j];
-      }
-    }
-
-    return setValue(variableName, floats);
-  }
-
-  public SscModule setValue(String variableName, Number[][] value) {
-    checkNotNull(value);
-    checkArgument(value.length >= 1, "The number of rows must be >= 1.");
-    checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
-
-    float[][] floats = new float[value.length][value[0].length];
-    for (int i = 0; i < value.length; i++) {
-      for (int j = 0; j < value[i].length; i++) {
-        floats[i][j] = value[i][j].floatValue();
-      }
-    }
-
-    return setValue(variableName, floats);
-  }
-
-  /**
-   * Get a numeric input or output number for this module.
-   * 
-   * @param variableName The name of the variable to retrieve.
-   * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
-   *         an empty {@link Optional}
-   * 
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
-   */
-  public Optional<Float> getNumber(String variableName) {
-    checkState();
-    checkNotNull(variableName);
-
-    FloatByReference value = new FloatByReference();
-    boolean present = api.ssc_data_get_number(data, variableName, value);
-
-    if (present) {
-      return Optional.of(value.getValue());
-    } else {
-      return Optional.absent();
-    }
-  }
-
-  /**
-   * Get a numeric input or output number for this module.
-   * 
-   * @param variableName The name of the variable to retrieve.
-   * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
-   *         an empty {@link Optional}
-   * 
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
-   */
-  public Optional<String> getString(String variableName) {
-    checkState();
-    checkNotNull(variableName);
-
-    String val = api.ssc_data_get_string(data, variableName);
-    return Optional.fromNullable(val);
-  }
-
-  /**
-   * Get a numeric input or output number for this module.
-   * 
-   * @param variableName The name of the variable to retrieve.
-   * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
-   *         an empty {@link Optional}
-   * 
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
-   */
-  public Optional<float[]> getArray(String variableName) {
-    checkState();
-    checkNotNull(variableName);
-
-    IntByReference length = new IntByReference();
-    Pointer result = api.ssc_data_get_array(data, variableName, length);
-
-    if (result == null) {
-      return Optional.<float[]>absent();
-    } else {
-      int len = length.getValue();
-      float[] arr = new float[len];
-
-      for (int i = 0; i < len; i++) {
-        arr[i] = result.getFloat(i * FLOAT_SIZE);
-      }
-
-      return Optional.of(arr);
-    }
-  }
-
-  /**
-   * Get a numeric input or output number for this module.
-   * 
-   * @param variableName The name of the variable to retrieve.
-   * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
-   *         an empty {@link Optional}
-   * 
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
-   */
-  public Optional<float[][]> getMatrix(String variableName) {
-    checkState();
-    checkNotNull(variableName);
-
-    IntByReference rows = new IntByReference();
-    IntByReference cols = new IntByReference();
-    Pointer result = api.ssc_data_get_matrix(data, variableName, rows, cols);
-
-    if (result == null) {
-      return Optional.<float[][]>absent();
-    } else {
-      float[][] value = new float[rows.getValue()][cols.getValue()];
-      for (int i = 0; i < rows.getValue(); i++) {
-        for (int j = 0; j < cols.getValue(); j++) {
-          value[i][j] = result.getFloat(arrayIndex(i, j, cols.getValue()) * FLOAT_SIZE);
-        }
-      }
-
-      return Optional.of(value);
-    }
-  }
-
-  private static int arrayIndex(int i, int j, int cols) {
-    return (i * cols) + j;
   }
 
   @Override
   public void free() {
     if (!freed) {
       api.ssc_module_free(module);
-      api.ssc_data_free(data);
       freed = true;
     }
   }

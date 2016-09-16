@@ -27,6 +27,16 @@ public class DataContainer implements Freeable {
     this.api = checkNotNull(api);
     
     data = api.ssc_data_create();
+    freed = false;
+  }
+  
+  /**
+   * Get the underlying SSC data pointer. Package private because it should only be accessible
+   * from {@link SscModule}.
+   */
+  Pointer getPointer() {
+    checkState();
+    return data;
   }
   
   /**

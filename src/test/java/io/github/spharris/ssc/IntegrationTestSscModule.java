@@ -4,13 +4,14 @@ import static com.google.common.truth.Truth.assertThat;
 
 import java.util.List;
 
+import javax.inject.Provider;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.google.common.base.Optional;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 
@@ -19,81 +20,24 @@ public class IntegrationTestSscModule {
 
   static final float EPSILON = 0f;
   
-  @Inject
-  private SscModuleFactory moduleFactory;
+  @Inject SscModuleFactory moduleFactory;
+  @Inject Provider<DataContainer> dataContainerProvider;
 
-  private SscModule module;
+  SscModule module;
+  DataContainer data;
 
   @Before
   public void createModule() {
     Guice.createInjector(new SscGuiceModule()).injectMembers(this);
 
     module = moduleFactory.create("layoutarea");
+    data = dataContainerProvider.get();
   }
 
   @After
-  public void freeModule() {
+  public void freeResources() {
     module.free();
-  }
-
-  @Test
-  public void getNumber() {
-    String field = "field";
-    float value = 0.5f;
-
-    module.setValue(field, value);
-    Optional<Float> result = module.getNumber(field);
-
-    assertThat(result.isPresent()).isTrue();
-    assertThat(result.get()).isWithin(EPSILON).of(value);
-  }
-
-  @Test
-  public void getArray() {
-    String field = "field";
-    float[] values = {0.5f, 0.5f, 0.5f};
-
-    module.setValue(field, values);
-    Optional<float[]> result = module.getArray(field);
-
-    assertThat(result.isPresent()).isTrue();
-    assertThat(result.get()).hasValuesWithin(EPSILON).of(values);
-  }
-
-  @Test
-  public void callsGetMatrixProperly() {
-    String field = "field";
-    float[][] values = {{1, 2}, {3, 4}};
-
-    module.setValue(field, values);
-    Optional<float[][]> result = module.getMatrix(field);
-
-    assertThat(result.isPresent()).isTrue();
-    assertThat(result.get()).isEqualTo(values);
-  }
-
-  @Test
-  public void callsGetMatrixProperlyMoreRows() {
-    String field = "field";
-    float[][] values = {{1, 2}, {3, 4}, {5, 6}};
-
-    module.setValue(field, values);
-    Optional<float[][]> result = module.getMatrix(field);
-
-    assertThat(result.isPresent()).isTrue();
-    assertThat(result.get()).isEqualTo(values);
-  }
-
-  @Test
-  public void callsGetMatrixProperlyMoreCols() {
-    String field = "field";
-    float[][] values = {{1, 2, 3}, {4, 5, 6}};
-
-    module.setValue(field, values);
-    Optional<float[][]> result = module.getMatrix(field);
-
-    assertThat(result.isPresent()).isTrue();
-    assertThat(result.get()).isEqualTo(values);
+    data.free();
   }
 
   @Test
@@ -128,7 +72,7 @@ public class IntegrationTestSscModule {
   @Test
   public void executeWithHandler() throws Exception {
     SscModule m = moduleFactory.create("pvsamv1");
-    populateModuleWithSimData(m);
+    populateModuleWithSimData(data);
 
     ExecutionHandler handler = new ExecutionHandler() {
 
@@ -146,9 +90,9 @@ public class IntegrationTestSscModule {
       }
     };
 
-    m.execute(handler);
+    m.execute(data, handler);
 
-    assertThat(m.getNumber("annual_dc_gross").get()).isGreaterThan(0f);
+    assertThat(data.getNumber("annual_dc_gross").get()).isGreaterThan(0f);
 
     m.free();
   }
@@ -156,81 +100,81 @@ public class IntegrationTestSscModule {
   @Test
   public void simpleExecute() throws Exception {
     SscModule m = moduleFactory.create("pvsamv1");
-    populateModuleWithSimData(m);
+    populateModuleWithSimData(data);
 
-    m.execute();
+    m.execute(data);
 
-    assertThat(m.getNumber("annual_dc_gross").get()).isGreaterThan(0f);
+    assertThat(data.getNumber("annual_dc_gross").get()).isGreaterThan(0f);
 
     m.free();
   }
 
-  private static void populateModuleWithSimData(SscModule m) throws Exception {
+  private static void populateModuleWithSimData(DataContainer data) throws Exception {
     String weatherFile = "target/test-classes/weather/tmy2/23129.tm2";
-    m.setValue("solar_resource_file", weatherFile);
-    m.setValue("albedo",
+    data.setValue("solar_resource_file", weatherFile);
+    data.setValue("albedo",
         new float[] {0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f});
-    m.setValue("dcoptimizer_loss", 0);
+    data.setValue("dcoptimizer_loss", 0);
 
-    m.setValue("system_capacity", 1);
-    m.setValue("modules_per_string", 14);
-    m.setValue("strings_in_parallel", 10);
-    m.setValue("inverter_count", 10);
+    data.setValue("system_capacity", 1);
+    data.setValue("modules_per_string", 14);
+    data.setValue("strings_in_parallel", 10);
+    data.setValue("inverter_count", 10);
 
-    m.setValue("ac_loss", 0.1f);
-    m.setValue("acwiring_loss", 0.015f);
-    m.setValue("transformer_loss", 0.02f);
+    data.setValue("ac_loss", 0.1f);
+    data.setValue("acwiring_loss", 0.015f);
+    data.setValue("transformer_loss", 0.02f);
 
     for (int i = 1; i <= 4; i++) {
-      m.setValue("subarray" + i + "_tilt", 20);
-      m.setValue("subarray" + i + "_track_mode", 0);
-      m.setValue("subarray" + i + "_azimuth", 180);
-      m.setValue("subarray" + i + "_mod_orient", 1);
-      m.setValue("subarray" + i + "_nmodx", 1);
-      m.setValue("subarray" + i + "_nmody", 1);
-      m.setValue("subarray" + i + "_shade_mode", 1);
-      m.setValue("subarray" + i + "_dcloss", .1f);
-      m.setValue("subarray" + i + "_dcwiring_loss", .015f);
-      m.setValue("subarray" + i + "_tracking_loss", 0);
-      m.setValue("subarray" + i + "_mismatch_loss", .04f);
-      m.setValue("subarray" + i + "_nameplate_loss", -0.015f);
-      m.setValue("subarray" + i + "_diodeconn_loss", 0);
-      m.setValue("subarray" + i + "_soiling",
+      data.setValue("subarray" + i + "_tilt", 20);
+      data.setValue("subarray" + i + "_track_mode", 0);
+      data.setValue("subarray" + i + "_azimuth", 180);
+      data.setValue("subarray" + i + "_mod_orient", 1);
+      data.setValue("subarray" + i + "_nmodx", 1);
+      data.setValue("subarray" + i + "_nmody", 1);
+      data.setValue("subarray" + i + "_shade_mode", 1);
+      data.setValue("subarray" + i + "_dcloss", .1f);
+      data.setValue("subarray" + i + "_dcwiring_loss", .015f);
+      data.setValue("subarray" + i + "_tracking_loss", 0);
+      data.setValue("subarray" + i + "_mismatch_loss", .04f);
+      data.setValue("subarray" + i + "_nameplate_loss", -0.015f);
+      data.setValue("subarray" + i + "_diodeconn_loss", 0);
+      data.setValue("subarray" + i + "_soiling",
           new float[] {0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f});
     }
 
-    m.setValue("module_model", 1);
-    m.setValue("cec_t_noct", 65);
-    m.setValue("cec_area", 0.67f);
-    m.setValue("cec_n_s", 18);
-    m.setValue("cec_i_sc_ref", 7.5f);
-    m.setValue("cec_v_oc_ref", 10.4f);
-    m.setValue("cec_i_mp_ref", 6.6f);
-    m.setValue("cec_v_mp_ref", 8.4f);
-    m.setValue("cec_alpha_sc", 0.003f);
-    m.setValue("cec_beta_oc", -0.04f);
-    m.setValue("cec_a_ref", 0.473f);
-    m.setValue("cec_i_l_ref", 7.545f);
-    m.setValue("cec_i_o_ref", (float) 1.94E-09);
-    m.setValue("cec_r_s", 0.094f);
-    m.setValue("cec_r_sh_ref", 15.72f);
-    m.setValue("cec_adjust", 10.6f);
-    m.setValue("cec_gamma_r", -0.5f);
-    m.setValue("cec_temp_corr_mode", 0);
-    m.setValue("cec_standoff", 1);
-    m.setValue("cec_height", 0);
+    data.setValue("module_model", 1);
+    data.setValue("cec_t_noct", 65);
+    data.setValue("cec_area", 0.67f);
+    data.setValue("cec_n_s", 18);
+    data.setValue("cec_i_sc_ref", 7.5f);
+    data.setValue("cec_v_oc_ref", 10.4f);
+    data.setValue("cec_i_mp_ref", 6.6f);
+    data.setValue("cec_v_mp_ref", 8.4f);
+    data.setValue("cec_alpha_sc", 0.003f);
+    data.setValue("cec_beta_oc", -0.04f);
+    data.setValue("cec_a_ref", 0.473f);
+    data.setValue("cec_i_l_ref", 7.545f);
+    data.setValue("cec_i_o_ref", (float) 1.94E-09);
+    data.setValue("cec_r_s", 0.094f);
+    data.setValue("cec_r_sh_ref", 15.72f);
+    data.setValue("cec_adjust", 10.6f);
+    data.setValue("cec_gamma_r", -0.5f);
+    data.setValue("cec_temp_corr_mode", 0);
+    data.setValue("cec_standoff", 1);
+    data.setValue("cec_height", 0);
 
-    m.setValue("inverter_model", 1);
-    m.setValue("inv_ds_paco", 225);
-    m.setValue("inv_ds_eff", .965f);
-    m.setValue("inv_ds_pnt", .065f);
-    m.setValue("inv_ds_pso", 250);
-    m.setValue("inv_ds_vdco", 27);
-    m.setValue("inv_ds_vdcmax", 48);
-    m.setValue("mppt_low_inverter", 25);
-    m.setValue("mppt_hi_inverter", 40);
+    data.setValue("inverter_model", 1);
+    data.setValue("inv_ds_paco", 225);
+    data.setValue("inv_ds_eff", .965f);
+    data.setValue("inv_ds_pnt", .065f);
+    data.setValue("inv_ds_pso", 250);
+    data.setValue("inv_ds_vdco", 27);
+    data.setValue("inv_ds_vdcmax", 48);
+    data.setValue("mppt_low_inverter", 25);
+    data.setValue("mppt_hi_inverter", 40);
 
-    m.setValue("adjust:factor", 1);
-    m.setValue("adjust:constant", 1);
+    data.setValue("adjust:factor", 1);
+    data.setValue("adjust:constant", 1);
   }
 }
