@@ -6,7 +6,9 @@ import com.google.common.collect.Iterables;
 import io.github.spharris.pvwatts.service.PvWatts4Request;
 import io.github.spharris.pvwatts.service.PvWatts5Request;
 
-public class RequestConverter {
+public final class RequestConverter {
+  
+  private RequestConverter() {}
 
   public static PvWatts4Request toPvWatts4Request(ImmutableMultimap<String, String> multimap) {
     return PvWatts4Request.builder()

@@ -8,7 +8,7 @@ import io.github.spharris.pvwatts.Configuration;
 /**
  * Module for provided weather sources.
  */
-public class WeatherModule extends AbstractModule {
+public final class WeatherModule extends AbstractModule {
 
   @Override
   protected void configure() {

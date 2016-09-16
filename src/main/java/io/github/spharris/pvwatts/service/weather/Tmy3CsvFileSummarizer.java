@@ -10,7 +10,7 @@ import org.apache.commons.csv.CSVRecord;
 /**
  * Summarizes TMY3-style CSV files
  */
-public class Tmy3CsvFileSummarizer implements WeatherSummarizer {
+public final class Tmy3CsvFileSummarizer implements WeatherSummarizer {
 
   /**
    * Reads a the header from a TMY3-style CSV file and summarizes it.

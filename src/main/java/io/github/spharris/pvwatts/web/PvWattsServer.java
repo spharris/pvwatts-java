@@ -17,7 +17,7 @@ import com.google.inject.Module;
 import io.github.spharris.pvwatts.Configuration;
 import io.github.spharris.pvwatts.PvWattsModule;
 
-public class PvWattsServer {
+public final class PvWattsServer {
 
   public static void main(String[] args) throws Exception {
     Configuration.loadConfig(

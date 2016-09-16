@@ -8,6 +8,8 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Variable {
   
+  Variable() {}
+  
   public abstract VariableType getVariableType();
   public abstract DataType getDataType();
   public abstract String getName();

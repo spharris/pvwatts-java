@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.sun.jna.Native;
 
-public class SscGuiceModule extends AbstractModule {
+public final class SscGuiceModule extends AbstractModule {
 
   @Override
   protected void configure() {

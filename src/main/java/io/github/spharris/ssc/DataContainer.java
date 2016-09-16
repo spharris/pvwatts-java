@@ -14,7 +14,7 @@ import com.sun.jna.ptr.IntByReference;
 /**
  * A container for data that is passed to an {@link SscModule} for execution
  */
-public class DataContainer implements Freeable {
+public final class DataContainer implements Freeable {
 
   private static final int FLOAT_SIZE = 4;
   

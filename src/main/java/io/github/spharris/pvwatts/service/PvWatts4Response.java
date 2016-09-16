@@ -21,6 +21,8 @@ import io.github.spharris.pvwatts.utils.ImmutableMultimapSerializer;
 @JsonDeserialize(builder = AutoValue_PvWatts4Response.Builder.class)
 public abstract class PvWatts4Response {
   
+  PvWatts4Response() {}
+  
   @JsonSerialize(using = ImmutableMultimapSerializer.class)
   public abstract @Nullable ImmutableMultimap<String, String> getInputs();
 

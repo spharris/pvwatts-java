@@ -10,7 +10,8 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
 
-public class ImmutableMultimapSerializer extends JsonSerializer<ImmutableMultimap<String, String>> {
+public final class ImmutableMultimapSerializer
+    extends JsonSerializer<ImmutableMultimap<String, String>> {
   
   @Override
   public void serialize(ImmutableMultimap<String, String> value,

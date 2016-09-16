@@ -6,7 +6,7 @@ package io.github.spharris.ssc.exceptions;
  * 
  * @author spharris
  */
-public class UnknownModuleNameException extends RuntimeException {
+public final class UnknownModuleNameException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 

@@ -5,7 +5,7 @@ import com.google.inject.AbstractModule;
 import io.github.spharris.pvwatts.service.PvWatts4Service;
 import io.github.spharris.pvwatts.service.PvWatts5Service;
 
-public class PvWattsWebModule extends AbstractModule {
+public final class PvWattsWebModule extends AbstractModule {
   
   @Override
   protected void configure() {

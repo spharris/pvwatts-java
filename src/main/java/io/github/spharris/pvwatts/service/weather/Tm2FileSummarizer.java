@@ -6,7 +6,7 @@ import java.io.Reader;
 /**
  * Summarize a .tm2 file.
  */
-public class Tm2FileSummarizer implements WeatherSummarizer {
+public final class Tm2FileSummarizer implements WeatherSummarizer {
 
   /**
    * Reads the header from a TM2 file and returns a {@link WeatherDataRecord} summarizing it.

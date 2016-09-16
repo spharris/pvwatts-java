@@ -7,6 +7,8 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class PvWatts5Request {
 
+  PvWatts5Request() {}
+  
   public abstract @Nullable Float getSystemCapacity();
   public abstract @Nullable Integer getModuleType();
   public abstract @Nullable Float getLosses();

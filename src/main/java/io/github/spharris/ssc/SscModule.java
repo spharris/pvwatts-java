@@ -26,7 +26,7 @@ import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
  * 
  * @author spharris
  */
-public class SscModule implements Freeable {
+public final class SscModule implements Freeable {
  
   private String moduleName;
   private Pointer module;

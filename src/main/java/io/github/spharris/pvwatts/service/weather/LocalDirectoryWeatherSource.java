@@ -18,7 +18,7 @@ import com.google.common.collect.ImmutableList;
  * A weather source that reads weather files from the specified directory and finds the one closest
  * to the specified latitude and longitude. 
  */
-public class LocalDirectoryWeatherSource implements WeatherSource {
+public final class LocalDirectoryWeatherSource implements WeatherSource {
 
   private static final double MI_TO_KM = 5280.0 * 12.0 * 2.54 / 100.0 / 1000.0;
   

@@ -11,6 +11,8 @@ import com.google.common.collect.ImmutableList;
 @AutoValue
 public abstract class SscModuleSummary {
 
+  SscModuleSummary() {}
+  
   public abstract String getName();
   public abstract String getDescription();
   public abstract int getVersion();
