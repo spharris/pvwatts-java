@@ -8,6 +8,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,7 +18,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.google.common.base.Optional;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.FloatByReference;
 

@@ -3,9 +3,10 @@ package io.github.spharris.ssc;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
-import com.google.common.base.Optional;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -256,7 +257,7 @@ public class DataContainer implements Freeable {
     if (present) {
       return Optional.of(value.getValue());
     } else {
-      return Optional.absent();
+      return Optional.empty();
     }
   }
 
@@ -275,7 +276,7 @@ public class DataContainer implements Freeable {
     checkNotNull(variableName);
 
     String val = api.ssc_data_get_string(data, variableName);
-    return Optional.fromNullable(val);
+    return Optional.ofNullable(val);
   }
 
   /**
@@ -296,7 +297,7 @@ public class DataContainer implements Freeable {
     Pointer result = api.ssc_data_get_array(data, variableName, length);
 
     if (result == null) {
-      return Optional.<float[]>absent();
+      return Optional.<float[]>empty();
     } else {
       int len = length.getValue();
       float[] arr = new float[len];
@@ -328,7 +329,7 @@ public class DataContainer implements Freeable {
     Pointer result = api.ssc_data_get_matrix(data, variableName, rows, cols);
 
     if (result == null) {
-      return Optional.<float[][]>absent();
+      return Optional.<float[][]>empty();
     } else {
       float[][] value = new float[rows.getValue()][cols.getValue()];
       for (int i = 0; i < rows.getValue(); i++) {

@@ -2,6 +2,8 @@ package io.github.spharris.ssc;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import org.junit.After;
@@ -10,7 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.google.common.base.Optional;
 import com.google.inject.Guice;
 
 @RunWith(JUnit4.class)
