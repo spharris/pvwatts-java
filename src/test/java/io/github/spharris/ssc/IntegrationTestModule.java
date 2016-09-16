@@ -20,13 +20,13 @@ public class IntegrationTestModule {
   static final float EPSILON = 0f;
   
   @Inject
-  private ModuleFactory moduleFactory;
+  private SscModuleFactory moduleFactory;
 
-  private Module module;
+  private SscModule module;
 
   @Before
   public void createModule() {
-    Guice.createInjector(new SscModule()).injectMembers(this);
+    Guice.createInjector(new SscGuiceModule()).injectMembers(this);
 
     module = moduleFactory.create("layoutarea");
   }
@@ -120,14 +120,14 @@ public class IntegrationTestModule {
 
   @Test
   public void getAllModules() {
-    List<ModuleSummary> modules = Module.getAvailableModules();
+    List<SscModuleSummary> modules = SscModule.getAvailableModules();
 
     assertThat(modules).isNotEmpty();
   }
 
   @Test
   public void executeWithHandler() throws Exception {
-    Module m = moduleFactory.create("pvsamv1");
+    SscModule m = moduleFactory.create("pvsamv1");
     populateModuleWithSimData(m);
 
     ExecutionHandler handler = new ExecutionHandler() {
@@ -155,7 +155,7 @@ public class IntegrationTestModule {
 
   @Test
   public void simpleExecute() throws Exception {
-    Module m = moduleFactory.create("pvsamv1");
+    SscModule m = moduleFactory.create("pvsamv1");
     populateModuleWithSimData(m);
 
     m.execute();
@@ -165,7 +165,7 @@ public class IntegrationTestModule {
     m.free();
   }
 
-  private static void populateModuleWithSimData(Module m) throws Exception {
+  private static void populateModuleWithSimData(SscModule m) throws Exception {
     String weatherFile = "target/test-classes/weather/tmy2/23129.tm2";
     m.setValue("solar_resource_file", weatherFile);
     m.setValue("albedo",

@@ -23,7 +23,7 @@ import com.google.inject.multibindings.MapBinder;
 
 import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.pvwatts.utils.RequestConverter;
-import io.github.spharris.ssc.SscModule;
+import io.github.spharris.ssc.SscGuiceModule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class IntegrationTestPvWatts4Service {
@@ -55,7 +55,7 @@ public class IntegrationTestPvWatts4Service {
   @Before
   public void createInjector() {
     Guice.createInjector(
-      new SscModule(),
+      new SscGuiceModule(),
       new AbstractModule() {
         
         @Override

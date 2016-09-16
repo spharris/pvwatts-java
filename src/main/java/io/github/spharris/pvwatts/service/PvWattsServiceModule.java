@@ -3,7 +3,7 @@ package io.github.spharris.pvwatts.service;
 import com.google.inject.AbstractModule;
 
 import io.github.spharris.pvwatts.service.weather.WeatherModule;
-import io.github.spharris.ssc.ModuleFactory;
+import io.github.spharris.ssc.SscModuleFactory;
 
 /**
  * Module for PvWatts services and dependencies
@@ -12,7 +12,7 @@ public final class PvWattsServiceModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    requireBinding(ModuleFactory.class);
+    requireBinding(SscModuleFactory.class);
     
     install(new WeatherModule());
     

@@ -13,11 +13,14 @@ import com.sun.jna.ptr.IntByReference;
 /**
  * Raw interface to the Ssc library. Declares the basic functions defined in sscapi.h. This
  * interface is public for compatibility with jnr.ffi, but should not be used outside of the ssc
- * package. Instead, use a {@link io.github.spharris.ssc.Module}
+ * package. Instead, use a {@link io.github.spharris.ssc.SscModule}
  * 
  * @author spharris
  */
 public interface Ssc extends Library {
+  
+  public static final String SSC_LIB_NAME = "ssc";
+  
   public int ssc_version();
 
   public String ssc_build_info();

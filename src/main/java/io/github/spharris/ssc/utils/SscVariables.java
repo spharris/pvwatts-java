@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableList;
 
-import io.github.spharris.ssc.Module;
+import io.github.spharris.ssc.SscModule;
 
 /**
  * Various implementations of {@link InputVariable} and {@link OutputVariable} interfaces
@@ -42,7 +42,7 @@ public final class SscVariables {
     }
     
     @Override
-    public ImmutableList<Float> get(Module module) {
+    public ImmutableList<Float> get(SscModule module) {
       float[] values = module.getArray(varName).get();
       
       ImmutableList.Builder<Float> builder = ImmutableList.builder();
@@ -65,7 +65,7 @@ public final class SscVariables {
     }
     
     @Override
-    public Float get(Module module) {
+    public Float get(SscModule module) {
       return module.getNumber(varName).get();
     }
   }
@@ -81,7 +81,7 @@ public final class SscVariables {
     }
     
     @Override
-    public String get(Module module) {
+    public String get(SscModule module) {
       return module.getString(varName).get();
     }
   }
@@ -102,7 +102,7 @@ public final class SscVariables {
     }
     
     @Override
-    public void set(ImmutableList<Float> value, Module module) {
+    public void set(ImmutableList<Float> value, SscModule module) {
       if (value == null) {
         return;
       }
@@ -130,7 +130,7 @@ public final class SscVariables {
     }
 
     @Override
-    public void set(Float value, Module module) {
+    public void set(Float value, SscModule module) {
       if (value == null) {
         return;
       }
@@ -153,7 +153,7 @@ public final class SscVariables {
     }
 
     @Override
-    public void set(Integer value, Module module) {
+    public void set(Integer value, SscModule module) {
       if (value == null) {
         return;
       }
@@ -164,7 +164,7 @@ public final class SscVariables {
     }
     
     @Override
-    public Integer get(Module module) {
+    public Integer get(SscModule module) {
       checkNotNull(module);
       return (int) Math.floor(module.getNumber(varName).get());
     }
@@ -182,7 +182,7 @@ public final class SscVariables {
     }
     
     @Override
-    public void set(String value, Module module) {
+    public void set(String value, SscModule module) {
       if (value == null) {
         return;
       }

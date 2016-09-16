@@ -16,7 +16,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
-import io.github.spharris.ssc.Module;
+import io.github.spharris.ssc.SscModule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UnitTestSscVariables {
@@ -25,11 +25,11 @@ public class UnitTestSscVariables {
 
   @Rule public ExpectedException thrown = ExpectedException.none();
   
-  @Mock private Module module;
+  @Mock private SscModule module;
   
   @Before
   public void mockModule() {
-    module = mock(Module.class);
+    module = mock(SscModule.class);
   }
   
   @Test

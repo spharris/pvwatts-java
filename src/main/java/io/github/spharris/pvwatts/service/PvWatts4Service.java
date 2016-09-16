@@ -17,8 +17,8 @@ import io.github.spharris.pvwatts.service.PvWatts4Response.StationInfo;
 import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.pvwatts.utils.RequestConverter;
 import io.github.spharris.ssc.ExecutionHandler;
-import io.github.spharris.ssc.Module;
-import io.github.spharris.ssc.ModuleFactory;
+import io.github.spharris.ssc.SscModule;
+import io.github.spharris.ssc.SscModuleFactory;
 
 /**
  * A service for PvWatts4 (pvwattsv1)
@@ -36,12 +36,12 @@ public final class PvWatts4Service {
       .setTrackMode(1)
       .build();
   
-  private final ModuleFactory moduleFactory;
+  private final SscModuleFactory moduleFactory;
   private ImmutableMap<String, WeatherSource> weatherSources;
   
   @Inject
   public PvWatts4Service(
-      ModuleFactory moduleFactory,
+      SscModuleFactory moduleFactory,
       Map<String, WeatherSource> weatherSources) {
     this.moduleFactory = moduleFactory;
     this.weatherSources = ImmutableMap.copyOf(weatherSources);
@@ -59,7 +59,7 @@ public final class PvWatts4Service {
   
   private PvWatts4Response executeWithResponse(PvWatts4Request request,
       PvWatts4Response.Builder response) {
-    Module module = moduleFactory.create(MODULE_NAME);
+    SscModule module = moduleFactory.create(MODULE_NAME);
 
     setRequiredValues(module);
     Variables.SOLAR_RESOURCE_FILE.set(weatherSources.get(request.getDataset()).getWeatherFile(
@@ -93,7 +93,7 @@ public final class PvWatts4Service {
   /**
    * Parameters that are always the same for every request, but are still required.
    */
-  private static void setRequiredValues(Module module) {
+  private static void setRequiredValues(SscModule module) {
     Variables.ADJUST_CONSTANT.set(1f, module);
   }
   
@@ -112,7 +112,7 @@ public final class PvWatts4Service {
       .build();
   }
   
-  private static PvWatts4Response.Builder buildResponse(Module module, PvWatts4Request request,
+  private static PvWatts4Response.Builder buildResponse(SscModule module, PvWatts4Request request,
       PvWatts4Response.Builder response) {
     response.setVersion(SERVICE_VERSION)
         .setSscInfo(SscInfo.builder()
