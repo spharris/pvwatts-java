@@ -15,7 +15,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 
 @RunWith(JUnit4.class)
-public class IntegrationTestModule {
+public class IntegrationTestSscModule {
 
   static final float EPSILON = 0f;
   

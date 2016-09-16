@@ -26,7 +26,7 @@ import com.sun.jna.ptr.FloatByReference;
 import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
 
 @RunWith(JUnit4.class)
-public class UnitTestModule {
+public class UnitTestSscModule {
 
   private static final String MODULE_NAME = "test module";
 
