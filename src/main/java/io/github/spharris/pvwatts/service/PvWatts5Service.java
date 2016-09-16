@@ -1,5 +1,7 @@
 package io.github.spharris.pvwatts.service;
 
+import static io.github.spharris.ssc.ExecutionHandlers.messageLoggingHandler;
+
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
@@ -18,7 +20,6 @@ import io.github.spharris.pvwatts.service.PvWatts5Response.StationInfo;
 import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.pvwatts.utils.RequestConverter;
 import io.github.spharris.ssc.DataContainer;
-import io.github.spharris.ssc.ExecutionHandler;
 import io.github.spharris.ssc.SscModule;
 import io.github.spharris.ssc.SscModuleFactory;
 
@@ -165,28 +166,5 @@ public final class PvWatts5Service {
     response.setOutputs(outputsBuilder.build());
     
     return response;
-  }
-  
-  private static ExecutionHandler messageLoggingHandler(
-      final ImmutableList.Builder<String> errorListBuilder,
-      final ImmutableList.Builder<String> warningListBuilder) {
-    return new ExecutionHandler() {
-
-      @Override
-      public boolean handleLogMessage(MessageType type, float time, String message) {
-        if (type == MessageType.ERROR || type == MessageType.NOTICE) {
-          errorListBuilder.add(message);
-        } else if (type == MessageType.WARNING) {
-          warningListBuilder.add(message);
-        }
-        
-        return true;
-      }
-
-      @Override
-      public boolean handleProgressUpdate(float percentComplete, float time, String text) {
-        return true;
-      }
-    };
   }
 }
