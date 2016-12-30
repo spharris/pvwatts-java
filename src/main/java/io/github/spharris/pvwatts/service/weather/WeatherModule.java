@@ -1,10 +1,10 @@
 package io.github.spharris.pvwatts.service.weather;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Key;
 import com.google.inject.multibindings.MapBinder;
 import io.github.spharris.pvwatts.service.Annotations.WeatherDirectory;
 import java.nio.file.Paths;
+import javax.inject.Inject;
 import javax.inject.Provider;
 
 /**
@@ -17,18 +17,28 @@ public final class WeatherModule extends AbstractModule {
     MapBinder<String, WeatherSource> weatherBinder = MapBinder.newMapBinder(
       binder(), String.class, WeatherSource.class);
     
-    weatherBinder.addBinding("tmy2").toProvider(getLocalSource("tmy2",
-      getProvider(Key.get(String.class, WeatherDirectory.class)), new Tm2FileSummarizer()));
-      
+    weatherBinder.addBinding("tmy2").toProvider(new LocalDirectoryWeatherSourceProvider("tmy2",
+      new Tm2FileSummarizer()));
 
-    weatherBinder.addBinding("tmy3").toProvider(getLocalSource("tmy3",
-      getProvider(Key.get(String.class, WeatherDirectory.class)), new Tmy3CsvFileSummarizer()));
-      
+    weatherBinder.addBinding("tmy3").toProvider(new LocalDirectoryWeatherSourceProvider("tmy3",
+      new Tmy3CsvFileSummarizer()));
   }
   
-  private static Provider<LocalDirectoryWeatherSource> getLocalSource(String subDirectory,
-      Provider<String> weatherDirectoryProvider, WeatherSummarizer summarizer) {
-    return () -> new LocalDirectoryWeatherSource(
-      Paths.get(weatherDirectoryProvider.get(), subDirectory), summarizer);
+  private static class LocalDirectoryWeatherSourceProvider
+      implements Provider<LocalDirectoryWeatherSource> {
+    
+    @Inject @WeatherDirectory private String weatherDirectory;
+    
+    private final String subdirectory;
+    private final WeatherSummarizer summarizer;
+    
+    LocalDirectoryWeatherSourceProvider(String subdirectory, WeatherSummarizer summarizer) {
+      this.subdirectory = subdirectory;
+      this.summarizer = summarizer;
+    }
+    
+    public LocalDirectoryWeatherSource get() {
+      return new LocalDirectoryWeatherSource(Paths.get(weatherDirectory, subdirectory), summarizer);
+    }
   }
 }

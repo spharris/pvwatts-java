@@ -26,7 +26,7 @@ public class UnitTestSscVariables {
 
   @Rule public ExpectedException thrown = ExpectedException.none();
   
-  @Mock DataContainer data;
+  @Mock private DataContainer data;
   
   @Before
   public void mockModule() {
