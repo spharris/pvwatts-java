@@ -13,14 +13,14 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class IntegrationTestLocalDirectoryWeatherSource {
   
-  Path basePath; 
-  WeatherSource tm2;
+  private Path basePath;
+  private WeatherSource tm2;
   
   @Before
   public void initializeSource() throws Exception {
     basePath = Paths.get(
         getClass().getClassLoader().getResource("weather/tmy2/").toURI());
-    tm2 = new LocalDirectoryWeatherSource(basePath.toString(), new Tm2FileSummarizer());
+    tm2 = new LocalDirectoryWeatherSource(basePath, new Tm2FileSummarizer());
   }
   
   @Test

@@ -1,18 +1,16 @@
 package io.github.spharris.pvwatts.service.weather;
 
+import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * A weather source that reads weather files from the specified directory and finds the one closest
@@ -25,8 +23,8 @@ public final class LocalDirectoryWeatherSource implements WeatherSource {
   private final Path path;
   private final WeatherSummarizer summarizer;
   
-  public LocalDirectoryWeatherSource(String directory, WeatherSummarizer summarizer) {
-    this.path = Paths.get(directory);
+  public LocalDirectoryWeatherSource(Path path, WeatherSummarizer summarizer) {
+    this.path = path;
     this.summarizer = summarizer;
   }
   
