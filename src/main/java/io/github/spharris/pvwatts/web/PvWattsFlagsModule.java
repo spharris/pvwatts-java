@@ -59,7 +59,6 @@ final class PvWattsFlagsModule extends AbstractModule {
         .addOption(Option.builder("weather_directory")
           .longOpt("weather_directory")
           .desc("The directory where weather data is stored")
-          .required()
           .hasArg()
           .argName("directory")
           .build());
