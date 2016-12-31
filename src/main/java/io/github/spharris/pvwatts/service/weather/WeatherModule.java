@@ -6,6 +6,7 @@ import io.github.spharris.pvwatts.service.Annotations.WeatherDirectory;
 import java.nio.file.Paths;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 
 /**
  * Module for provided weather sources.
@@ -18,10 +19,10 @@ public final class WeatherModule extends AbstractModule {
       binder(), String.class, WeatherSource.class);
     
     weatherBinder.addBinding("tmy2").toProvider(new LocalDirectoryWeatherSourceProvider("tmy2",
-      new Tm2FileSummarizer()));
+      new Tm2FileSummarizer())).in(Singleton.class);
 
     weatherBinder.addBinding("tmy3").toProvider(new LocalDirectoryWeatherSourceProvider("tmy3",
-      new Tmy3CsvFileSummarizer()));
+      new Tmy3CsvFileSummarizer())).in(Singleton.class);
   }
   
   private static class LocalDirectoryWeatherSourceProvider
@@ -38,7 +39,8 @@ public final class WeatherModule extends AbstractModule {
     }
     
     public LocalDirectoryWeatherSource get() {
-      return new LocalDirectoryWeatherSource(Paths.get(weatherDirectory, subdirectory), summarizer);
+      return new LocalDirectoryWeatherSource(
+        Paths.get(weatherDirectory, subdirectory), summarizer).initialize();
     }
   }
 }

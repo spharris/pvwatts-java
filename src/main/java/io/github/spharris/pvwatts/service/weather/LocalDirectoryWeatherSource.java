@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -19,9 +20,13 @@ import java.util.stream.Collectors;
 public final class LocalDirectoryWeatherSource implements WeatherSource {
 
   private static final double MI_TO_KM = 5280.0 * 12.0 * 2.54 / 100.0 / 1000.0;
+  private static final Logger logger =
+      Logger.getLogger(LocalDirectoryWeatherSource.class.getName());
   
   private final Path path;
   private final WeatherSummarizer summarizer;
+  
+  private ImmutableList<WeatherDataRecord> weatherData;
   
   public LocalDirectoryWeatherSource(Path path, WeatherSummarizer summarizer) {
     this.path = path;
@@ -34,7 +39,7 @@ public final class LocalDirectoryWeatherSource implements WeatherSource {
       return null;
     }
 
-    WeatherDataRecord closestStation = Collections.min(loadSummaryData(), byDistanceFrom(lat, lon));
+    WeatherDataRecord closestStation = Collections.min(weatherData, byDistanceFrom(lat, lon));
     double distance = Haversine.haversine(
       closestStation.getLat(), closestStation.getLon(), lat, lon);
     
@@ -44,6 +49,14 @@ public final class LocalDirectoryWeatherSource implements WeatherSource {
     }
 
     return path.resolve(closestStation.getFilename()).toString();
+  }
+  
+  public LocalDirectoryWeatherSource initialize() {
+    weatherData = loadSummaryData();
+    logger.info(
+      String.format("Loaded %d weather files for path %s", weatherData.size(), path.toString()));
+    
+    return this;
   }
   
   private ImmutableList<WeatherDataRecord> loadSummaryData() {
