@@ -12,7 +12,7 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class UnitTestImmutableMultimapSerializer {
 
-  ObjectMapper mapper = new ObjectMapper();
+  private ObjectMapper mapper = new ObjectMapper();
 
   @Test
   public void emptyMapIsEmpty() throws Exception {
