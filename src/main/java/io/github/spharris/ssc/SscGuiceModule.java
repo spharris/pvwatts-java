@@ -11,7 +11,6 @@ public final class SscGuiceModule extends AbstractModule {
     bind(Ssc.class).toInstance((Ssc) Native.loadLibrary(Ssc.SSC_LIB_NAME, Ssc.class));
     bind(DataContainer.class);
 
-    install(new FactoryModuleBuilder().implement(SscModule.class, SscModule.class)
-        .build(SscModuleFactory.class));
+    install(new FactoryModuleBuilder().build(SscModuleFactory.class));
   }
 }

@@ -86,7 +86,7 @@ public final class PvWatts4Service {
 
     ImmutableList<String> errors = errorListBuilder.build();
     if (errors.isEmpty()) {
-      buildResponse(module, data, request, response);
+      populateResponse(module, data, request, response);
     }
     
     response.setErrors(errors);
@@ -103,6 +103,7 @@ public final class PvWatts4Service {
    */
   private static void setRequiredValues(DataContainer data) {
     Variables.ADJUST_CONSTANT.set(1f, data);
+    Variables.ADJUST_FACTOR.set(1f, data);
   }
   
   /**
@@ -120,7 +121,7 @@ public final class PvWatts4Service {
       .build();
   }
   
-  private static PvWatts4Response.Builder buildResponse(SscModule module, DataContainer data,
+  private static void populateResponse(SscModule module, DataContainer data,
       PvWatts4Request request, PvWatts4Response.Builder response) {
     response.setVersion(SERVICE_VERSION)
         .setSscInfo(SscInfo.builder()
@@ -159,7 +160,5 @@ public final class PvWatts4Service {
     }
 
     response.setOutputs(outputsBuilder.build());
-    
-    return response;
   }
 }

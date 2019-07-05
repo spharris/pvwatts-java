@@ -20,7 +20,7 @@ public class IntegrationTestLocalDirectoryWeatherSource {
   public void initializeSource() throws Exception {
     basePath = Paths.get(
         getClass().getClassLoader().getResource("weather/tmy2/").toURI());
-    tm2 = new LocalDirectoryWeatherSource(basePath, new Tm2FileSummarizer());
+    tm2 = new LocalDirectoryWeatherSource(basePath, new Tm2FileSummarizer()).initialize();
   }
   
   @Test

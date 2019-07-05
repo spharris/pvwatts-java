@@ -105,6 +105,7 @@ public final class PvWatts5Service {
    */
   private static void setRequiredValues(DataContainer data) {
     Variables.ADJUST_CONSTANT.set(1f, data);
+    Variables.ADJUST_FACTOR.set(1f, data);
   }
   
   /**
