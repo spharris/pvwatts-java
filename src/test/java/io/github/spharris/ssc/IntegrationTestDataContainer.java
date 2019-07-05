@@ -25,7 +25,7 @@ public class IntegrationTestDataContainer {
 
   @After
   public void freeData() {
-    data.free();
+    data.close();
   }
 
   @Test

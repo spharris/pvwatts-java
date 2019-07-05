@@ -61,38 +61,36 @@ public final class PvWatts4Service {
 
   private PvWatts4Response executeWithResponse(
       PvWatts4Request request, PvWatts4Response.Builder response) {
-    SscModule module = moduleFactory.create(MODULE_NAME);
-    DataContainer data = dataContainerProvider.get();
+    try (SscModule module = moduleFactory.create(MODULE_NAME)) {
+      try (DataContainer data = dataContainerProvider.get()) {
+        setRequiredValues(data);
+        Variables.SOLAR_RESOURCE_FILE.set(
+            weatherSources
+                .get(request.getDataset())
+                .getWeatherFile(request.getLat(), request.getLon(), request.getRadius()),
+            data);
+        Variables.SYSTEM_SIZE.set(request.getSystemSize(), data);
+        Variables.AZIMUTH.set(request.getAzimuth(), data);
+        Variables.TILT.set(request.getTilt(), data);
+        Variables.DERATE.set(request.getDerate(), data);
+        Variables.TRACK_MODE.set(request.getTrackMode(), data);
+        Variables.TILT_EQ_LAT.set(request.getTiltEqLat(), data);
+        Variables.INOCT.set(request.getInoct(), data);
+        Variables.GAMMA.set(request.getGamma(), data);
 
-    setRequiredValues(data);
-    Variables.SOLAR_RESOURCE_FILE.set(
-        weatherSources
-            .get(request.getDataset())
-            .getWeatherFile(request.getLat(), request.getLon(), request.getRadius()),
-        data);
-    Variables.SYSTEM_SIZE.set(request.getSystemSize(), data);
-    Variables.AZIMUTH.set(request.getAzimuth(), data);
-    Variables.TILT.set(request.getTilt(), data);
-    Variables.DERATE.set(request.getDerate(), data);
-    Variables.TRACK_MODE.set(request.getTrackMode(), data);
-    Variables.TILT_EQ_LAT.set(request.getTiltEqLat(), data);
-    Variables.INOCT.set(request.getInoct(), data);
-    Variables.GAMMA.set(request.getGamma(), data);
+        ImmutableList.Builder<String> errorListBuilder = ImmutableList.builder();
+        ImmutableList.Builder<String> warningListBuilder = ImmutableList.builder();
+        module.execute(data, messageLoggingHandler(errorListBuilder, warningListBuilder));
 
-    ImmutableList.Builder<String> errorListBuilder = ImmutableList.builder();
-    ImmutableList.Builder<String> warningListBuilder = ImmutableList.builder();
-    module.execute(data, messageLoggingHandler(errorListBuilder, warningListBuilder));
+        ImmutableList<String> errors = errorListBuilder.build();
+        if (errors.isEmpty()) {
+          populateResponse(module, data, request, response);
+        }
 
-    ImmutableList<String> errors = errorListBuilder.build();
-    if (errors.isEmpty()) {
-      populateResponse(module, data, request, response);
+        response.setErrors(errors);
+        response.setWarnings(warningListBuilder.build());
+      }
     }
-
-    response.setErrors(errors);
-    response.setWarnings(warningListBuilder.build());
-
-    module.free();
-    data.free();
 
     return response.build();
   }

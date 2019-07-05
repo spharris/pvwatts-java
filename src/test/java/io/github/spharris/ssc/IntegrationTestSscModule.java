@@ -33,8 +33,8 @@ public class IntegrationTestSscModule {
 
   @After
   public void freeResources() {
-    module.free();
-    data.free();
+    module.close();
+    data.close();
   }
 
   @Test
@@ -114,7 +114,7 @@ public class IntegrationTestSscModule {
 
     assertThat(data.getNumber("annual_dc_gross").get()).isGreaterThan(0f);
 
-    m.free();
+    m.close();
   }
 
   @Test
@@ -126,7 +126,7 @@ public class IntegrationTestSscModule {
 
     assertThat(data.getNumber("annual_dc_gross").get()).isGreaterThan(0f);
 
-    m.free();
+    m.close();
   }
 
   private static void populateModuleWithSimData(DataContainer data) throws Exception {

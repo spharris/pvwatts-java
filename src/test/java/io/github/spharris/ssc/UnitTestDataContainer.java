@@ -82,7 +82,7 @@ public class UnitTestDataContainer {
 
   @Test
   public void setNumberThrowsErrorOnFreedModule() {
-    data.free();
+    data.close();
 
     thrown.expect(IllegalStateException.class);
 
@@ -91,15 +91,15 @@ public class UnitTestDataContainer {
 
   @Test
   public void freeCallsSccFree() {
-    data.free();
+    data.close();
 
     verify(mockApi).ssc_data_free(any(Pointer.class));
   }
 
   @Test
   public void multipleFreeCallsOnlyFreesOnce() {
-    data.free();
-    data.free();
+    data.close();
+    data.close();
 
     verify(mockApi, times(1)).ssc_data_free(any(Pointer.class));
   }

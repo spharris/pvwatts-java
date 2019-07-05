@@ -1,6 +1,7 @@
 package io.github.spharris.ssc;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
@@ -19,12 +20,8 @@ import java.util.Objects;
  *
  * <p>Once a module has been created, you can get information about the available variables, add
  * values for variables, and execute.
- *
- * <p><strong>When you are done with a module, it must be freed using {@link #free}.
- *
- * @author spharris
  */
-public final class SscModule implements Freeable {
+public final class SscModule implements AutoCloseable {
 
   private String moduleName;
   private Pointer module;
@@ -32,7 +29,7 @@ public final class SscModule implements Freeable {
   private Ssc api;
   private List<Variable> variables;
 
-  private boolean freed = false;
+  private boolean closed = false;
 
   /** Gets a list of the available modules. */
   public static ImmutableList<SscModuleSummary> getAvailableModules() {
@@ -131,10 +128,10 @@ public final class SscModule implements Freeable {
   /**
    * Returns a list of all of the variables for this module.
    *
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
+   * @throws java.lang.IllegalStateException if the module has already been {@link #free}ed.
    */
   public List<Variable> getVariables() {
-    checkState();
+    checkNotClosed();
 
     if (variables != null) {
       return variables;
@@ -167,12 +164,12 @@ public final class SscModule implements Freeable {
   }
 
   public void execute(DataContainer data) {
-    checkState();
+    checkNotClosed();
     api.ssc_module_exec(module, data.getPointer());
   }
 
   public void execute(DataContainer data, final ExecutionHandler handler) {
-    checkState();
+    checkNotClosed();
     SscExecutionHandler wrapper =
         new SscExecutionHandler() {
 
@@ -215,21 +212,14 @@ public final class SscModule implements Freeable {
   }
 
   @Override
-  public void free() {
-    if (!freed) {
+  public void close() {
+    if (!closed) {
       api.ssc_module_free(module);
-      freed = true;
+      closed = true;
     }
   }
 
-  @Override
-  public boolean isFreed() {
-    return freed;
-  }
-
-  private void checkState() {
-    if (freed) {
-      throw new IllegalStateException("The module has already been freed.");
-    }
+  private void checkNotClosed() {
+    checkState(!closed, "This module has already been closed.");
   }
 }

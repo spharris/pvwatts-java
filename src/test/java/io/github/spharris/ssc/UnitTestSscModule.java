@@ -42,7 +42,7 @@ public class UnitTestSscModule {
   public void freeCallsSccFree() {
     SscModule m = getRealModule();
 
-    m.free();
+    m.close();
 
     verify(mockApi).ssc_module_free(any(Pointer.class));
   }
@@ -51,8 +51,8 @@ public class UnitTestSscModule {
   public void multipleFreeCallsOnlyFreesOnce() {
     SscModule m = getRealModule();
 
-    m.free();
-    m.free();
+    m.close();
+    m.close();
 
     verify(mockApi, times(1)).ssc_module_free(any(Pointer.class));
   }
@@ -97,7 +97,6 @@ public class UnitTestSscModule {
     when(mockApi.ssc_module_entry(isA(Integer.class))).thenReturn(fakePointer);
     when(mockApi.ssc_entry_name(isA(Pointer.class))).thenReturn(MODULE_NAME);
 
-    SscModule m = new SscModule(MODULE_NAME, mockApi);
-    return m;
+    return new SscModule(MODULE_NAME, mockApi);
   }
 }

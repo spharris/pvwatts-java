@@ -62,39 +62,37 @@ public final class PvWatts5Service {
 
   private PvWatts5Response executeWithResponse(
       PvWatts5Request request, PvWatts5Response.Builder response) {
-    SscModule module = moduleFactory.create(MODULE_NAME);
-    DataContainer data = dataContainerProvider.get();
+    try (SscModule module = moduleFactory.create(MODULE_NAME)) {
+      try (DataContainer data = dataContainerProvider.get()) {
+        setRequiredValues(data);
+        Variables.SOLAR_RESOURCE_FILE.set(
+            weatherSources
+                .get(request.getDataset())
+                .getWeatherFile(request.getLat(), request.getLon(), request.getRadius()),
+            data);
+        Variables.SYSTEM_CAPACITY.set(request.getSystemCapacity(), data);
+        Variables.MODULE_TYPE.set(request.getModuleType(), data);
+        Variables.LOSSES.set(request.getLosses(), data);
+        Variables.ARRAY_TYPE.set(request.getArrayType(), data);
+        Variables.TILT.set(request.getTilt(), data);
+        Variables.AZIMUTH.set(request.getAzimuth(), data);
+        Variables.DC_AC_RATIO.set(request.getDcAcRatio(), data);
+        Variables.GCR.set(request.getGcr(), data);
+        Variables.INV_EFF.set(request.getInvEff(), data);
 
-    setRequiredValues(data);
-    Variables.SOLAR_RESOURCE_FILE.set(
-        weatherSources
-            .get(request.getDataset())
-            .getWeatherFile(request.getLat(), request.getLon(), request.getRadius()),
-        data);
-    Variables.SYSTEM_CAPACITY.set(request.getSystemCapacity(), data);
-    Variables.MODULE_TYPE.set(request.getModuleType(), data);
-    Variables.LOSSES.set(request.getLosses(), data);
-    Variables.ARRAY_TYPE.set(request.getArrayType(), data);
-    Variables.TILT.set(request.getTilt(), data);
-    Variables.AZIMUTH.set(request.getAzimuth(), data);
-    Variables.DC_AC_RATIO.set(request.getDcAcRatio(), data);
-    Variables.GCR.set(request.getGcr(), data);
-    Variables.INV_EFF.set(request.getInvEff(), data);
+        ImmutableList.Builder<String> errorListBuilder = ImmutableList.builder();
+        ImmutableList.Builder<String> warningListBuilder = ImmutableList.builder();
+        module.execute(data, messageLoggingHandler(errorListBuilder, warningListBuilder));
 
-    ImmutableList.Builder<String> errorListBuilder = ImmutableList.builder();
-    ImmutableList.Builder<String> warningListBuilder = ImmutableList.builder();
-    module.execute(data, messageLoggingHandler(errorListBuilder, warningListBuilder));
+        ImmutableList<String> errors = errorListBuilder.build();
+        if (errors.isEmpty()) {
+          buildResponse(module, data, request, response);
+        }
 
-    ImmutableList<String> errors = errorListBuilder.build();
-    if (errors.isEmpty()) {
-      buildResponse(module, data, request, response);
+        response.setErrors(errors);
+        response.setWarnings(warningListBuilder.build());
+      }
     }
-
-    response.setErrors(errors);
-    response.setWarnings(warningListBuilder.build());
-
-    module.free();
-    data.free();
 
     return response.build();
   }
@@ -120,7 +118,7 @@ public final class PvWatts5Service {
         .build();
   }
 
-  private static PvWatts5Response.Builder buildResponse(
+  private static void buildResponse(
       SscModule module,
       DataContainer data,
       PvWatts5Request request,
@@ -168,7 +166,5 @@ public final class PvWatts5Service {
     }
 
     response.setOutputs(outputsBuilder.build());
-
-    return response;
   }
 }

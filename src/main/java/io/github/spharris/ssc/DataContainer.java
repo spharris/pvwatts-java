@@ -2,6 +2,7 @@ package io.github.spharris.ssc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.FloatByReference;
@@ -10,21 +11,21 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 /** A container for data that is passed to an {@link SscModule} for execution */
-public class DataContainer implements Freeable {
+public class DataContainer implements AutoCloseable {
 
   private static final int FLOAT_SIZE = 4;
 
   private final Ssc api;
   private final Pointer data;
 
-  private boolean freed;
+  private boolean closed;
 
   @Inject
   DataContainer(Ssc api) {
     this.api = checkNotNull(api);
 
     data = api.ssc_data_create();
-    freed = false;
+    closed = false;
   }
 
   /**
@@ -32,7 +33,7 @@ public class DataContainer implements Freeable {
    * {@link SscModule}.
    */
   Pointer getPointer() {
-    checkState();
+    checkNotClosed();
     return data;
   }
 
@@ -41,11 +42,11 @@ public class DataContainer implements Freeable {
    *
    * @param variableName The name of the variable to set.
    * @param value The value.
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
+   * @throws java.lang.IllegalStateException if the module has already been {@link #close}ed.
+   * @throws java.lang.NullPointerException if <tt>variableName</tt> is null
    */
   public DataContainer setNumber(String variableName, float value) {
-    checkState();
+    checkNotClosed();
     checkNotNull(variableName);
 
     api.ssc_data_set_number(data, variableName, value);
@@ -73,12 +74,12 @@ public class DataContainer implements Freeable {
    *
    * @param variableName The name of the variable to set.
    * @param value The value.
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is
+   * @throws java.lang.IllegalStateException if the module has already been {@link #close}ed.
+   * @throws java.lang.NullPointerException if <tt>variableName</tt> or <tt>value</tt> is
    *     null
    */
   public DataContainer setString(String variableName, String value) {
-    checkState();
+    checkNotClosed();
     checkNotNull(value);
 
     api.ssc_data_set_string(data, variableName, value);
@@ -90,13 +91,13 @@ public class DataContainer implements Freeable {
    *
    * @param variableName The name of the variable to set.
    * @param value The value.
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is
+   * @throws java.lang.IllegalStateException if the module has already been {@link #close}ed.
+   * @throws java.lang.NullPointerException if <tt>variableName</tt> or <tt>value</tt> is
    *     null
-   * @throws {@link java.lang.IllegalArgumentException} if <tt>value</tt> has a length of zero.
+   * @throws java.lang.IllegalArgumentException if <tt>value</tt> has a length of zero.
    */
   public DataContainer setArray(String variableName, float[] value) {
-    checkState();
+    checkNotClosed();
     checkNotNull(value);
     checkArgument(value.length >= 1, "The length of the array must be >= 1.");
 
@@ -145,13 +146,13 @@ public class DataContainer implements Freeable {
    *
    * @param variableName The name of the variable to set.
    * @param value The value.
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is
+   * @throws java.lang.IllegalStateException if the module has already been {@link #close}ed.
+   * @throws java.lang.NullPointerException if <tt>variableName</tt> or <tt>value</tt> is
    *     null
-   * @throws {@link java.lang.IllegalArgumentException} if <tt>value</tt> has zero rows or columns
+   * @throws java.lang.IllegalArgumentException if <tt>value</tt> has zero rows or columns
    */
   public DataContainer setMatrix(String variableName, float[][] value) {
-    checkState();
+    checkNotClosed();
     checkNotNull(value);
     checkArgument(value.length >= 1, "The number of rows must be >= 1.");
     checkArgument(value[0].length >= 1, "The number of columns must be >= 1.");
@@ -235,11 +236,11 @@ public class DataContainer implements Freeable {
    * @param variableName The name of the variable to retrieve.
    * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
    *     an empty {@link Optional}
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
+   * @throws java.lang.IllegalStateException if the module has already been {@link #close}ed.
+   * @throws java.lang.NullPointerException if <tt>variableName</tt> is null
    */
   public Optional<Float> getNumber(String variableName) {
-    checkState();
+    checkNotClosed();
     checkNotNull(variableName);
 
     FloatByReference value = new FloatByReference();
@@ -258,11 +259,11 @@ public class DataContainer implements Freeable {
    * @param variableName The name of the variable to retrieve.
    * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
    *     an empty {@link Optional}
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
+   * @throws java.lang.IllegalStateException if the module has already been {@link #close}ed.
+   * @throws java.lang.NullPointerException if <tt>variableName</tt> is null
    */
   public Optional<String> getString(String variableName) {
-    checkState();
+    checkNotClosed();
     checkNotNull(variableName);
 
     String val = api.ssc_data_get_string(data, variableName);
@@ -275,18 +276,18 @@ public class DataContainer implements Freeable {
    * @param variableName The name of the variable to retrieve.
    * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
    *     an empty {@link Optional}
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
+   * @throws java.lang.IllegalStateException if the module has already been {@link #close}ed.
+   * @throws java.lang.NullPointerException if <tt>variableName</tt> is null
    */
   public Optional<float[]> getArray(String variableName) {
-    checkState();
+    checkNotClosed();
     checkNotNull(variableName);
 
     IntByReference length = new IntByReference();
     Pointer result = api.ssc_data_get_array(data, variableName, length);
 
     if (result == null) {
-      return Optional.<float[]>empty();
+      return Optional.empty();
     } else {
       int len = length.getValue();
       float[] arr = new float[len];
@@ -305,11 +306,11 @@ public class DataContainer implements Freeable {
    * @param variableName The name of the variable to retrieve.
    * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
    *     an empty {@link Optional}
-   * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
-   * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
+   * @throws java.lang.IllegalStateException if the module has already been {@link #close}ed.
+   * @throws java.lang.NullPointerException if <tt>variableName</tt> is null
    */
   public Optional<float[][]> getMatrix(String variableName) {
-    checkState();
+    checkNotClosed();
     checkNotNull(variableName);
 
     IntByReference rows = new IntByReference();
@@ -317,7 +318,7 @@ public class DataContainer implements Freeable {
     Pointer result = api.ssc_data_get_matrix(data, variableName, rows, cols);
 
     if (result == null) {
-      return Optional.<float[][]>empty();
+      return Optional.empty();
     } else {
       float[][] value = new float[rows.getValue()][cols.getValue()];
       for (int i = 0; i < rows.getValue(); i++) {
@@ -335,21 +336,14 @@ public class DataContainer implements Freeable {
   }
 
   @Override
-  public void free() {
-    if (!freed) {
+  public void close() {
+    if (!closed) {
       api.ssc_data_free(data);
-      freed = true;
+      closed = true;
     }
   }
 
-  @Override
-  public boolean isFreed() {
-    return freed;
-  }
-
-  private void checkState() {
-    if (freed) {
-      throw new IllegalStateException("This data container has already been freed.");
-    }
+  private void checkNotClosed() {
+    checkState(!closed, "This data container has already been closed.");
   }
 }
