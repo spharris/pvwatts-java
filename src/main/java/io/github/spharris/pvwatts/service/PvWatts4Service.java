@@ -2,18 +2,9 @@ package io.github.spharris.pvwatts.service;
 
 import static io.github.spharris.ssc.ExecutionHandlers.messageLoggingHandler;
 
-import java.nio.file.Paths;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-
 import io.github.spharris.pvwatts.service.PvWatts4Response.Outputs;
 import io.github.spharris.pvwatts.service.PvWatts4Response.SscInfo;
 import io.github.spharris.pvwatts.service.PvWatts4Response.StationInfo;
@@ -22,6 +13,12 @@ import io.github.spharris.pvwatts.utils.RequestConverter;
 import io.github.spharris.ssc.DataContainer;
 import io.github.spharris.ssc.SscModule;
 import io.github.spharris.ssc.SscModuleFactory;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 /** A service for PvWatts4 (pvwattsv1) */
 public final class PvWatts4Service {

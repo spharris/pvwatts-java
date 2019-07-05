@@ -1,14 +1,13 @@
 package io.github.spharris.pvwatts.utils;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Map.Entry;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Map.Entry;
 
 public final class ImmutableMultimapSerializer
     extends JsonSerializer<ImmutableMultimap<String, String>> {

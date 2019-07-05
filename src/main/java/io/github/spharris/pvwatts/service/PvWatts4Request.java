@@ -1,8 +1,7 @@
 package io.github.spharris.pvwatts.service;
 
-import javax.annotation.Nullable;
-
 import com.google.auto.value.AutoValue;
+import javax.annotation.Nullable;
 
 @AutoValue
 public abstract class PvWatts4Request {

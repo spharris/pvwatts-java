@@ -1,7 +1,5 @@
 package io.github.spharris.pvwatts.service;
 
-import javax.annotation.Nullable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -13,8 +11,8 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-
 import io.github.spharris.pvwatts.utils.ImmutableMultimapSerializer;
+import javax.annotation.Nullable;
 
 @AutoValue
 @JsonInclude(Include.NON_NULL)

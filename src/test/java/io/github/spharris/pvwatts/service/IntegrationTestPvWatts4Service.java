@@ -5,14 +5,6 @@ import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
 
-import javax.inject.Inject;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.collect.ImmutableList;
@@ -20,10 +12,15 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.multibindings.MapBinder;
-
 import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.pvwatts.utils.RequestConverter;
 import io.github.spharris.ssc.SscGuiceModule;
+import javax.inject.Inject;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class IntegrationTestPvWatts4Service {

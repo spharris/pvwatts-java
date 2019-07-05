@@ -1,7 +1,6 @@
 package io.github.spharris.pvwatts.service;
 
 import com.google.inject.AbstractModule;
-
 import io.github.spharris.pvwatts.service.weather.WeatherModule;
 import io.github.spharris.ssc.SscModuleFactory;
 

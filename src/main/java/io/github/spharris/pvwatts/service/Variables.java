@@ -1,7 +1,6 @@
 package io.github.spharris.pvwatts.service;
 
 import com.google.common.collect.ImmutableList;
-
 import io.github.spharris.ssc.utils.InputVariable;
 import io.github.spharris.ssc.utils.SscVariable;
 import io.github.spharris.ssc.utils.SscVariables;

@@ -4,7 +4,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import java.io.Reader;
 import java.io.StringReader;
-
 import org.junit.Test;
 
 public class UnitTestTmy3CsvFileSummarizer {

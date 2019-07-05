@@ -2,18 +2,16 @@ package io.github.spharris.ssc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-
 import io.github.spharris.ssc.ExecutionHandler.MessageType;
 import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A <code>Module</code> represents an SSC compute module ("pvwattsv1", for example). This class is

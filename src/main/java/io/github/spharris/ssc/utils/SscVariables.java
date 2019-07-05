@@ -3,7 +3,6 @@ package io.github.spharris.ssc.utils;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableList;
-
 import io.github.spharris.ssc.DataContainer;
 
 /** Various implementations of {@link InputVariable} and {@link OutputVariable} interfaces */

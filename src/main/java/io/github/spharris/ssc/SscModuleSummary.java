@@ -1,9 +1,8 @@
 package io.github.spharris.ssc;
 
-import javax.annotation.Nullable;
-
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
+import javax.annotation.Nullable;
 
 /** A summary of a particular SSC compute module. */
 @AutoValue

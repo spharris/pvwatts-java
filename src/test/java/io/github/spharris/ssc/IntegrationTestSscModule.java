@@ -2,18 +2,15 @@ package io.github.spharris.ssc;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.inject.Guice;
+import com.google.inject.Inject;
 import java.util.List;
-
 import javax.inject.Provider;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import com.google.inject.Guice;
-import com.google.inject.Inject;
 
 @RunWith(JUnit4.class)
 public class IntegrationTestSscModule {

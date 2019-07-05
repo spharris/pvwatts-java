@@ -3,13 +3,11 @@ package io.github.spharris.ssc;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.IntByReference;
+import java.util.Optional;
+import javax.inject.Inject;
 
 /** A container for data that is passed to an {@link SscModule} for execution */
 public class DataContainer implements Freeable {

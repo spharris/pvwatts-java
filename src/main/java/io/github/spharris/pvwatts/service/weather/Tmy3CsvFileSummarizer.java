@@ -3,7 +3,6 @@ package io.github.spharris.pvwatts.service.weather;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 

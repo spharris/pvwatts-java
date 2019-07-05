@@ -2,16 +2,15 @@ package io.github.spharris.ssc;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.FloatByReference;
+import com.sun.jna.ptr.IntByReference;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.FloatByReference;
-import com.sun.jna.ptr.IntByReference;
 
 @RunWith(JUnit4.class)
 public class IntegrationTestSsc {

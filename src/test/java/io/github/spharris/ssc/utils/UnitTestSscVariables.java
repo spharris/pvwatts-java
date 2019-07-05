@@ -5,8 +5,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.common.collect.ImmutableList;
+import io.github.spharris.ssc.DataContainer;
 import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,10 +15,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.ImmutableList;
-
-import io.github.spharris.ssc.DataContainer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UnitTestSscVariables {

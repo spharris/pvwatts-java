@@ -10,18 +10,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.sun.jna.Pointer;
+import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
 import java.util.List;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import com.sun.jna.Pointer;
-
-import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UnitTestSscModule {

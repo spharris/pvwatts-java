@@ -1,8 +1,12 @@
 package io.github.spharris.pvwatts.web;
 
+import com.google.common.collect.ImmutableMultimap;
+import io.github.spharris.pvwatts.service.PvWatts4Response;
+import io.github.spharris.pvwatts.service.PvWatts4Service;
+import io.github.spharris.pvwatts.service.PvWatts5Response;
+import io.github.spharris.pvwatts.service.PvWatts5Service;
 import java.util.List;
 import java.util.Map;
-
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -11,13 +15,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
-
-import com.google.common.collect.ImmutableMultimap;
-
-import io.github.spharris.pvwatts.service.PvWatts4Response;
-import io.github.spharris.pvwatts.service.PvWatts4Service;
-import io.github.spharris.pvwatts.service.PvWatts5Response;
-import io.github.spharris.pvwatts.service.PvWatts5Service;
 
 @Path("/")
 public final class PvWattsController {
