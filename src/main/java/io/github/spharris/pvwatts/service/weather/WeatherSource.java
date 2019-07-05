@@ -7,10 +7,10 @@ public interface WeatherSource {
    * Fetches the path to a local weather file for the given location and radius, if available. Note
    * that paths must not contain spaces, because the SSC library does not handle them gracefully.
    *
-   * @param lat
-   * @param lon
+   * @param lat The latitude.
+   * @param lon The longitude.
    * @param radius The search radius (in mi)
-   * @returns The location of the weather file to use, if available. <code>null</code> otherwise.
+   * @return The location of the weather file to use, if available. <code>null</code> otherwise.
    */
   String getWeatherFile(Float lat, Float lon, Integer radius);
 }

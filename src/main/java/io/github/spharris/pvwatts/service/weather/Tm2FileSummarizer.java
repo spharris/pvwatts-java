@@ -1,5 +1,7 @@
 package io.github.spharris.pvwatts.service.weather;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.IOException;
 import java.io.Reader;
 
@@ -13,7 +15,12 @@ public final class Tm2FileSummarizer implements WeatherSummarizer {
 
     // http://rredc.nrel.gov/solar/pubs/tmy2/tab3-1.html
     char[] header = new char[59];
-    file.read(header);
+    int read = file.read(header);
+    checkState(
+        read == header.length,
+        "Read an incorrect number of bytes from TM2 header. Got %d expected %d.",
+        read,
+        header.length);
 
     builder
         .setFilename(new String(header, 1, 5).trim() + ".tm2")
