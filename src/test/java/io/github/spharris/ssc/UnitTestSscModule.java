@@ -30,7 +30,7 @@ public class UnitTestSscModule {
   @Rule public ExpectedException thrown = ExpectedException.none();
 
   @Test
-  public void throwsExceptiononUnknownModule() {
+  public void throwsExceptionOnUnknownModule() {
     when(mockApi.ssc_module_create(anyString())).thenReturn(null);
 
     thrown.expect(UnknownModuleNameException.class);
