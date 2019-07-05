@@ -7,7 +7,7 @@ import io.github.spharris.pvwatts.web.PvWattsWebModule;
 import io.github.spharris.ssc.SscGuiceModule;
 
 public final class PvWattsModule extends AbstractModule {
-  
+
   @Override
   protected void configure() {
     install(new SscGuiceModule());

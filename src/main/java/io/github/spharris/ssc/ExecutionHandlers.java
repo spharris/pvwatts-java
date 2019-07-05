@@ -2,13 +2,11 @@ package io.github.spharris.ssc;
 
 import com.google.common.collect.ImmutableList;
 
-/**
- * Implemtations of {@link ExecutionHandler}. 
- */
+/** Implemtations of {@link ExecutionHandler}. */
 public final class ExecutionHandlers {
-  
+
   private ExecutionHandlers() {}
-  
+
   public static ExecutionHandler messageLoggingHandler(
       final ImmutableList.Builder<String> errorListBuilder,
       final ImmutableList.Builder<String> warningListBuilder) {
@@ -21,7 +19,7 @@ public final class ExecutionHandlers {
         } else if (type == MessageType.WARNING) {
           warningListBuilder.add(message);
         }
-        
+
         return true;
       }
 

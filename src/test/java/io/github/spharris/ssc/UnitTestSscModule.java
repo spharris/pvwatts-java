@@ -30,8 +30,7 @@ public class UnitTestSscModule {
 
   @Mock private Ssc mockApi;
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @Rule public ExpectedException thrown = ExpectedException.none();
 
   @Test
   public void throwsExceptiononUnknownModule() {
@@ -79,9 +78,17 @@ public class UnitTestSscModule {
 
     List<Variable> vars = m.getVariables();
 
-    Variable expected = Variable.builder().setVariableType(Variable.VariableType.forInt(1))
-        .setDataType(Variable.DataType.forInt(1)).setName("Name").setLabel("Label").setUnits("Units")
-        .setMeta("Meta").setGroup("Group").setRequired("Required").build();
+    Variable expected =
+        Variable.builder()
+            .setVariableType(Variable.VariableType.forInt(1))
+            .setDataType(Variable.DataType.forInt(1))
+            .setName("Name")
+            .setLabel("Label")
+            .setUnits("Units")
+            .setMeta("Meta")
+            .setGroup("Group")
+            .setRequired("Required")
+            .build();
 
     assertThat(vars).hasSize(1);
     assertThat(vars.get(0)).isEqualTo(expected);

@@ -17,7 +17,7 @@ import com.sun.jna.ptr.IntByReference;
 public class IntegrationTestSsc {
 
   static final float EPSILON = 0f;
-  
+
   private Ssc ssclib;
   private Pointer data;
 
@@ -286,8 +286,15 @@ public class IntegrationTestSsc {
   public static class TestHandler implements SscExecutionHandler {
 
     @Override
-    public boolean update(Pointer module, Pointer handler, int action, float f0, float f1,
-        String s0, String s1, Pointer userData) {
+    public boolean update(
+        Pointer module,
+        Pointer handler,
+        int action,
+        float f0,
+        float f1,
+        String s0,
+        String s1,
+        Pointer userData) {
 
       assertThat(f0).isAtLeast(0f);
 

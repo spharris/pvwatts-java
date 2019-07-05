@@ -2,21 +2,26 @@ package io.github.spharris.ssc;
 
 import com.google.auto.value.AutoValue;
 
-/**
- * An immutable class representing a module variable.
- */
+/** An immutable class representing a module variable. */
 @AutoValue
 public abstract class Variable {
-  
+
   Variable() {}
-  
+
   public abstract VariableType getVariableType();
+
   public abstract DataType getDataType();
+
   public abstract String getName();
+
   public abstract String getLabel();
+
   public abstract String getUnits();
+
   public abstract String getMeta();
+
   public abstract String getGroup();
+
   public abstract String getRequired();
 
   static Builder builder() {
@@ -24,22 +29,31 @@ public abstract class Variable {
   }
 
   @AutoValue.Builder
-  static abstract class Builder {
+  abstract static class Builder {
 
     abstract Builder setVariableType(VariableType value);
+
     abstract Builder setDataType(DataType value);
+
     abstract Builder setName(String value);
+
     abstract Builder setLabel(String value);
+
     abstract Builder setUnits(String value);
+
     abstract Builder setMeta(String value);
+
     abstract Builder setGroup(String value);
+
     abstract Builder setRequired(String value);
-    
+
     abstract Variable build();
   }
 
   public enum VariableType {
-    INPUT(1), OUTPUT(2), INOUT(3);
+    INPUT(1),
+    OUTPUT(2),
+    INOUT(3);
 
     private final int sscConst;
 
@@ -53,7 +67,7 @@ public abstract class Variable {
           return var;
         }
       }
-      
+
       return null;
     }
   }
@@ -78,7 +92,7 @@ public abstract class Variable {
           return var;
         }
       }
-      
+
       return null;
     }
   }

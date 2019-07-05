@@ -7,7 +7,7 @@ import io.github.spharris.pvwatts.service.PvWatts4Request;
 import io.github.spharris.pvwatts.service.PvWatts5Request;
 
 public final class RequestConverter {
-  
+
   private RequestConverter() {}
 
   public static PvWatts4Request toPvWatts4Request(ImmutableMultimap<String, String> multimap) {
@@ -30,7 +30,7 @@ public final class RequestConverter {
         .setCallback(Iterables.getFirst(multimap.get("callback"), null))
         .build();
   }
-  
+
   public static PvWatts5Request toPvWatts5Request(ImmutableMultimap<String, String> multimap) {
     return PvWatts5Request.builder()
         .setSystemCapacity(parseFloat(Iterables.getFirst(multimap.get("system_capacity"), null)))

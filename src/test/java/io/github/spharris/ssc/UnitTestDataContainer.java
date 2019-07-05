@@ -26,17 +26,16 @@ public class UnitTestDataContainer {
 
   @Mock Ssc mockApi;
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @Rule public ExpectedException thrown = ExpectedException.none();
 
   DataContainer data;
-  
+
   @Before
   public void createData() {
     when(mockApi.ssc_data_create()).thenReturn(mock(Pointer.class));
     data = new DataContainer(mockApi);
   }
-  
+
   @Test
   public void setNumber() {
     String varName = "var";
@@ -48,8 +47,9 @@ public class UnitTestDataContainer {
 
   @Test
   public void getNonExistentNumber() {
-    when(mockApi.ssc_data_get_number(any(Pointer.class), any(String.class),
-        any(FloatByReference.class))).thenReturn(false);
+    when(mockApi.ssc_data_get_number(
+            any(Pointer.class), any(String.class), any(FloatByReference.class)))
+        .thenReturn(false);
 
     Optional<Float> val = data.getNumber("asdf");
     assertThat(val.isPresent()).isFalse();
@@ -138,8 +138,8 @@ public class UnitTestDataContainer {
     data.setMatrix(varName, value);
 
     float[] expected = {1, 2, 3, 4};
-    verify(mockApi).ssc_data_set_matrix(any(Pointer.class), eq(varName), eq(expected), eq(2),
-        eq(2));
+    verify(mockApi)
+        .ssc_data_set_matrix(any(Pointer.class), eq(varName), eq(expected), eq(2), eq(2));
   }
 
   @Test
@@ -150,7 +150,7 @@ public class UnitTestDataContainer {
     data.setMatrix(varName, value);
 
     float[] expected = {1, 2, 3, 4, 5, 6};
-    verify(mockApi).ssc_data_set_matrix(any(Pointer.class), eq(varName), eq(expected), eq(3),
-        eq(2));
+    verify(mockApi)
+        .ssc_data_set_matrix(any(Pointer.class), eq(varName), eq(expected), eq(3), eq(2));
   }
 }

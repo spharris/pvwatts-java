@@ -24,20 +24,20 @@ public final class PvWattsController {
 
   private final PvWatts4Service v4Service;
   private final PvWatts5Service v5Service;
-  
+
   @Inject
   public PvWattsController(PvWatts4Service v4Service, PvWatts5Service v5Service) {
     this.v4Service = v4Service;
     this.v5Service = v5Service;
   }
-  
+
   @Path("v4.json")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public PvWatts4Response versionFourJsonResource(@Context UriInfo uriInfo) {
     return v4Service.execute(transformMap(uriInfo.getQueryParameters()));
   }
-  
+
   @Path("v5.json")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
@@ -51,7 +51,7 @@ public final class PvWattsController {
     for (Map.Entry<String, List<String>> entry : map.entrySet()) {
       builder.putAll(entry.getKey(), entry.getValue());
     }
-    
+
     return builder.build();
   }
 }

@@ -6,13 +6,10 @@ import io.github.spharris.ssc.utils.InputVariable;
 import io.github.spharris.ssc.utils.SscVariable;
 import io.github.spharris.ssc.utils.SscVariables;
 
-/**
- * Input and output variables for PVWatts modules (both v4 and v5)
- */
+/** Input and output variables for PVWatts modules (both v4 and v5) */
 class Variables {
 
-  private Variables() {
-  }
+  private Variables() {}
 
   public static final InputVariable<String> SOLAR_RESOURCE_FILE =
       SscVariables.stringInput("solar_resource_file");
@@ -48,11 +45,9 @@ class Variables {
       SscVariables.arrayOutput("ac_monthly");
   public static final SscVariable<ImmutableList<Float>> MONTHLY_ENERGY =
       SscVariables.arrayOutput("monthly_energy");
-  public static final SscVariable<Float> SOLRAD_ANNUAL =
-      SscVariables.numberOutput("solrad_annual");
+  public static final SscVariable<Float> SOLRAD_ANNUAL = SscVariables.numberOutput("solrad_annual");
   public static final SscVariable<Float> AC_ANNUAL = SscVariables.numberOutput("ac_annual");
-  public static final SscVariable<Float> ANNUAL_ENERGY =
-      SscVariables.numberOutput("annual_energy");
+  public static final SscVariable<Float> ANNUAL_ENERGY = SscVariables.numberOutput("annual_energy");
   public static final SscVariable<Float> CAPACITY_FACTOR =
       SscVariables.numberOutput("capacity_factor");
   public static final SscVariable<ImmutableList<Float>> AC = SscVariables.arrayOutput("ac");
@@ -61,8 +56,7 @@ class Variables {
   public static final SscVariable<ImmutableList<Float>> DC = SscVariables.arrayOutput("dc");
   public static final SscVariable<ImmutableList<Float>> DF = SscVariables.arrayOutput("df");
   public static final SscVariable<ImmutableList<Float>> TAMB = SscVariables.arrayOutput("tamb");
-  public static final SscVariable<ImmutableList<Float>> TCELL =
-      SscVariables.arrayOutput("tcell");
+  public static final SscVariable<ImmutableList<Float>> TCELL = SscVariables.arrayOutput("tcell");
   public static final SscVariable<ImmutableList<Float>> WSPD = SscVariables.arrayOutput("wspd");
 
   public static final SscVariable<String> LOCATION = SscVariables.stringOutput("location");

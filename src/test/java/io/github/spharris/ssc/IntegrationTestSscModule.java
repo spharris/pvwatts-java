@@ -19,7 +19,7 @@ import com.google.inject.Inject;
 public class IntegrationTestSscModule {
 
   static final float EPSILON = 0f;
-  
+
   @Inject SscModuleFactory moduleFactory;
   @Inject Provider<DataContainer> dataContainerProvider;
 
@@ -44,19 +44,41 @@ public class IntegrationTestSscModule {
   public void getsAllVariables() {
     List<Variable> vars = module.getVariables();
 
-    Variable v1 = Variable.builder().setVariableType(Variable.VariableType.INPUT)
-        .setDataType(Variable.DataType.MATRIX).setName("positions")
-        .setLabel("Positions within calculataed area").setGroup("layoutarea").setRequired("*").setUnits("")
-        .setMeta("").build();
+    Variable v1 =
+        Variable.builder()
+            .setVariableType(Variable.VariableType.INPUT)
+            .setDataType(Variable.DataType.MATRIX)
+            .setName("positions")
+            .setLabel("Positions within calculataed area")
+            .setGroup("layoutarea")
+            .setRequired("*")
+            .setUnits("")
+            .setMeta("")
+            .build();
 
-    Variable v2 = Variable.builder().setVariableType(Variable.VariableType.OUTPUT)
-        .setDataType(Variable.DataType.MATRIX).setName("convex_hull")
-        .setLabel("Convex hull bounding the region").setGroup("layoutarea").setRequired("*").setUnits("")
-        .setMeta("").build();
+    Variable v2 =
+        Variable.builder()
+            .setVariableType(Variable.VariableType.OUTPUT)
+            .setDataType(Variable.DataType.MATRIX)
+            .setName("convex_hull")
+            .setLabel("Convex hull bounding the region")
+            .setGroup("layoutarea")
+            .setRequired("*")
+            .setUnits("")
+            .setMeta("")
+            .build();
 
-    Variable v3 = Variable.builder().setVariableType(Variable.VariableType.OUTPUT)
-        .setDataType(Variable.DataType.NUMBER).setName("area").setLabel("Area inside the convex hull")
-        .setGroup("layoutarea").setRequired("*").setUnits("").setMeta("").build();
+    Variable v3 =
+        Variable.builder()
+            .setVariableType(Variable.VariableType.OUTPUT)
+            .setDataType(Variable.DataType.NUMBER)
+            .setName("area")
+            .setLabel("Area inside the convex hull")
+            .setGroup("layoutarea")
+            .setRequired("*")
+            .setUnits("")
+            .setMeta("")
+            .build();
 
     assertThat(vars).hasSize(3);
     assertThat(vars).containsExactly(v1, v2, v3);
@@ -74,21 +96,22 @@ public class IntegrationTestSscModule {
     SscModule m = moduleFactory.create("pvsamv1");
     populateModuleWithSimData(data);
 
-    ExecutionHandler handler = new ExecutionHandler() {
+    ExecutionHandler handler =
+        new ExecutionHandler() {
 
-      @Override
-      public boolean handleLogMessage(MessageType type, float time, String message) {
-        assertThat(type).isNotNull();
-        return true;
-      }
+          @Override
+          public boolean handleLogMessage(MessageType type, float time, String message) {
+            assertThat(type).isNotNull();
+            return true;
+          }
 
-      @Override
-      public boolean handleProgressUpdate(float percentComplete, float time, String text) {
-        assertThat(percentComplete).isAtLeast(0f);
-        assertThat(time).isAtLeast(0f);
-        return true;
-      }
-    };
+          @Override
+          public boolean handleProgressUpdate(float percentComplete, float time, String text) {
+            assertThat(percentComplete).isAtLeast(0f);
+            assertThat(time).isAtLeast(0f);
+            return true;
+          }
+        };
 
     m.execute(data, handler);
 
@@ -112,7 +135,8 @@ public class IntegrationTestSscModule {
   private static void populateModuleWithSimData(DataContainer data) throws Exception {
     String weatherFile = "target/test-classes/weather/tmy2/23129.tm2";
     data.setString("solar_resource_file", weatherFile);
-    data.setArray("albedo",
+    data.setArray(
+        "albedo",
         new float[] {0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f});
     data.setNumber("dcoptimizer_loss", 0);
 
@@ -139,7 +163,8 @@ public class IntegrationTestSscModule {
       data.setNumber("subarray" + i + "_mismatch_loss", .04f);
       data.setNumber("subarray" + i + "_nameplate_loss", -0.015f);
       data.setNumber("subarray" + i + "_diodeconn_loss", 0);
-      data.setArray("subarray" + i + "_soiling",
+      data.setArray(
+          "subarray" + i + "_soiling",
           new float[] {0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f});
     }
 

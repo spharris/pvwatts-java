@@ -12,28 +12,28 @@ import com.google.common.collect.Iterables;
 
 public final class ImmutableMultimapSerializer
     extends JsonSerializer<ImmutableMultimap<String, String>> {
-  
+
   @Override
-  public void serialize(ImmutableMultimap<String, String> value,
-      JsonGenerator gen,
-      SerializerProvider provider) throws IOException {
+  public void serialize(
+      ImmutableMultimap<String, String> value, JsonGenerator gen, SerializerProvider provider)
+      throws IOException {
     gen.writeStartObject();
-    
+
     for (Entry<String, Collection<String>> entry : value.asMap().entrySet()) {
       Collection<String> values = entry.getValue();
       if (values.isEmpty()) {
         continue;
       }
-      
+
       gen.writeFieldName(entry.getKey());
-      
+
       if (values.size() == 1) {
         gen.writeObject(Iterables.getOnlyElement(values));
       } else {
         gen.writeObject(values);
       }
     }
-    
+
     gen.writeEndObject();
   }
 }

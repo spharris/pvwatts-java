@@ -32,48 +32,46 @@ public class IntegrationTestPvWatts4Service {
 
   private static final float EPSILON = 0.001f;
 
-  private final ImmutableMultimap<String, String> urlParameters = ImmutableMultimap.<String, String>builder()
-      .put("lat", "33.816")
-      .put("lon", "-118.15")
-      .put("azimuth", "30")
-      .put("tilt", "1.5")
-      .put("dataset", "tmy2")
-      .put("system_size", "4")
-      .put("derate", "0.77")
-      .put("track_mode", "1")
-      .build();
+  private final ImmutableMultimap<String, String> urlParameters =
+      ImmutableMultimap.<String, String>builder()
+          .put("lat", "33.816")
+          .put("lon", "-118.15")
+          .put("azimuth", "30")
+          .put("tilt", "1.5")
+          .put("dataset", "tmy2")
+          .put("system_size", "4")
+          .put("derate", "0.77")
+          .put("track_mode", "1")
+          .build();
 
   private final PvWatts4Request.Builder requestBuilder =
       RequestConverter.toPvWatts4Request(urlParameters).toBuilder();
 
-  private final ObjectMapper mapper = new ObjectMapper()
-      .registerModule(new GuavaModule());
+  private final ObjectMapper mapper = new ObjectMapper().registerModule(new GuavaModule());
 
-  @Mock
-  private WeatherSource tmy2WeatherSource;
-  @Inject
-  private PvWatts4Service service;
+  @Mock private WeatherSource tmy2WeatherSource;
+  @Inject private PvWatts4Service service;
 
   @Before
   public void createInjector() {
     Guice.createInjector(
-        new SscGuiceModule(),
-        new AbstractModule() {
+            new SscGuiceModule(),
+            new AbstractModule() {
 
-          @Override
-          protected void configure() {
-            MapBinder.newMapBinder(binder(),
-                String.class,
-                WeatherSource.class)
-                .addBinding("tmy2").toInstance(tmy2WeatherSource);
-          }
-        }).injectMembers(this);
+              @Override
+              protected void configure() {
+                MapBinder.newMapBinder(binder(), String.class, WeatherSource.class)
+                    .addBinding("tmy2")
+                    .toInstance(tmy2WeatherSource);
+              }
+            })
+        .injectMembers(this);
   }
 
   @Before
   public void returnWeatherData() {
-    when(tmy2WeatherSource.getWeatherFile(anyFloat(), anyFloat(), anyInt())).thenReturn(
-        "target/test-classes/weather/tmy2/23129.tm2");
+    when(tmy2WeatherSource.getWeatherFile(anyFloat(), anyFloat(), anyInt()))
+        .thenReturn("target/test-classes/weather/tmy2/23129.tm2");
   }
 
   @Test
@@ -120,9 +118,7 @@ public class IntegrationTestPvWatts4Service {
 
   @Test
   public void populatesHourlyDataWhenRequested() {
-    PvWatts4Response result = service.execute(requestBuilder
-        .setTimeframe("hourly")
-        .build());
+    PvWatts4Response result = service.execute(requestBuilder.setTimeframe("hourly").build());
 
     assertThat(result.getErrors()).isEmpty();
     assertThat(result.getOutputs().getAc()).hasSize(8760);
@@ -137,9 +133,7 @@ public class IntegrationTestPvWatts4Service {
 
   @Test
   public void hourlyDataMatchesExpected() throws Exception {
-    PvWatts4Response result = service.execute(requestBuilder
-        .setTimeframe("hourly")
-        .build());
+    PvWatts4Response result = service.execute(requestBuilder.setTimeframe("hourly").build());
 
     PvWatts4Response expected = loadResponse("long_beach_hourly.json");
 
@@ -156,10 +150,12 @@ public class IntegrationTestPvWatts4Service {
     arraysAreClose(result.getOutputs().getDcMonthly(), expected.getOutputs().getDcMonthly());
     arraysAreClose(result.getOutputs().getPoaMonthly(), expected.getOutputs().getPoaMonthly());
 
-    assertThat(result.getOutputs().getAcAnnual()).isWithin(EPSILON)
+    assertThat(result.getOutputs().getAcAnnual())
+        .isWithin(EPSILON)
         .of(expected.getOutputs().getAcAnnual());
 
-    assertThat(result.getOutputs().getSolradAnnual()).isWithin(EPSILON)
+    assertThat(result.getOutputs().getSolradAnnual())
+        .isWithin(EPSILON)
         .of(expected.getOutputs().getSolradAnnual());
   }
 

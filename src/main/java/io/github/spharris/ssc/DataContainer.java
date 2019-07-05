@@ -11,41 +11,38 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.IntByReference;
 
-/**
- * A container for data that is passed to an {@link SscModule} for execution
- */
+/** A container for data that is passed to an {@link SscModule} for execution */
 public class DataContainer implements Freeable {
 
   private static final int FLOAT_SIZE = 4;
-  
+
   private final Ssc api;
   private final Pointer data;
-  
+
   private boolean freed;
-    
+
   @Inject
   DataContainer(Ssc api) {
     this.api = checkNotNull(api);
-    
+
     data = api.ssc_data_create();
     freed = false;
   }
-  
+
   /**
-   * Get the underlying SSC data pointer. Package private because it should only be accessible
-   * from {@link SscModule}.
+   * Get the underlying SSC data pointer. Package private because it should only be accessible from
+   * {@link SscModule}.
    */
   Pointer getPointer() {
     checkState();
     return data;
   }
-  
+
   /**
    * Set a numeric input value for this module.
-   * 
+   *
    * @param variableName The name of the variable to set.
    * @param value The value.
-   * 
    * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
    * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
    */
@@ -75,13 +72,12 @@ public class DataContainer implements Freeable {
 
   /**
    * Set a String input value for this module.
-   * 
+   *
    * @param variableName The name of the variable to set.
    * @param value The value.
-   * 
    * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
    * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is
-   *         null
+   *     null
    */
   public DataContainer setString(String variableName, String value) {
     checkState();
@@ -93,13 +89,12 @@ public class DataContainer implements Freeable {
 
   /**
    * Set an array input value for this module.
-   * 
+   *
    * @param variableName The name of the variable to set.
    * @param value The value.
-   * 
    * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
    * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is
-   *         null
+   *     null
    * @throws {@link java.lang.IllegalArgumentException} if <tt>value</tt> has a length of zero.
    */
   public DataContainer setArray(String variableName, float[] value) {
@@ -149,13 +144,12 @@ public class DataContainer implements Freeable {
 
   /**
    * Set an array input value for this module.
-   * 
+   *
    * @param variableName The name of the variable to set.
    * @param value The value.
-   * 
    * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
    * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> or <tt>value</tt> is
-   *         null
+   *     null
    * @throws {@link java.lang.IllegalArgumentException} if <tt>value</tt> has zero rows or columns
    */
   public DataContainer setMatrix(String variableName, float[][] value) {
@@ -239,11 +233,10 @@ public class DataContainer implements Freeable {
 
   /**
    * Get a numeric input or output number for this module.
-   * 
+   *
    * @param variableName The name of the variable to retrieve.
    * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
-   *         an empty {@link Optional}
-   * 
+   *     an empty {@link Optional}
    * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
    * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
    */
@@ -263,11 +256,10 @@ public class DataContainer implements Freeable {
 
   /**
    * Get a numeric input or output number for this module.
-   * 
+   *
    * @param variableName The name of the variable to retrieve.
    * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
-   *         an empty {@link Optional}
-   * 
+   *     an empty {@link Optional}
    * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
    * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
    */
@@ -281,11 +273,10 @@ public class DataContainer implements Freeable {
 
   /**
    * Get a numeric input or output number for this module.
-   * 
+   *
    * @param variableName The name of the variable to retrieve.
    * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
-   *         an empty {@link Optional}
-   * 
+   *     an empty {@link Optional}
    * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
    * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
    */
@@ -312,11 +303,10 @@ public class DataContainer implements Freeable {
 
   /**
    * Get a numeric input or output number for this module.
-   * 
+   *
    * @param variableName The name of the variable to retrieve.
    * @return If <tt>variableName</tt> is found, an {@link Optional} containing the value. Otherwise,
-   *         an empty {@link Optional}
-   * 
+   *     an empty {@link Optional}
    * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
    * @throws {@link java.lang.NullPointerException} if <tt>variableName</tt> is null
    */

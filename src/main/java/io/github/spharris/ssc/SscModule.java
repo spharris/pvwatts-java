@@ -16,18 +16,18 @@ import io.github.spharris.ssc.ExecutionHandler.MessageType;
 import io.github.spharris.ssc.exceptions.UnknownModuleNameException;
 
 /**
- * <p>A <code>Module</code> represents an SSC compute module ("pvwattsv1", for example). This class
- * is created via an injected {@link SscModuleFactory}.
- * 
+ * A <code>Module</code> represents an SSC compute module ("pvwattsv1", for example). This class is
+ * created via an injected {@link SscModuleFactory}.
+ *
  * <p>Once a module has been created, you can get information about the available variables, add
  * values for variables, and execute.
- * 
+ *
  * <p><strong>When you are done with a module, it must be freed using {@link #free}.
- * 
+ *
  * @author spharris
  */
 public final class SscModule implements Freeable {
- 
+
   private String moduleName;
   private Pointer module;
   private Pointer entry;
@@ -36,9 +36,7 @@ public final class SscModule implements Freeable {
 
   private boolean freed = false;
 
-  /**
-   * Gets a list of the available modules.
-   */
+  /** Gets a list of the available modules. */
   public static ImmutableList<SscModuleSummary> getAvailableModules() {
     Ssc api = loadSscLibrary();
 
@@ -51,11 +49,12 @@ public final class SscModule implements Freeable {
       String desc = api.ssc_entry_description(entry);
       int version = api.ssc_entry_version(entry);
 
-      builder.add(SscModuleSummary.builder()
-        .setName(name)
-        .setDescription(desc)
-        .setVersion(version)
-        .build());
+      builder.add(
+          SscModuleSummary.builder()
+              .setName(name)
+              .setDescription(desc)
+              .setVersion(version)
+              .build());
 
       i++;
       entry = api.ssc_module_entry(i);
@@ -104,7 +103,7 @@ public final class SscModule implements Freeable {
   public int getSscVersion() {
     return api.ssc_version();
   }
-  
+
   public String getSscBuildInfo() {
     return api.ssc_build_info();
   }
@@ -118,9 +117,7 @@ public final class SscModule implements Freeable {
         .build();
   }
 
-  /**
-   * Get the name of SSC compute module
-   */
+  /** Get the name of SSC compute module */
   public String getName() {
     return moduleName;
   }
@@ -135,7 +132,7 @@ public final class SscModule implements Freeable {
 
   /**
    * Returns a list of all of the variables for this module.
-   * 
+   *
    * @throws {@link java.lang.IllegalStateException} if the module has already been {@link #free}ed.
    */
   public List<Variable> getVariables() {
@@ -150,13 +147,17 @@ public final class SscModule implements Freeable {
     int i = 0;
     Pointer infoPointer = api.ssc_module_var_info(module, i);
     while (infoPointer != null) {
-      Variable var = Variable.builder()
-          .setVariableType(Variable.VariableType.forInt(api.ssc_info_var_type(infoPointer)))
-          .setDataType(Variable.DataType.forInt(api.ssc_info_data_type(infoPointer)))
-          .setName(api.ssc_info_name(infoPointer)).setLabel(api.ssc_info_label(infoPointer))
-          .setUnits(api.ssc_info_units(infoPointer)).setMeta(api.ssc_info_meta(infoPointer))
-          .setGroup(api.ssc_info_group(infoPointer)).setRequired(api.ssc_info_required(infoPointer))
-          .build();
+      Variable var =
+          Variable.builder()
+              .setVariableType(Variable.VariableType.forInt(api.ssc_info_var_type(infoPointer)))
+              .setDataType(Variable.DataType.forInt(api.ssc_info_data_type(infoPointer)))
+              .setName(api.ssc_info_name(infoPointer))
+              .setLabel(api.ssc_info_label(infoPointer))
+              .setUnits(api.ssc_info_units(infoPointer))
+              .setMeta(api.ssc_info_meta(infoPointer))
+              .setGroup(api.ssc_info_group(infoPointer))
+              .setRequired(api.ssc_info_required(infoPointer))
+              .build();
 
       variables.add(var);
 
@@ -174,26 +175,35 @@ public final class SscModule implements Freeable {
 
   public void execute(DataContainer data, final ExecutionHandler handler) {
     checkState();
-    SscExecutionHandler wrapper = new SscExecutionHandler() {
+    SscExecutionHandler wrapper =
+        new SscExecutionHandler() {
 
-      @Override
-      public boolean update(Pointer module, Pointer sscFunction, int action, float f0, float f1,
-          String s0, String s1, Pointer userData) {
-        ActionType type = ActionType.forInt(action);
-        if (type == ActionType.LOG) {
-          MessageType msg = MessageType.forInt((int) f0);
-          return handler.handleLogMessage(msg, f1, s0);
-        } else {
-          return handler.handleProgressUpdate(f0, f1, s0);
-        }
-      }
-    };
+          @Override
+          public boolean update(
+              Pointer module,
+              Pointer sscFunction,
+              int action,
+              float f0,
+              float f1,
+              String s0,
+              String s1,
+              Pointer userData) {
+            ActionType type = ActionType.forInt(action);
+            if (type == ActionType.LOG) {
+              MessageType msg = MessageType.forInt((int) f0);
+              return handler.handleLogMessage(msg, f1, s0);
+            } else {
+              return handler.handleProgressUpdate(f0, f1, s0);
+            }
+          }
+        };
 
     api.ssc_module_exec_with_handler(module, data.getPointer(), wrapper, null);
   }
 
   private enum ActionType {
-    LOG, UPDATE;
+    LOG,
+    UPDATE;
 
     public static ActionType forInt(int action) {
       checkArgument(action == 0 || action == 1, "action must have a value of 0 or 1");
