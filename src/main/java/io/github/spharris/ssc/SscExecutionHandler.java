@@ -9,7 +9,7 @@ import com.sun.jna.Pointer;
  * @author spharris
  */
 interface SscExecutionHandler extends Callback {
-  public boolean update(
+  boolean update(
       Pointer module,
       Pointer sscFunction,
       int action,

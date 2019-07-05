@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import io.github.spharris.ssc.ExecutionHandler.MessageType;
@@ -23,12 +24,12 @@ import java.util.Objects;
  */
 public final class SscModule implements AutoCloseable {
 
-  private String moduleName;
-  private Pointer module;
-  private Pointer entry;
-  private Ssc api;
-  private List<Variable> variables;
+  private final String moduleName;
+  private final Pointer module;
+  private final Pointer entry;
+  private final Ssc api;
 
+  private ImmutableList<Variable> variables;
   private boolean closed = false;
 
   /** Gets a list of the available modules. */
@@ -62,7 +63,7 @@ public final class SscModule implements AutoCloseable {
     return (Ssc) Native.loadLibrary(Ssc.SSC_LIB_NAME, Ssc.class);
   }
 
-  @Inject
+  @AssistedInject
   SscModule(@Assisted String moduleName, Ssc api) {
     this.module = api.ssc_module_create(moduleName);
     if (module == null) {
@@ -71,19 +72,19 @@ public final class SscModule implements AutoCloseable {
 
     this.moduleName = moduleName;
     this.api = api;
-    this.entry = getEntry();
+    this.entry = getEntry(api, moduleName);
   }
 
   /**
    * Helper to get the SSC entry for this module. Generally you should only use this once you're
    * sure that the module in question exists.
    */
-  private Pointer getEntry() {
+  private static Pointer getEntry(Ssc api, String moduleName) {
     int i = 0;
     Pointer entry = api.ssc_module_entry(i);
     while (entry != null) {
       String name = api.ssc_entry_name(entry);
-      if (Objects.equals(name, getName())) {
+      if (Objects.equals(name, moduleName)) {
         return entry;
       }
 
@@ -92,7 +93,7 @@ public final class SscModule implements AutoCloseable {
     }
 
     // Should never get here.
-    throw new IllegalStateException("You cannot call getEntry for a module that doesn't exist.");
+    throw new IllegalArgumentException("You cannot call getEntry for a module that doesn't exist.");
   }
 
   public int getSscVersion() {
@@ -128,17 +129,16 @@ public final class SscModule implements AutoCloseable {
   /**
    * Returns a list of all of the variables for this module.
    *
-   * @throws java.lang.IllegalStateException if the module has already been {@link #free}ed.
+   * @throws java.lang.IllegalStateException if the module has already been {@link #close closed}.
    */
-  public List<Variable> getVariables() {
+  public ImmutableList<Variable> getVariables() {
     checkNotClosed();
 
     if (variables != null) {
       return variables;
     }
 
-    variables = new LinkedList<>();
-
+    ImmutableList.Builder<Variable> builder = ImmutableList.builder();
     int i = 0;
     Pointer infoPointer = api.ssc_module_var_info(module, i);
     while (infoPointer != null) {
@@ -154,12 +154,13 @@ public final class SscModule implements AutoCloseable {
               .setRequired(api.ssc_info_required(infoPointer))
               .build();
 
-      variables.add(var);
+      builder.add(var);
 
       i++;
       infoPointer = api.ssc_module_var_info(module, i);
     }
 
+    variables = builder.build();
     return variables;
   }
 

@@ -1,5 +1,6 @@
 package io.github.spharris.ssc;
 
+/** Factory interface for creating {@link SscModule SscModules}. */
 public interface SscModuleFactory {
-  public SscModule create(String moduleName);
+  SscModule create(String moduleName);
 }

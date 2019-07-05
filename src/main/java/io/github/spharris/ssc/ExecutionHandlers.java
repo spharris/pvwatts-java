@@ -2,7 +2,7 @@ package io.github.spharris.ssc;
 
 import com.google.common.collect.ImmutableList;
 
-/** Implemtations of {@link ExecutionHandler}. */
+/** Implementations of {@link ExecutionHandler}. */
 public final class ExecutionHandlers {
 
   private ExecutionHandlers() {}

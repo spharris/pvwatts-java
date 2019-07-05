@@ -18,14 +18,12 @@ public class DataContainer implements AutoCloseable {
   private final Ssc api;
   private final Pointer data;
 
-  private boolean closed;
+  private boolean closed = false;
 
   @Inject
   DataContainer(Ssc api) {
-    this.api = checkNotNull(api);
-
-    data = api.ssc_data_create();
-    closed = false;
+    this.api = api;
+    this.data = api.ssc_data_create();
   }
 
   /**

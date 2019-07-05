@@ -5,6 +5,7 @@ import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import com.google.common.collect.ImmutableMap;
 import java.util.Arrays;
 
+/** An interface that handles messages from the execution of an SSC module. */
 public interface ExecutionHandler {
   enum MessageType {
     INPUT_ERROR(0),
