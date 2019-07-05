@@ -23,7 +23,7 @@ import javax.inject.Provider;
 /** A service for PvWatts5 (pvwattsv5) */
 public final class PvWatts5Service {
 
-  public static final String SERVICE_VERSION = "0.0.1";
+  private static final String SERVICE_VERSION = "0.0.1";
 
   private static final String MODULE_NAME = "pvwattsv5";
   private static final PvWatts5Request DEFAULT_REQUEST =
@@ -41,7 +41,7 @@ public final class PvWatts5Service {
   private final ImmutableMap<String, WeatherSource> weatherSources;
 
   @Inject
-  public PvWatts5Service(
+  PvWatts5Service(
       SscModuleFactory moduleFactory,
       Provider<DataContainer> dataContainerProvider,
       Map<String, WeatherSource> weatherSources) {
