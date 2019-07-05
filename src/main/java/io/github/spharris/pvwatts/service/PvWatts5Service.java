@@ -101,8 +101,8 @@ public final class PvWatts5Service {
 
   /** Parameters that are always the same for every request, but are still required. */
   private static void setRequiredValues(DataContainer data) {
-    Variables.ADJUST_CONSTANT.set(1f, data);
-    Variables.ADJUST_FACTOR.set(1f, data);
+    Variables.ADJUST_CONSTANT.set(0f, data);
+    Variables.ADJUST_FACTOR.set(0f, data);
   }
 
   /** Set default values on the request if they're not already set */

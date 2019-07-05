@@ -28,8 +28,7 @@ public class IntegrationTestPvWatts4Service {
   // https://developer.nrel.gov/api/pvwatts/v4.json?api_key=DEMO_KEY&system_size=4&dataset=tmy2&derate=0.77&lat=33.81666&lon=-118.15&tilt=1.5&track_mode=1&azimuth=30&timeframe=hourly
 
   private static final float EPSILON = 0.001f;
-
-  private final ImmutableMultimap<String, String> urlParameters =
+  private static final ImmutableMultimap<String, String> URL_PARAMETERS =
       ImmutableMultimap.<String, String>builder()
           .put("lat", "33.816")
           .put("lon", "-118.15")
@@ -42,7 +41,7 @@ public class IntegrationTestPvWatts4Service {
           .build();
 
   private final PvWatts4Request.Builder requestBuilder =
-      RequestConverter.toPvWatts4Request(urlParameters).toBuilder();
+      RequestConverter.toPvWatts4Request(URL_PARAMETERS).toBuilder();
 
   private final ObjectMapper mapper = new ObjectMapper().registerModule(new GuavaModule());
 
@@ -80,23 +79,23 @@ public class IntegrationTestPvWatts4Service {
 
   @Test
   public void populatesFilename() {
-    PvWatts4Response result = service.execute(urlParameters);
+    PvWatts4Response result = service.execute(URL_PARAMETERS);
 
     assertThat(result.getStationInfo().getFileName()).isEqualTo("23129.tm2");
   }
 
   @Test
   public void runsPvWatts4SimulationFromParameters() {
-    PvWatts4Response result = service.execute(urlParameters);
+    PvWatts4Response result = service.execute(URL_PARAMETERS);
 
     assertThat(result.getOutputs().getAcAnnual()).isGreaterThan(0f);
   }
 
   @Test
   public void simulationFromParametersWritesInputs() {
-    PvWatts4Response result = service.execute(urlParameters);
+    PvWatts4Response result = service.execute(URL_PARAMETERS);
 
-    assertThat(result.getInputs()).isEqualTo(urlParameters);
+    assertThat(result.getInputs()).isEqualTo(URL_PARAMETERS);
   }
 
   @Test

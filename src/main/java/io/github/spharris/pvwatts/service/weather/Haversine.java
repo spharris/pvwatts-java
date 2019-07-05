@@ -4,7 +4,9 @@ package io.github.spharris.pvwatts.service.weather;
  * From
  * http://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula?rq=1
  */
-class Haversine {
+final class Haversine {
+
+  private Haversine() {}
 
   private static final float R = 6371;
 
