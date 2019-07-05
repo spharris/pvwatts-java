@@ -1,10 +1,12 @@
 package io.github.spharris.ssc;
 
-import java.util.HashMap;
-import java.util.Map;
+import static com.google.common.collect.ImmutableMap.toImmutableMap;
+
+import com.google.common.collect.ImmutableMap;
+import java.util.Arrays;
 
 public interface ExecutionHandler {
-  public static enum MessageType {
+  enum MessageType {
     INPUT_ERROR(0),
     NOTICE(1),
     WARNING(2),
@@ -12,24 +14,20 @@ public interface ExecutionHandler {
 
     private int sscConst;
 
-    private static Map<Integer, MessageType> sscVarTypeMap = new HashMap<>();
+    private static final ImmutableMap<Integer, MessageType> VAR_TYPE_MAP =
+        Arrays.stream(values())
+        .collect(toImmutableMap(t -> t.sscConst, t -> t));
 
-    static {
-      for (MessageType v : values()) {
-        sscVarTypeMap.put(v.sscConst, v);
-      }
-    }
-
-    private MessageType(final int sscConst) {
+    MessageType(final int sscConst) {
       this.sscConst = sscConst;
     }
 
     public static MessageType forInt(int val) {
-      return sscVarTypeMap.get(val);
+      return VAR_TYPE_MAP.get(val);
     }
   }
 
-  public boolean handleLogMessage(MessageType type, float time, String message);
+  boolean handleLogMessage(MessageType type, float time, String message);
 
-  public boolean handleProgressUpdate(float percentComplete, float time, String text);
+  boolean handleProgressUpdate(float percentComplete, float time, String text);
 }
