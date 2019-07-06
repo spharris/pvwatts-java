@@ -29,4 +29,21 @@ public final class ExecutionHandlers {
       }
     };
   }
+
+  private static final ExecutionHandler NO_OP_HANDLER = new ExecutionHandler() {
+
+    @Override
+    public boolean handleLogMessage(MessageType type, float time, String message) {
+      return true;
+    }
+
+    @Override
+    public boolean handleProgressUpdate(float percentComplete, float time, String text) {
+      return true;
+    }
+  };
+
+  public static ExecutionHandler noOpHandler() {
+    return NO_OP_HANDLER;
+  }
 }

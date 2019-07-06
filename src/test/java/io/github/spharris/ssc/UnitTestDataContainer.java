@@ -22,11 +22,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class UnitTestDataContainer {
 
-  @Mock Ssc mockApi;
+  @Mock private Ssc mockApi;
 
   @Rule public ExpectedException thrown = ExpectedException.none();
 
-  DataContainer data;
+  private DataContainer data;
 
   @Before
   public void createData() {

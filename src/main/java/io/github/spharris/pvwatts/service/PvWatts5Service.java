@@ -11,14 +11,13 @@ import io.github.spharris.pvwatts.service.PvWatts5Response.StationInfo;
 import io.github.spharris.pvwatts.service.weather.WeatherSource;
 import io.github.spharris.pvwatts.utils.RequestConverter;
 import io.github.spharris.ssc.DataContainer;
+import io.github.spharris.ssc.SimulationRunner;
 import io.github.spharris.ssc.SscModule;
-import io.github.spharris.ssc.SscModuleFactory;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 /** A service for PvWatts5 (pvwattsv5) */
 public final class PvWatts5Service {
@@ -36,18 +35,13 @@ public final class PvWatts5Service {
           .setInvEff(96f)
           .build();
 
-  private final SscModuleFactory moduleFactory;
-  private final Provider<DataContainer> dataContainerProvider;
   private final ImmutableMap<String, WeatherSource> weatherSources;
+  private final SimulationRunner runner;
 
   @Inject
-  PvWatts5Service(
-      SscModuleFactory moduleFactory,
-      Provider<DataContainer> dataContainerProvider,
-      Map<String, WeatherSource> weatherSources) {
-    this.moduleFactory = moduleFactory;
-    this.dataContainerProvider = dataContainerProvider;
+  PvWatts5Service(Map<String, WeatherSource> weatherSources, SimulationRunner runner) {
     this.weatherSources = ImmutableMap.copyOf(weatherSources);
+    this.runner = runner;
   }
 
   public PvWatts5Response execute(ImmutableMultimap<String, String> parameters) {
@@ -62,39 +56,39 @@ public final class PvWatts5Service {
 
   private PvWatts5Response executeWithResponse(
       PvWatts5Request request, PvWatts5Response.Builder response) {
-    try (SscModule module = moduleFactory.create(MODULE_NAME)) {
-      try (DataContainer data = dataContainerProvider.get()) {
-        setRequiredValues(data);
-        Variables.SOLAR_RESOURCE_FILE.set(
-            weatherSources
-                .get(request.getDataset())
-                .getWeatherFile(request.getLat(), request.getLon(), request.getRadius()),
-            data);
-        Variables.SYSTEM_CAPACITY.set(request.getSystemCapacity(), data);
-        Variables.MODULE_TYPE.set(request.getModuleType(), data);
-        Variables.LOSSES.set(request.getLosses(), data);
-        Variables.ARRAY_TYPE.set(request.getArrayType(), data);
-        Variables.TILT.set(request.getTilt(), data);
-        Variables.AZIMUTH.set(request.getAzimuth(), data);
-        Variables.DC_AC_RATIO.set(request.getDcAcRatio(), data);
-        Variables.GCR.set(request.getGcr(), data);
-        Variables.INV_EFF.set(request.getInvEff(), data);
+    return runner.run(
+        MODULE_NAME,
+        (module, data) -> {
+          setRequiredValues(data);
+          Variables.SOLAR_RESOURCE_FILE.set(
+              weatherSources
+                  .get(request.getDataset())
+                  .getWeatherFile(request.getLat(), request.getLon(), request.getRadius()),
+              data);
+          Variables.SYSTEM_CAPACITY.set(request.getSystemCapacity(), data);
+          Variables.MODULE_TYPE.set(request.getModuleType(), data);
+          Variables.LOSSES.set(request.getLosses(), data);
+          Variables.ARRAY_TYPE.set(request.getArrayType(), data);
+          Variables.TILT.set(request.getTilt(), data);
+          Variables.AZIMUTH.set(request.getAzimuth(), data);
+          Variables.DC_AC_RATIO.set(request.getDcAcRatio(), data);
+          Variables.GCR.set(request.getGcr(), data);
+          Variables.INV_EFF.set(request.getInvEff(), data);
 
-        ImmutableList.Builder<String> errorListBuilder = ImmutableList.builder();
-        ImmutableList.Builder<String> warningListBuilder = ImmutableList.builder();
-        module.execute(data, messageLoggingHandler(errorListBuilder, warningListBuilder));
+          ImmutableList.Builder<String> errorListBuilder = ImmutableList.builder();
+          ImmutableList.Builder<String> warningListBuilder = ImmutableList.builder();
+          module.execute(data, messageLoggingHandler(errorListBuilder, warningListBuilder));
 
-        ImmutableList<String> errors = errorListBuilder.build();
-        if (errors.isEmpty()) {
-          buildResponse(module, data, request, response);
-        }
+          ImmutableList<String> errors = errorListBuilder.build();
+          if (errors.isEmpty()) {
+            buildResponse(module, data, request, response);
+          }
 
-        response.setErrors(errors);
-        response.setWarnings(warningListBuilder.build());
-      }
-    }
+          response.setErrors(errors);
+          response.setWarnings(warningListBuilder.build());
 
-    return response.build();
+          return response.build();
+        });
   }
 
   /** Parameters that are always the same for every request, but are still required. */

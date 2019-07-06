@@ -15,13 +15,11 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class IntegrationTestSscModule {
 
-  static final float EPSILON = 0f;
+  @Inject private SscModuleFactory moduleFactory;
+  @Inject private Provider<DataContainer> dataContainerProvider;
 
-  @Inject SscModuleFactory moduleFactory;
-  @Inject Provider<DataContainer> dataContainerProvider;
-
-  SscModule module;
-  DataContainer data;
+  private SscModule module;
+  private DataContainer data;
 
   @Before
   public void createModule() {
@@ -130,8 +128,7 @@ public class IntegrationTestSscModule {
   }
 
   private static void populateModuleWithSimData(DataContainer data) throws Exception {
-    String weatherFile = "target/test-classes/weather/tmy2/23129.tm2";
-    data.setString("solar_resource_file", weatherFile);
+    data.setString("solar_resource_file", "target/test-classes/weather/tmy2/23129.tm2");
     data.setArray(
         "albedo",
         new float[] {0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f});
